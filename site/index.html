@@ -57,7 +57,7 @@ header.mast{border-bottom:1px solid var(--line);background:var(--bg);position:st
 .brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
 .brand b{font:600 20px/1 var(--serif)}
 .brand span{font-size:12px;color:var(--ink-3)}
-nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:8px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface-2);padding:4px;border-radius:8px}
 nav.tabs a{padding:7px 14px;border-radius:6px;text-decoration:none;color:var(--ink-2);font-weight:500;font-size:14px}
 nav.tabs a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 
@@ -67,6 +67,7 @@ nav.tabs a[aria-current="page"]{background:var(--surface);color:var(--ink);box-s
 .stat .v{font:500 24px/1.1 var(--mono);font-variant-numeric:tabular-nums}
 .stat .l{font-size:12.5px;color:var(--ink-2);line-height:1.35}
 
+@media (max-width:600px){header.mast{position:static}}
 /* chips */
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;line-height:1;padding:4px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
 .chip.warn{background:var(--warn-soft);color:var(--warn)}
@@ -179,6 +180,26 @@ ol.reasons b{color:var(--ink)}
 .ckstatus.part{background:var(--warn-soft);color:var(--warn)}
 .ckstatus.todo{background:var(--surface-2);color:var(--ink-3)}
 .stat .ci{font:12px var(--mono);color:var(--ink-3)}
+/* about page: large, plain, high-contrast reading */
+.about{max-width:680px;margin:0 auto;padding-block:40px 24px;font-size:19px;line-height:1.7;color:var(--ink);display:grid;gap:18px}
+.about h1{font-size:clamp(34px,5vw,46px);margin-bottom:4px}
+.about h2{font-size:28px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.about h3{font-size:21px;margin-bottom:4px}
+.about .lead{font-size:21px;line-height:1.65}
+.about p{color:var(--ink)}
+.about .eyebrow{font-size:13px}
+.steps{list-style:none;counter-reset:step;margin:0;padding:0;display:grid;gap:22px}
+.steps li{counter-increment:step;display:grid;grid-template-columns:48px 1fr;gap:4px 16px}
+.steps li::before{content:counter(step);grid-row:span 2;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--bg);font:600 20px/40px var(--serif);text-align:center}
+.found{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 24px;display:grid;gap:14px}
+.caveats{margin:0;padding-left:1.2em;display:grid;gap:10px}
+.guide{display:grid;gap:10px}
+.guide a{display:grid;gap:2px;padding:16px 18px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);text-decoration:none;color:var(--ink)}
+.guide a:hover{border-color:var(--accent)}
+.guide a b{font:600 20px var(--serif);color:var(--accent)}
+.guide a span{font-size:17px;color:var(--ink-2)}
+.thanks{font-style:italic;color:var(--ink-2)!important;font-size:17px;margin-top:12px}
+@media (max-width:480px){.about{font-size:18px}.steps li{grid-template-columns:40px 1fr;gap:4px 12px}.steps li::before{width:34px;height:34px;line-height:34px;font-size:17px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -186,9 +207,10 @@ ol.reasons b{color:var(--ink)}
   <div class="wrap">
     <div class="brand"><b>Canberra Bloom Record</b><span>ANBG “In Flower This Week”, 1997–2016</span></div>
     <nav class="tabs" aria-label="Pages">
-      <a href="#extraction" id="tab-extraction">1 · Extraction</a>
-      <a href="#analysis" id="tab-analysis">2 · Analysis</a>
-      <a href="#check" id="tab-check">3 · Check accuracy</a>
+      <a href="#about" id="tab-about">How this was made</a>
+      <a href="#extraction" id="tab-extraction">Leaflets</a>
+      <a href="#analysis" id="tab-analysis">Findings</a>
+      <a href="#check" id="tab-check">Check accuracy</a>
     </nav>
   </div>
 </header>
@@ -196,10 +218,58 @@ ol.reasons b{color:var(--ink)}
 <main class="wrap">
   <div id="loading" class="loading">Loading 899 brochures…</div>
 
+  <!-- ============ ABOUT ============ -->
+  <div id="view-about" hidden>
+    <article class="about">
+      <div class="eyebrow">About this website</div>
+      <h1>How this was made</h1>
+      <p class="lead">Every week or two, a volunteer at the Australian National Botanic Gardens in Canberra walks through the Gardens and writes a short leaflet called <i>In Flower This Week</i>. It describes the plants in bloom along that day's walk. The Gardens have kept these leaflets online, from April 1997 to August 2016.</p>
+      <p>This website uses those leaflets to answer a simple question: <b>are the plants in the Gardens flowering earlier than they used to, and if so, why?</b></p>
+
+      <h2>What was done, step by step</h2>
+      <ol class="steps">
+        <li><h3>Every leaflet was collected</h3>
+          <p>All <b data-n="brochures">899</b> leaflets were gathered. Most are still on the Gardens' website. <b data-n="wayback">52</b> had gone missing, and copies of those were found in the Internet Archive, a public library of old web pages.</p></li>
+        <li><h3>The plants in each leaflet were picked out</h3>
+          <p>In every leaflet, the plants in flower are printed in <b>bold</b>. A computer program read each leaflet and wrote down every bold plant name, together with the leaflet's date. This gave <b data-n="records">18,620</b> records of a plant in flower on a particular day.</p></li>
+        <li><h3>The plant names were tidied up</h3>
+          <p>Botanists sometimes rename plants, and a few names in the leaflets were misspelt. Each name was checked against the Atlas of Living Australia, the national list of Australian species. That way the same plant is counted as one plant across all twenty years, even if its name changed.</p></li>
+        <li><h3>Each plant's flowering date was tracked over the years</h3>
+          <p>For every plant, the first leaflet each year that mentioned it was noted. Only plants that appeared in at least eight different years were used, which left <b data-n="plants">326</b> plants. Then came the key question: did that first date move earlier or later as the years went by?</p></li>
+        <li><h3>The results were compared with Canberra's weather</h3>
+          <p>Official temperature records for Canberra from the Bureau of Meteorology, and rainfall records, were used to see whether plants flowered earlier in warmer or wetter years.</p></li>
+        <li><h3>The work was double-checked</h3>
+          <p>From 2014 the leaflets came out every two weeks instead of every week, and over time they began to list more plants. Changes like these could make plants look earlier or later when nothing had really changed. So the analysis was repeated in several ways that remove these effects, and the result held each time. A separate page also lets anyone compare a leaflet with what the computer picked out, to measure how accurate it was.</p></li>
+      </ol>
+
+      <h2>What was found</h2>
+      <div class="found">
+        <p><b>Plants are appearing in the leaflets earlier than they used to.</b> On average, they now show up about <b data-n="range">5 to 7</b> days earlier for every ten years that pass. Over the twenty years of leaflets, that adds up to roughly <b data-n="twenty">one to two weeks</b> earlier.</p>
+        <p><b>Canberra has warmed, and warmth plays a part.</b> Winters and springs in Canberra were about half a degree warmer each decade over this period. After a warm winter, plants did tend to flower early.</p>
+        <p><b>But warming doesn't seem to explain all of it.</b> The warming was fairly small, and on its own it would account for only part of the change. Other likely reasons include changes in the Gardens themselves, such as plants maturing, new plantings and watering, and changes in which volunteers wrote the leaflets and which paths they walked.</p>
+      </div>
+
+      <h2>Things to keep in mind</h2>
+      <ul class="caveats">
+        <li>The leaflets were written to guide visitors, not as scientific records. A plant only appears when a volunteer chose to walk past it and mention it.</li>
+        <li>Because of this, the result for any single plant is not reliable. The overall pattern across hundreds of plants is much more trustworthy.</li>
+        <li>The findings are best read as a strong hint, not as proof.</li>
+      </ul>
+
+      <h2>The rest of this website</h2>
+      <div class="guide">
+        <a href="#extraction"><b>Leaflets</b><span>Look at any leaflet and the list of plants taken from it.</span></a>
+        <a href="#analysis"><b>Findings</b><span>The charts and figures behind the results, for readers who want the detail.</span></a>
+        <a href="#check"><b>Check accuracy</b><span>For helpers who want to check the computer's work against the original leaflets.</span></a>
+      </div>
+      <p class="thanks">With thanks to the volunteers of the Australian National Botanic Gardens, who wrote every one of these leaflets.</p>
+    </article>
+  </div>
+
   <!-- ============ EXTRACTION ============ -->
   <div id="view-extraction" hidden>
     <div class="intro">
-      <div class="eyebrow">Page 1 · Validate the extraction</div>
+      <div class="eyebrow">Leaflets · Validate the extraction</div>
       <h1>Every brochure, and what was pulled out of it</h1>
       <p class="prose">Each ANBG volunteer walk sheet puts the plants in flower in <b>bold</b>, usually followed by a garden bed reference like <span class="mono">[Section 30]</span>. The parser reads that convention, cleans the name, and resolves it against the Atlas of Living Australia so misspellings and renamed species (e.g. <span class="sp">Bracteantha bracteata</span> → <span class="sp">Xerochrysum bracteatum</span>) join up across 20 years. Pick a brochure to compare the extraction with the original page.</p>
     </div>
@@ -219,7 +289,7 @@ ol.reasons b{color:var(--ink)}
   <!-- ============ ANALYSIS ============ -->
   <div id="view-analysis" hidden>
     <div class="intro">
-      <div class="eyebrow">Page 2 · Analysis</div>
+      <div class="eyebrow">Findings</div>
       <h1>Which flowers are blooming earlier, and why?</h1>
     </div>
     <div class="answer" id="answer"></div>
@@ -313,7 +383,7 @@ ol.reasons b{color:var(--ink)}
   <!-- ============ CHECK ACCURACY ============ -->
   <div id="view-check" hidden>
     <div class="intro">
-      <div class="eyebrow">Page 3 · Check accuracy</div>
+      <div class="eyebrow">Check accuracy</div>
       <h1>Check the extraction against the originals</h1>
       <div class="prose">
         <p>This page draws a random sample of one brochure per year (20 in total). For each one, compare the original on the left with what was extracted on the right. Mark every row, add any bold plants that were missed, then mark the brochure done. The scores update as you go.</p>
@@ -364,17 +434,32 @@ function sci(name){
   return esc(name).replace(/('[^']*'?)|\b(subsp\.|var\.|f\.|sp\.|×)|([^'\s][^'\s]*)/g,(m,c,r,w)=> c ? c : r ? r : `<span class="sp">${w}</span>`);
 }
 let B = [], A = null, charts = {};
+setTimeout(route, 0);
 
 Promise.all([fetch("data/brochures.json").then(r=>r.json()), fetch("data/analysis.json").then(r=>r.json())])
-.then(([b,a]) => { document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; $("#loading").hidden = true; initExtraction(); route(); window.addEventListener("hashchange", route); })
+.then(([b,a]) => { document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
 .catch(e => { $("#loading").textContent = "Couldn't load the data files (" + e.message + "). Serve this folder over HTTP rather than opening the file directly."; });
 
-let analysisReady = false, checkReady = false;
+let analysisReady = false, checkReady = false, loaded = false;
+window.addEventListener("hashchange", route);
 function route(){
-  const v = location.hash === "#analysis" ? "analysis" : location.hash === "#check" ? "check" : "extraction";
-  for (const k of ["extraction","analysis","check"]){ $("#view-"+k).hidden = k !== v; $("#tab-"+k).setAttribute("aria-current", k === v ? "page" : "false"); }
+  const h = location.hash.slice(1), v = ["extraction","analysis","check"].includes(h) ? h : "about";
+  $("#loading").hidden = loaded || v === "about";
+  if (!loaded && v !== "about"){ for (const k of ["about","extraction","analysis","check"]) $("#view-"+k).hidden = true; return; }
+  if (["about","extraction","analysis","check"].includes(h) || !h) window.scrollTo(0,0);
+  for (const k of ["about","extraction","analysis","check"]){ $("#view-"+k).hidden = k !== v; $("#tab-"+k).setAttribute("aria-current", k === v ? "page" : "false"); }
+  $("#view-"+v).hidden = false;
   if (v === "analysis" && !analysisReady){ analysisReady = true; initAnalysis(); }
   if (v === "check" && !checkReady){ checkReady = true; initCheck(); }
+}
+
+/* ================= ABOUT ================= */
+function initAbout(){
+  const R = A.community.robustness, lo = Math.abs(R.short_season_only.days_per_decade), hi = Math.abs(R.all_years.days_per_decade);
+  const vals = {brochures: B.length.toLocaleString(), wayback: B.filter(r=>r.src==="wayback").length,
+    records: B.reduce((s,r)=>s+r.np,0).toLocaleString(), plants: A.species.length,
+    range: `${Math.round(lo)} to ${Math.round(hi)}`, twenty: `${Math.round(lo*2)} to ${Math.round(hi*2)} days`};
+  document.querySelectorAll("#view-about [data-n]").forEach(el => { if (vals[el.dataset.n] != null) el.textContent = vals[el.dataset.n]; });
 }
 
 /* ================= EXTRACTION ================= */
