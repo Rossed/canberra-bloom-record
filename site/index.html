@@ -158,7 +158,7 @@ a.report:hover{filter:brightness(1.08)}
 a.report svg{width:18px;height:18px;flex:none}
 a.report small{font-weight:400;opacity:.85;font-size:13px}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-.ckgrid{display:grid;grid-template-columns:minmax(200px,240px) 1fr;gap:20px;align-items:start}
+.ckgrid{display:grid;grid-template-columns:minmax(230px,270px) 1fr;gap:20px;align-items:start}
 @media (max-width:860px){.ckgrid{grid-template-columns:1fr}}
 .blist.ck{max-height:none}
 .ckwork{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;min-width:0}
@@ -233,17 +233,17 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
       <h2>What was done, step by step</h2>
       <ol class="steps">
         <li><h3>Every leaflet was collected</h3>
-          <p><b data-n="iftw">899</b> leaflets from the Gardens (1997 to 2016) and <b data-n="fff">248</b> from the Friends (2016 to today) were gathered. Most are still online. About <b data-n="wayback">180</b> had gone missing, and copies of those were found in the Internet Archive, a public library of old web pages.</p></li>
+          <p><b data-n="iftw">899</b> leaflets from the Gardens (1997 to 2016) and <b data-n="fff">248</b> from the Friends (2016 to today) were gathered. Most are still online. About <b data-n="wayback">180</b> had gone missing, including many of the Friends' older leaflets after their old website closed. Copies of those were found in the Internet Archive, a public library of old web pages.</p></li>
         <li><h3>The plants in each leaflet were picked out</h3>
-          <p>In every leaflet, the plants being featured are printed in <b>bold</b>. A computer program read each leaflet and wrote down every bold plant name, together with the leaflet's date. This gave <b data-n="records">22,000</b> records of a plant in flower on a particular day.</p></li>
+          <p>In every leaflet, the plants being featured are printed in <b>bold</b>. A computer program read each leaflet and wrote down every bold plant name, together with the leaflet's date. The Gardens' leaflets are web pages. The Friends' leaflets are printed sheets saved as PDFs, laid out in two columns with numbered stops, and a few store their text in a scrambled form that had to be decoded. This gave <b data-n="records">22,000</b> records of a plant in flower on a particular day.</p></li>
         <li><h3>The plant names were tidied up</h3>
           <p>Botanists sometimes rename plants, and a few names in the leaflets were misspelt. Each name was checked against the Atlas of Living Australia, the national list of Australian species. That way the same plant is counted as one plant across all the years, even if its name changed.</p></li>
         <li><h3>Each plant's flowering time was worked out for every year</h3>
           <p>For every plant, the dates it appeared in the leaflets each year were noted, and the middle of those dates was taken as that year's flowering time. Only plants seen in at least eight different years were used, which left <b data-n="plants">436</b> plants. Then came the key question: did that flowering time move earlier or later as the years went by?</p></li>
         <li><h3>The results were compared with Canberra's weather</h3>
-          <p>Official temperature records for Canberra from the Bureau of Meteorology, and rainfall records, were used to see whether plants flowered earlier in warmer or wetter years.</p></li>
+          <p>Official temperature records for Canberra from the Bureau of Meteorology, and rainfall records, were used to see whether plants flowered earlier in warmer or wetter years. The Bureau's long-term record currently ends in 2024. For the months since then, a weather model that closely matches the Bureau's figures was used.</p></li>
         <li><h3>The work was double-checked</h3>
-          <p>From 2014 the leaflets came out every two weeks instead of every week. With fewer leaflets, a plant tends to be spotted a little later, even if nothing has changed. That's why the middle of each plant's flowering time is used rather than the first day it was seen. The analysis was also repeated in several other ways, for example treating the early years as if they too were fortnightly, and the result held. A separate page lets anyone compare a leaflet with what the computer picked out, to measure how accurate it was.</p></li>
+          <p>In 2014 the leaflets changed format. They began coming out every two weeks instead of every week, and each became a fixed walk of 15 stops instead of about 20 plants. With fewer leaflets and fewer plants, a plant tends to be spotted a little later, even if nothing has changed. That's why the middle of each plant's flowering time is used rather than the first day it was seen. The analysis was also repeated in several other ways, for example treating the early years as if they too were fortnightly, and using the Gardens' leaflets on their own. The result held each time, and nothing changed when the Friends took over the leaflets in 2016. A separate page lets anyone compare a leaflet with what the computer picked out, to measure how accurate it was.</p></li>
       </ol>
 
       <h2>What was found</h2>
@@ -259,6 +259,7 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
       <ul class="caveats">
         <li>The leaflets were written to guide visitors, not as scientific records. A plant only appears when a volunteer chose to walk past it and mention it.</li>
         <li>Because of this, the result for any single plant is not reliable. The overall pattern across hundreds of plants is much more trustworthy.</li>
+        <li>Since 2014 each leaflet features 15 plants and comes out every two weeks, so recent years have about a third as many records as the early years. The analysis allows for this, but it does make recent years less certain.</li>
         <li>There are no leaflets for April to June 2020 or for mid-August to October 2021, the periods of COVID-19 restrictions and lockdown in Canberra.</li>
         <li>The findings are best read as a strong hint, not as proof.</li>
       </ul>
@@ -289,7 +290,7 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
       <span class="count" id="xcount"></span>
     </div>
     <div class="xgrid">
-      <div class="blist" id="blist" role="listbox" aria-label="Brochures"></div>
+      <div class="blist" id="blist" role="listbox" aria-label="Leaflets"></div>
       <div class="detail" id="detail"></div>
     </div>
   </div>
@@ -395,8 +396,9 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
       <div class="eyebrow">Check accuracy</div>
       <h1>Check the extraction against the originals</h1>
       <div class="prose">
-        <p>This page draws a random sample of one leaflet per year (<span id="ckN">30</span> in total). For each one, compare the original on the left with what was extracted on the right. Mark every row, add any bold plants that were missed, then mark the brochure done. The scores update as you go.</p>
-        <p>Your marks save in this browser only. When you finish, use <b>Download results</b> and send the file to Ross. Several people's files can be combined.</p>
+        <p>This page draws a random sample of one leaflet per year, 1997 to today (<span id="ckN">30</span> in total). The sample covers both series. For each leaflet, compare the original on the left with what was extracted on the right. Mark every row, add any bold plants that were missed, then mark the leaflet done. The scores update as you go.</p>
+        <p><b>What to look for.</b> In the Gardens' web pages (1997–2016), the featured plants are in bold, usually followed by a bed number such as [Section 30]. In the Friends' PDF leaflets (2016 on), each numbered stop names its plant in bold italics. The stop numbers on the right match the numbers in the leaflet. The PDFs are in two columns, so read them by stop number rather than top to bottom. If an original doesn't appear (Internet Archive copies can be slow), use <b>Open in a new tab</b>.</p>
+        <p>Your marks save in this browser only. When you finish, use <b>Download results</b> and send the file to Ross. Several people's files can be combined, and the scores then appear in the PDF report too.</p>
       </div>
     </div>
     <div class="controls">
@@ -411,7 +413,7 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
     <p class="note" id="ckMsg" role="status" aria-live="polite"></p>
     <div class="stats" id="ckStats"></div>
     <div class="ckgrid">
-      <div class="blist ck" id="ckList" role="listbox" aria-label="Sample brochures"></div>
+      <div class="blist ck" id="ckList" role="listbox" aria-label="Sample leaflets"></div>
       <div id="ckWork" class="ckwork"></div>
     </div>
 
@@ -422,7 +424,7 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
         <select id="rnScope" aria-label="Which name changes"><option value="genus">Genus changes only</option><option value="all">All name changes</option></select>
         <span class="count" id="rnCount"></span>
       </div>
-      <div class="stbl"><table id="rnTable"><thead><tr><th>Printed in brochure</th><th>Mapped to</th><th>Family</th><th class="num">Records</th><th>Check in the Atlas</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
+      <div class="stbl"><table id="rnTable"><thead><tr><th>Printed in leaflet</th><th>Mapped to</th><th>Family</th><th class="num">Records</th><th>Check in the Atlas</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
     </section>
   </div>
 </main>
@@ -516,7 +518,7 @@ function renderList(){
     const dots = (r.src==="wayback"?`<span class="dot wb" title="Recovered from Wayback Machine"></span>`:"") + (r.fl.length?`<span class="dot warn" title="${esc(r.fl.join("; "))}"></span>`:"");
     html += `<button class="brow" role="option" data-id="${r.id}" aria-selected="${r.id===sel}"><span class="d">${r.d}</span><span class="n">${r.np} plants${r.s==="FFF"?" · Friends":""}</span><span class="f">${dots}</span></button>`;
   }
-  $("#blist").innerHTML = html || `<p class="note" style="padding:16px">No brochures match. Clear the search or year filter.</p>`;
+  $("#blist").innerHTML = html || `<p class="note" style="padding:16px">No leaflets match. Clear the search or year filter.</p>`;
   $("#blist").querySelectorAll(".brow").forEach(b=>b.addEventListener("click",()=>select(b.dataset.id)));
 }
 function select(id){
@@ -553,7 +555,7 @@ function select(id){
     <p class="prose" style="padding-top:12px;font-size:14px"><span class="eyebrow">Opening line · </span>${esc(r.intro)}</p>
     <div class="tablewrap"><table><thead><tr><th class="num">${r.s==="FFF"?"Stop":"#"}</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="side-lists">
-      <div><h4>Photo on the sheet</h4>${list(r.cap,1)}</div>
+      <div><h4>Photo on the leaflet</h4>${list(r.cap,1)}</div>
       <div><h4>Named with a Section ref but not bold</h4>${list(r.lm,1)}<div class="sub">Usually landmarks such as tree ferns and conifers. Not treated as in flower.</div></div>
       <div><h4>Other species mentioned in passing</h4>${list(r.inc,1)}</div>
     </div>`;
@@ -801,7 +803,7 @@ function initCheck(){
   $("#ckN").textContent = CK.sample.length;
   $("#rvName").value = CK.reviewer || "";
   $("#rvName").addEventListener("input", e => { CK.reviewer = e.target.value; ckSave(); });
-  $("#ckNew").addEventListener("click", () => { CK.seed += 1; CK.sample = drawSample(CK.seed); ckSave(); renderCkList(); ckOpen(CK.sample[0]); ckMsg(`New sample drawn. Brochures you already checked still count in the scores.`); });
+  $("#ckNew").addEventListener("click", () => { CK.seed += 1; CK.sample = drawSample(CK.seed); ckSave(); renderCkList(); ckOpen(CK.sample[0]); ckMsg(`New sample drawn. Leaflets you already checked still count in the scores.`); });
   $("#ckDownload").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(ckExport(), null, 1)], {type:"application/json"});
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
@@ -818,7 +820,7 @@ function initCheck(){
     f.text().then(t => { const d = JSON.parse(t); let n = 0;
       for (const [id,b] of Object.entries(d.brochures||{})) { CK.brochures[id] = b; n++; }
       for (const [k,v] of Object.entries(d.renames||{})) CK.renames[k] = v;
-      ckSave(); renderCkList(); ckOpen(ckSel); renderRenames(); ckMsg(`Imported ${n} brochures from ${f.name}.`);
+      ckSave(); renderCkList(); ckOpen(ckSel); renderRenames(); ckMsg(`Imported ${n} leaflets from ${f.name}.`);
     }).catch(() => ckMsg("That file couldn't be read. Choose a results file downloaded from this page."));
     e.target.value = "";
   });
@@ -847,7 +849,7 @@ function ckMetrics(){
 function renderCkStats(){
   const m = ckMetrics(), inSample = CK.sample.filter(id => (CK.brochures[id]||{}).done).length;
   $("#ckStats").innerHTML = [
-    [`${inSample} / ${CK.sample.length}`, "brochures in this sample marked done", `${m.brochures_done} done in total`],
+    [`${inSample} / ${CK.sample.length}`, "leaflets in this sample marked done", `${m.brochures_done} done in total`],
     [m.records_checked, "plant records checked", `${m.not_plant} not plants, ${m.wrong_name} wrong names, ${m.missed} missed`],
     [pct(m.precision), "of extracted records are real featured plants", pctci(m.precision)],
     [pct(m.recall), "of featured plants were extracted", pctci(m.recall)],
@@ -864,7 +866,7 @@ function renderCkList(){
   $("#ckSeed").textContent = `Sample ${CK.seed}`;
   $("#ckList").innerHTML = `<div class="yr">Sample ${CK.seed} · one per year</div>` + CK.sample.map(id => {
     const r = B.find(x=>x.id===id), [cls,lab] = ckStatus(id);
-    return `<button class="brow" role="option" data-id="${id}" aria-selected="${id===ckSel}"><span class="d">${r.d}</span><span class="n">${r.np} plants</span><span class="ckstatus ${cls}">${lab}</span></button>`;
+    return `<button class="brow" role="option" data-id="${id}" aria-selected="${id===ckSel}"><span class="d">${r.d}</span><span class="n">${r.s==="FFF"?"Friends":"ANBG"}</span><span class="ckstatus ${cls}">${lab}</span></button>`;
   }).join("");
   $("#ckList").querySelectorAll(".brow").forEach(b => b.addEventListener("click", () => ckOpen(b.dataset.id)));
   renderCkStats();
@@ -877,22 +879,22 @@ function ckOpen(id){
   const V = [["ok","ok","Correct"],["wrong_name","wn","Wrong name"],["not_plant","np","Not a featured plant"]];
   const rows = r.p.map((p,i) => {
     const v = st.rows[i] || {};
-    return `<div class="ckrow" data-i="${i}"><span class="no">${p[0]??i+1}</span>
+    return `<div class="ckrow" data-i="${i}"><span class="no" title="${r.s==="FFF"?"Stop number in the leaflet":"Order in the leaflet"}">${p[0]??i+1}</span>
       <div><div class="nm">${sci(p[1])}</div><div class="alt">parsed as ${sci(p[2])}${p[3] && p[3]!==p[2] ? ` · accepted ${sci(p[3])}` : ""}${p[7] ? ` · Section ${esc(p[7])}` : ""}</div></div>
       <div class="vb">${V.map(([k,c,l]) => `<button type="button" class="vbtn ${c}" data-v="${k}" aria-pressed="${v.verdict===k}">${l}</button>`).join("")}</div>
       ${v.verdict==="wrong_name" ? `<input type="text" data-fix="${i}" placeholder="Correct name as printed" value="${esc(v.correct||"")}" aria-label="Correct name">` : ""}
     </div>`;
   }).join("");
   $("#ckWork").innerHTML = `
-    <div class="orig"><div class="bar"><span><b>Original</b> · ${r.d}${r.src==="wayback"?" (Wayback Machine copy)":""}</span><a href="${esc(url)}" target="_blank" rel="noopener">Open in a new tab ↗</a></div>
-      <iframe src="${esc(url)}" title="Original brochure ${r.d}" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+    <div class="orig"><div class="bar"><span><b>Original</b> · ${r.s==="FFF"?"Friends PDF":"ANBG web page"} · ${r.d}${r.src==="wayback"?" (Internet Archive copy)":""}</span><a href="${esc(url)}" target="_blank" rel="noopener">${r.s==="FFF"?"PDF not showing? Open it in a new tab ↗":"Open in a new tab ↗"}</a></div>
+      <iframe src="${esc(url)}" title="Original leaflet ${r.d}" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
     <div class="cklist">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap"><h3>Extracted: ${r.np} plants</h3><button type="button" class="btn" id="ckAllOk">Mark unmarked rows correct</button></div>
-      <p class="note">Mark each row. A row is a featured plant if the original shows it in bold. Choose "Wrong name" if the plant is right but the name is garbled or truncated.</p>
+      <p class="note">Mark each row. A row is a featured plant if the original shows it in bold. ${r.s==="FFF"?"The number on each row is the stop number in the leaflet.":"Bold names are usually followed by a [Section] number."} Choose "Wrong name" if the plant is right but the name is garbled or truncated, for example a cultivar name that was cut short.</p>
       <div id="ckRows">${rows}</div>
       <label for="ckMissed"><b>Missed plants</b> <span class="sub">Bold plant names on the original that aren't listed above, one per line</span></label>
       <textarea id="ckMissed" placeholder="e.g. Grevillea juniperina">${esc(st.missed.join("\n"))}</textarea>
-      <button type="button" class="btn primary" id="ckDone">${st.done ? "Done ✓ (click to reopen)" : "Mark brochure done"}</button>
+      <button type="button" class="btn primary" id="ckDone">${st.done ? "Done ✓ (click to reopen)" : "Mark leaflet done"}</button>
     </div>`;
   const W = $("#ckWork");
   W.querySelectorAll(".vbtn").forEach(b => b.addEventListener("click", () => {
@@ -908,7 +910,7 @@ function ckOpen(id){
     if (!st.done && unmarked > 0){ ckMsg(`Mark all rows first. ${unmarked} still unmarked.`); return; }
     st.done = !st.done; ckSave(); renderCkList();
     const next = CK.sample.find(x => !(CK.brochures[x]||{}).done);
-    ckMsg(st.done ? (next ? "Brochure done. Opened the next one." : "All brochures in this sample are done. Download your results.") : "Brochure reopened.");
+    ckMsg(st.done ? (next ? "Leaflet done. Opened the next one." : "All leaflets in this sample are done. Download your results.") : "Leaflet reopened.");
     ckOpen(st.done && next ? next : id);
   });
 }
