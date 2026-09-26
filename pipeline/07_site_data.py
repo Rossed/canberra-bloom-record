@@ -4,7 +4,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, "data", "brochures.json")))
 out = []
 for r in D:
-    out.append(dict(id=r["id"], d=r["date"], url=r["source_url"], src=r["source"], hd=r["heading_date"], dr=r["date_range"],
+    out.append(dict(id=r["id"], s=r.get("series", "IFTW"), d=r["date"], url=r["source_url"], src=r["source"], hd=r["heading_date"], dr=r["date_range"],
                     au=r["author"], intro=r["intro"][:300], np=r["n_plants"], fl=r["flags"], mode=r["extraction_mode"],
                     wx=r["weather_mentions"], fa=r["fauna_mentions"], cap=r["photo_captions"], lm=r["possible_misses"],
                     inc=r["incidental_mentions"], qs=r["qa_section_refs"], qp=r["qa_plants_with_section"],

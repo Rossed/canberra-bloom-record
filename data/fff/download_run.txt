@@ -1,0 +1,73 @@
+2020-07-01 wayback
+2020-07-29 wayback
+2020-08-26 wayback
+2020-07-15 wayback
+2020-08-12 wayback
+2020-09-09 wayback
+2020-09-23 wayback
+2020-10-21 wayback
+2020-10-07 wayback
+2020-11-18 wayback
+2020-11-04 wayback
+2020-12-02 wayback
+2021-01-13 wayback
+2021-04-07 wayback
+2020-12-30 wayback
+2021-04-21 wayback
+2021-05-05 wayback
+2021-05-19 wayback
+2020-12-16 wayback
+2021-06-02 wayback
+2021-06-16 wayback
+2021-06-30 wayback
+2021-07-28 wayback
+MuPDF error: library error: FT_New_Memory_Face(BCDIEE+Arial-BoldItalicMT): unknown file format
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+2021-07-14 wayback
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+MuPDF error: format error: object is not a stream
+
+2021-12-01 wayback
+2021-08-11 wayback
+Counter({'wayback': 130, 'live': 119}) problems: 4
+   filename 2021-11-17 vs link text 2021-11-07 (7- 30 November 2021 ( PDF, 1.4 MB )): using 2021-11-17
+   filename 2017-09-17 vs link text 2017-09-13 (13-26 September 2017): using 2017-09-13
+   filename 2017-02-28 vs link text 2017-02-15 (15-28 February 2017): using 2017-02-15
+   filename 2017-02-14 vs link text 2017-02-01 (1-14 February 2017): using 2017-02-01

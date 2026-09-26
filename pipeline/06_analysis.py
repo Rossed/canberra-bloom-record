@@ -10,6 +10,8 @@ import statsmodels.api as sm
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, "data", "brochures.json")))
 MIN_SEASONS, MIN_SPAN, MAX_GAP, TEMP_WINDOW, LONG_DAYS = 8, 10, 28, 60, 150
+MIN_YEAR_N = 30        # species-seasons needed for a year to appear in the garden-wide index
+SERIES_SWITCH = 2017   # first full season of the Friends' "Flowers, Fruit & Foliage" leaflets (Aug 2016 on)
 
 # ---------------- climate ----------------
 clim = {}
@@ -137,17 +139,18 @@ def seasons_for(dates, start, sample_dates):
     return out, (lo, hi)
 
 
-def analyse(sample_dates, year_max=None, keep=None):
+def analyse(sample_dates, year_max=None, keep=None, min_seasons=None, min_span=None):
+    ms, mspan = min_seasons or MIN_SEASONS, min_span or MIN_SPAN
     sample_set = set(sample_dates)
     res = {}
     for k, dates in obs.items():
         dates = [d for d in dates if d in sample_set and (year_max is None or d.year <= year_max)]
-        if len(dates) < MIN_SEASONS:
+        if len(dates) < ms:
             continue
         start = season_start([doy0(d) for d in dates])
         ss, win = seasons_for(dates, start, sample_dates)
         ok = [s for s in ss if s["covered"]]
-        if len(ok) < MIN_SEASONS or ok[-1]["season"] - ok[0]["season"] < MIN_SPAN:
+        if len(ok) < ms or ok[-1]["season"] - ok[0]["season"] < mspan:
             continue
         yrs = [s["season"] for s in ok]
         f = ols(yrs, [s["first"] for s in ok])
@@ -262,25 +265,39 @@ community["yearly"] = [dict(year=y, n=len(v), anom_first=float(np.mean([r["anom_
 
 # robustness of the pooled trend
 def pooled_trend(res, short_only=False):
-    rows = []
+    """Garden-wide trend (days/decade) for first appearance and for mid-flowering date, SEs clustered by species and year."""
     if short_only:
         res = {k: a for k, a in res.items() if not LONG[k]}
+    rows = []
     for k, a in res.items():
         ok = [s for s in a["seasons"] if s["covered"]]
-        mf = np.mean([s["first"] for s in ok])
-        rows += [dict(key=k, year=s["season"], a=s["first"] - mf) for s in ok]
+        mf, mm = np.mean([s["first"] for s in ok]), np.mean([s["mean"] for s in ok])
+        rows += [dict(key=k, year=s["season"], a=s["first"] - mf, m=s["mean"] - mm) for s in ok]
     ks = sorted(res)
     X = sm.add_constant(np.array([r["year"] for r in rows], float))
     g2 = np.column_stack([[ks.index(r["key"]) for r in rows], [r["year"] for r in rows]])
-    fit = sm.OLS(np.array([r["a"] for r in rows]), X).fit(cov_type="cluster", cov_kwds={"groups": g2})
-    return dict(days_per_decade=float(fit.params[1] * 10), lo=float(fit.conf_int()[1][0] * 10), hi=float(fit.conf_int()[1][1] * 10),
-                p=float(fit.pvalues[1]), n_species=len(res), n_obs=len(rows))
+    out = dict(n_species=len(res), n_obs=len(rows))
+    for lab, col in (("", "a"), ("mean_", "m")):
+        fit = sm.OLS(np.array([r[col] for r in rows]), X).fit(cov_type="cluster", cov_kwds={"groups": g2})
+        out.update({lab + "days_per_decade": float(fit.params[1] * 10), lab + "lo": float(fit.conf_int()[1][0] * 10),
+                    lab + "hi": float(fit.conf_int()[1][1] * 10), lab + "p": float(fit.pvalues[1])})
+    return out
 
 
 stable = analyse([d for d in all_dates if 2003 <= d.year <= 2013])
+iftw_only = analyse([d for d in all_dates if d <= datetime.date(2016, 8, 31)], min_seasons=6, min_span=7)
+fff_only = analyse([d for d in all_dates if d > datetime.date(2016, 8, 31)], min_seasons=6, min_span=7)
 community["robustness"] = dict(all_years=pooled_trend(main), weekly_1997_2013=pooled_trend(weekly),
                                thinned_fortnightly=pooled_trend(thinned), stable_effort_2003_2013=pooled_trend(stable),
-                               short_season_only=pooled_trend(main, True))
+                               short_season_only=pooled_trend(main, True),
+                               iftw_1997_2016=pooled_trend(iftw_only), friends_2016_now=pooled_trend(fff_only))
+# did anything jump when the leaflet series (and its writers) changed? trend + step at the switch
+for r in pooled_rows:
+    r["friends_series"] = 1.0 if r["year"] >= SERIES_SWITCH else 0.0
+community["series_step"] = pooled(pooled_rows, "anom_first", ["year", "friends_series"])
+community["series_step_mean"] = pooled(pooled_rows, "anom_mean", ["year", "friends_series"])
+community["temp_mean"] = pooled(pooled_rows, "anom_mean", ["temp_anom"])
+community["temp_rain_year_mean"] = pooled(pooled_rows, "anom_mean", ["temp_anom", "rain_anom", "year"])
 
 # temperature window sensitivity: mean temp over N days before each species' climatological onset
 win_sens = []
@@ -299,15 +316,19 @@ for W in (30, 60, 90, 120, 180):
         if len(tmp) < MIN_SEASONS:
             continue
         tm = np.mean([t for _, t in tmp])
-        rows += [dict(key=k, year=s["season"], anom_first=s["first"] - mf, temp_anom=t - tm, rain_anom=0) for s, t in tmp]
+        mm = np.mean([s["mean"] for s in ok])
+        rows += [dict(key=k, year=s["season"], anom_first=s["first"] - mf, anom_mean=s["mean"] - mm, temp_anom=t - tm, rain_anom=0) for s, t in tmp]
     r1 = pooled(rows, "anom_first", ["temp_anom"])
+    r1m = pooled(rows, "anom_mean", ["temp_anom"])
     r2 = pooled(rows, "temp_anom", ["year"])
     win_sens.append(dict(window=W, sens=r1["temp_anom"]["coef"], lo=r1["temp_anom"]["lo"], hi=r1["temp_anom"]["hi"],
-                         p=r1["temp_anom"]["p"], warming_per_decade=r2["year"]["coef"] * 10))
+                         p=r1["temp_anom"]["p"], warming_per_decade=r2["year"]["coef"] * 10,
+                         sens_mean=r1m["temp_anom"]["coef"], lo_mean=r1m["temp_anom"]["lo"], hi_mean=r1m["temp_anom"]["hi"], p_mean=r1m["temp_anom"]["p"]))
 community["window_sensitivity"] = win_sens
 
 # ---------------- climate summaries ----------------
-years = range(1990, 2017)
+LAST_FULL = max(d.year for d in clim if d.month == 12 and d.day == 31 and clim[d].get("tmean") is not None)
+years = range(1990, LAST_FULL + 2)
 climate = []
 for y in years:
     def mean_months(ms, var, yy=y):
@@ -322,22 +343,28 @@ for y in years:
                         autumn=mean_months([3, 4, 5], "tmean"), tmax_annual=mean_months(range(1, 13), "tmax"),
                         tmin_annual=mean_months(range(1, 13), "tmin"), rain_annual=sum_months(range(1, 13)),
                         rain_winter_spring=sum_months(range(6, 12))))
-c9716 = [c for c in climate if 1997 <= c["year"] <= 2016]
+c9716 = [c for c in climate if 1997 <= c["year"] <= LAST_FULL]
 # year-level correlation: community onset index vs seasonal climate of the same year
 yi = {y["year"]: y for y in community["yearly"]}
 cy = {c["year"]: c for c in climate}
 community["year_corr"] = {}
 for v in ["annual", "winter", "spring", "rain_annual", "rain_winter_spring"]:
-    ys = [y for y in yi if y in cy and cy[y][v] is not None and yi[y]["n"] >= 50]
+    ys = [y for y in yi if y in cy and cy[y][v] is not None and yi[y]["n"] >= MIN_YEAR_N]
     r = stats.pearsonr([cy[y][v] for y in ys], [yi[y]["anom_first"] for y in ys])
     community["year_corr"][v] = dict(r=float(r[0]), p=float(r[1]), n=len(ys))
 # detrended: does a warmer-than-trend year flower earlier than trend?
-ys = [y for y in yi if y in cy and yi[y]["n"] >= 50]
+ys = [y for y in yi if y in cy and yi[y]["n"] >= MIN_YEAR_N]
 def detr(v):
     v = np.asarray(v, float); b = np.polyfit(ys, v, 1); return v - np.polyval(b, ys)
 for v in ["winter", "spring", "rain_winter_spring"]:
     r = stats.pearsonr(detr([cy[y][v] for y in ys]), detr([yi[y]["anom_first"] for y in ys]))
     community["year_corr"][v + "_detrended"] = dict(r=float(r[0]), p=float(r[1]), n=len(ys))
+community["year_corr_mean"] = {}
+for v in ["annual", "winter", "spring", "rain_annual", "rain_winter_spring"]:
+    r = stats.pearsonr([cy[y][v] for y in ys], [yi[y]["anom_mean"] for y in ys])
+    community["year_corr_mean"][v] = dict(r=float(r[0]), p=float(r[1]), n=len(ys))
+    r = stats.pearsonr(detr([cy[y][v] for y in ys]), detr([yi[y]["anom_mean"] for y in ys]))
+    community["year_corr_mean"][v + "_detrended"] = dict(r=float(r[0]), p=float(r[1]), n=len(ys))
 climate_trends = {v: ols([c["year"] for c in c9716], [c[v] for c in c9716]) for v in ["annual", "winter", "spring", "summer", "autumn", "tmax_annual", "tmin_annual", "rain_annual"]}
 climate_trends = {k: dict(per_decade=v["slope"] * 10, p=v["p"]) for k, v in climate_trends.items()}
 
@@ -345,7 +372,7 @@ climate_trends = {k: dict(per_decade=v["slope"] * 10, p=v["p"]) for k, v in clim
 fam = collections.defaultdict(list)
 for s in species_out:
     if s["kind"] == "species" and s["family"]:
-        fam[s["family"]].append(s["slope_first"])
+        fam[s["family"]].append(s["slope_mean"])
 families = sorted([dict(family=f, n=len(v), mean_slope=float(np.mean(v)), n_earlier=sum(x < 0 for x in v))
                    for f, v in fam.items() if len(v) >= 3], key=lambda x: x["mean_slope"])
 
@@ -356,8 +383,12 @@ for r in D:
     plants_per[r["year"]].append(r["n_plants"])
 effort_out = [dict(year=y, brochures=effort[y], mean_plants=float(np.mean(plants_per[y]))) for y in sorted(effort)]
 
-out = dict(generated=datetime.datetime.now().isoformat(timespec="seconds"),
-           params=dict(long_days=LONG_DAYS, min_seasons=MIN_SEASONS, min_span=MIN_SPAN, max_gap=MAX_GAP, temp_window=TEMP_WINDOW),
+splice = json.load(open(os.path.join(ROOT, "data", "climate", "splice_check.json")))
+out = dict(climate_splice=dict(acorn_end=splice["acorn_end"], era5_end=splice["era5_end"],
+                               r_tmax=splice["tmax"]["monthly_anomaly_r"], r_tmin=splice["tmin"]["monthly_anomaly_r"]),
+           series_counts={k: sum(1 for r in D if r.get("series") == k) for k in ("IFTW", "FFF")},
+           generated=datetime.datetime.now().isoformat(timespec="seconds"),
+           last_full_year=LAST_FULL, series_switch=SERIES_SWITCH, params=dict(min_year_n=MIN_YEAR_N, long_days=LONG_DAYS, min_seasons=MIN_SEASONS, min_span=MIN_SPAN, max_gap=MAX_GAP, temp_window=TEMP_WINDOW),
            n_brochures=len(D), n_keys_total=len(obs), species=species_out, community=community,
            climate=climate, climate_trends=climate_trends, families=families, effort=effort_out)
 os.makedirs(os.path.join(ROOT, "site", "data"), exist_ok=True)

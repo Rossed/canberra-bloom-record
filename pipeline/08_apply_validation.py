@@ -29,7 +29,7 @@ for f in files:
         if not b.get("done"):
             continue
         y = int(b.get("date", "0000")[:4])
-        era = "1997-2004" if y < 2005 else "2005-2013" if y < 2014 else "2014-2016"
+        era = "1997-2004" if y < 2005 else "2005-2013" if y < 2014 else "2014-2016" if y <= 2016 and bid.startswith("iftw") else "Friends 2016-"
         c = by_era[era]
         for v in b.get("rows", {}).values():
             c[v["verdict"]] += 1

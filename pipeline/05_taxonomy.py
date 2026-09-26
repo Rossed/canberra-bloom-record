@@ -4,7 +4,12 @@ import os, json, urllib.request, urllib.parse, concurrent.futures as cf, time, c
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "data", "ala_cache.json")
 cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
-d = json.load(open(os.path.join(ROOT, "data", "brochures.json")))
+# both series: ANBG "In Flower This Week" (1997-2016) and Friends "Flowers, Fruit & Foliage" (2016-)
+d = json.load(open(os.path.join(ROOT, "data", "extract_iftw.json")))
+fff = os.path.join(ROOT, "data", "extract_fff.json")
+if os.path.exists(fff):
+    d += json.load(open(fff))
+d.sort(key=lambda r: r["date"])
 
 def query_for(p):
     if p["epithet"] and "×" not in p["epithet"]:

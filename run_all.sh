@@ -6,6 +6,8 @@ python3 pipeline/01_download.py
 python3 pipeline/02_recover_wayback.py
 python3 pipeline/03_climate.py
 python3 pipeline/04_extract.py
+python3 pipeline/09_fff_download.py
+python3 pipeline/10_fff_extract.py
 python3 pipeline/05_taxonomy.py
 python3 pipeline/06_analysis.py
 python3 pipeline/07_site_data.py

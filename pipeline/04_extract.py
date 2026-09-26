@@ -434,7 +434,9 @@ if __name__ == "__main__":
             print("ERROR", f, e)
             raise
     out.sort(key=lambda r: r["date"])
-    json.dump(out, open(os.path.join(ROOT, "data", "brochures.json"), "w"), indent=0, ensure_ascii=False)
+    for r in out:
+        r["series"] = "IFTW"
+    json.dump(out, open(os.path.join(ROOT, "data", "extract_iftw.json"), "w"), indent=0, ensure_ascii=False)
     n = sum(r["n_plants"] for r in out)
     print(len(out), "brochures", n, "plant records", len({p['species_key'] for r in out for p in r['plants']}), "species keys")
     print("flagged:", collections.Counter(fl.split("'")[0] for r in out for fl in r["flags"]))

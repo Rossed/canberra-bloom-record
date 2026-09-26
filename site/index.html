@@ -205,7 +205,7 @@ ol.reasons b{color:var(--ink)}
 
 <header class="mast">
   <div class="wrap">
-    <div class="brand"><b>Canberra Bloom Record</b><span>ANBG “In Flower This Week”, 1997–2016</span></div>
+    <div class="brand"><b>Canberra Bloom Record</b><span>ANBG flower-walk leaflets, 1997–today</span></div>
     <nav class="tabs" aria-label="Pages">
       <a href="#about" id="tab-about">How this was made</a>
       <a href="#extraction" id="tab-extraction">Leaflets</a>
@@ -216,43 +216,44 @@ ol.reasons b{color:var(--ink)}
 </header>
 
 <main class="wrap">
-  <div id="loading" class="loading">Loading 899 brochures…</div>
+  <div id="loading" class="loading">Loading the leaflets…</div>
 
   <!-- ============ ABOUT ============ -->
   <div id="view-about" hidden>
     <article class="about">
       <div class="eyebrow">About this website</div>
       <h1>How this was made</h1>
-      <p class="lead">Every week or two, a volunteer at the Australian National Botanic Gardens in Canberra walks through the Gardens and writes a short leaflet called <i>In Flower This Week</i>. It describes the plants in bloom along that day's walk. The Gardens have kept these leaflets online, from April 1997 to August 2016.</p>
+      <p class="lead">Every week or two, a volunteer at the Australian National Botanic Gardens in Canberra walks through the Gardens and writes a short leaflet describing the plants in bloom along that day's walk. From 1997 to 2016 the Gardens published it as <i>In Flower This Week</i>. Since August 2016 the Friends of the Gardens have carried it on as <i>Flowers, Fruit &amp; Foliage</i>. Together the two series cover nearly thirty years.</p>
       <p>This website uses those leaflets to answer a simple question: <b>are the plants in the Gardens flowering earlier than they used to, and if so, why?</b></p>
 
       <h2>What was done, step by step</h2>
       <ol class="steps">
         <li><h3>Every leaflet was collected</h3>
-          <p>All <b data-n="brochures">899</b> leaflets were gathered. Most are still on the Gardens' website. <b data-n="wayback">52</b> had gone missing, and copies of those were found in the Internet Archive, a public library of old web pages.</p></li>
+          <p><b data-n="iftw">899</b> leaflets from the Gardens (1997 to 2016) and <b data-n="fff">248</b> from the Friends (2016 to today) were gathered. Most are still online. About <b data-n="wayback">180</b> had gone missing, and copies of those were found in the Internet Archive, a public library of old web pages.</p></li>
         <li><h3>The plants in each leaflet were picked out</h3>
-          <p>In every leaflet, the plants in flower are printed in <b>bold</b>. A computer program read each leaflet and wrote down every bold plant name, together with the leaflet's date. This gave <b data-n="records">18,620</b> records of a plant in flower on a particular day.</p></li>
+          <p>In every leaflet, the plants being featured are printed in <b>bold</b>. A computer program read each leaflet and wrote down every bold plant name, together with the leaflet's date. This gave <b data-n="records">22,000</b> records of a plant in flower on a particular day.</p></li>
         <li><h3>The plant names were tidied up</h3>
-          <p>Botanists sometimes rename plants, and a few names in the leaflets were misspelt. Each name was checked against the Atlas of Living Australia, the national list of Australian species. That way the same plant is counted as one plant across all twenty years, even if its name changed.</p></li>
-        <li><h3>Each plant's flowering date was tracked over the years</h3>
-          <p>For every plant, the first leaflet each year that mentioned it was noted. Only plants that appeared in at least eight different years were used, which left <b data-n="plants">326</b> plants. Then came the key question: did that first date move earlier or later as the years went by?</p></li>
+          <p>Botanists sometimes rename plants, and a few names in the leaflets were misspelt. Each name was checked against the Atlas of Living Australia, the national list of Australian species. That way the same plant is counted as one plant across all the years, even if its name changed.</p></li>
+        <li><h3>Each plant's flowering time was worked out for every year</h3>
+          <p>For every plant, the dates it appeared in the leaflets each year were noted, and the middle of those dates was taken as that year's flowering time. Only plants seen in at least eight different years were used, which left <b data-n="plants">436</b> plants. Then came the key question: did that flowering time move earlier or later as the years went by?</p></li>
         <li><h3>The results were compared with Canberra's weather</h3>
           <p>Official temperature records for Canberra from the Bureau of Meteorology, and rainfall records, were used to see whether plants flowered earlier in warmer or wetter years.</p></li>
         <li><h3>The work was double-checked</h3>
-          <p>From 2014 the leaflets came out every two weeks instead of every week, and over time they began to list more plants. Changes like these could make plants look earlier or later when nothing had really changed. So the analysis was repeated in several ways that remove these effects, and the result held each time. A separate page also lets anyone compare a leaflet with what the computer picked out, to measure how accurate it was.</p></li>
+          <p>From 2014 the leaflets came out every two weeks instead of every week. With fewer leaflets, a plant tends to be spotted a little later, even if nothing has changed. That's why the middle of each plant's flowering time is used rather than the first day it was seen. The analysis was also repeated in several other ways, for example treating the early years as if they too were fortnightly, and the result held. A separate page lets anyone compare a leaflet with what the computer picked out, to measure how accurate it was.</p></li>
       </ol>
 
       <h2>What was found</h2>
       <div class="found">
-        <p><b>Plants are appearing in the leaflets earlier than they used to.</b> On average, they now show up about <b data-n="range">5 to 7</b> days earlier for every ten years that pass. Over the twenty years of leaflets, that adds up to roughly <b data-n="twenty">one to two weeks</b> earlier.</p>
-        <p><b>Canberra has warmed, and warmth plays a part.</b> Winters and springs in Canberra were about half a degree warmer each decade over this period. After a warm winter, plants did tend to flower early.</p>
-        <p><b>But warming doesn't seem to explain all of it.</b> The warming was fairly small, and on its own it would account for only part of the change. Other likely reasons include changes in the Gardens themselves, such as plants maturing, new plantings and watering, and changes in which volunteers wrote the leaflets and which paths they walked.</p>
+        <p><b>The plants are flowering earlier than they used to.</b> On average, their flowering time has moved about <b data-n="perdecade">5</b> days earlier for every ten years. Over the whole period that adds up to roughly <b data-n="total">two weeks</b>.</p>
+        <p><b>Warmth plays a part.</b> Canberra has warmed by about a third of a degree each decade since 1997. In warmer years the plants flowered earlier, by around 3 to 7 days for each degree of extra warmth.</p>
+        <p><b>But warming explains only part of it.</b> On these figures, the warming accounts for roughly <b data-n="share">a fifth to a third</b> of the change. Wet years tended to flower a little later. The rest is likely due to changes in the Gardens themselves, such as plants maturing, new plantings and watering, and to changes in who wrote the leaflets and which paths they walked.</p>
       </div>
 
       <h2>Things to keep in mind</h2>
       <ul class="caveats">
         <li>The leaflets were written to guide visitors, not as scientific records. A plant only appears when a volunteer chose to walk past it and mention it.</li>
         <li>Because of this, the result for any single plant is not reliable. The overall pattern across hundreds of plants is much more trustworthy.</li>
+        <li>There are no leaflets for April to June 2020 or for mid-August to October 2021, the periods of COVID-19 restrictions and lockdown in Canberra.</li>
         <li>The findings are best read as a strong hint, not as proof.</li>
       </ul>
 
@@ -262,7 +263,7 @@ ol.reasons b{color:var(--ink)}
         <a href="#analysis"><b>Findings</b><span>The charts and figures behind the results, for readers who want the detail.</span></a>
         <a href="#check"><b>Check accuracy</b><span>For helpers who want to check the computer's work against the original leaflets.</span></a>
       </div>
-      <p class="thanks">With thanks to the volunteers of the Australian National Botanic Gardens, who wrote every one of these leaflets.</p>
+      <p class="thanks">With thanks to the volunteers of the Australian National Botanic Gardens and the Friends of the ANBG, who wrote every one of these leaflets.</p>
     </article>
   </div>
 
@@ -270,12 +271,12 @@ ol.reasons b{color:var(--ink)}
   <div id="view-extraction" hidden>
     <div class="intro">
       <div class="eyebrow">Leaflets · Validate the extraction</div>
-      <h1>Every brochure, and what was pulled out of it</h1>
-      <p class="prose">Each ANBG volunteer walk sheet puts the plants in flower in <b>bold</b>, usually followed by a garden bed reference like <span class="mono">[Section 30]</span>. The parser reads that convention, cleans the name, and resolves it against the Atlas of Living Australia so misspellings and renamed species (e.g. <span class="sp">Bracteantha bracteata</span> → <span class="sp">Xerochrysum bracteatum</span>) join up across 20 years. Pick a brochure to compare the extraction with the original page.</p>
+      <h1>Every leaflet, and what was pulled out of it</h1>
+      <p class="prose">Both series put the featured plants in <b>bold</b>. The ANBG web pages (1997–2016) usually follow each name with a garden bed reference like <span class="mono">[Section 30]</span>. The Friends' PDFs (2016–now) number each stop on the walk. The parser reads that convention, cleans the name, and resolves it against the Atlas of Living Australia so misspellings and renamed species (e.g. <span class="sp">Bracteantha bracteata</span> → <span class="sp">Xerochrysum bracteatum</span>) join up across the years. Pick a leaflet to compare the extraction with the original.</p>
     </div>
     <div class="stats" id="xstats"></div>
     <div class="controls">
-      <input type="search" id="q" placeholder="Search a plant, family or brochure date (e.g. Grevillea, Proteaceae, 2009-09)" aria-label="Search">
+      <input type="search" id="q" placeholder="Search a plant, family or leaflet date (e.g. Grevillea, Proteaceae, 2009-09)" aria-label="Search">
       <select id="yearSel" aria-label="Year"></select>
       <label class="tog"><input type="checkbox" id="flagOnly"> Flagged only</label>
       <span class="count" id="xcount"></span>
@@ -295,27 +296,27 @@ ol.reasons b{color:var(--ink)}
     <div class="answer" id="answer"></div>
 
     <section class="block">
-      <div><div class="eyebrow">The garden-wide signal</div><h2>Flowering onset, all taxa combined</h2></div>
-      <p class="prose">For each species, every season's first appearance in the brochures is compared with that species' own average. Averaging those differences across all species in a year gives a garden-wide onset index. Below zero means the garden flowered earlier than usual.</p>
+      <div><div class="eyebrow">The garden-wide signal</div><h2>Flowering time, all taxa combined</h2></div>
+      <p class="prose">Each taxon's <b>mid-flowering date</b> is the average date of its mentions in a season. For every season it is compared with that taxon's own long-run average. Averaging those differences across all taxa gives a garden-wide index for the year. Below zero means the garden flowered earlier than usual. The mid-flowering date is the main measure because it isn't thrown off by the switch from weekly to fortnightly leaflets in 2014. First appearance is shown as a check.</p>
       <div class="cards2">
         <div class="panel">
-          <h3>Onset index by year</h3>
-          <div class="legend"><span><i style="background:var(--early)"></i>Earlier than species average</span><span><i style="background:var(--late)"></i>Later</span><span><i style="background:var(--ink)"></i>Linear trend</span></div>
+          <h3>Garden-wide flowering index by year</h3>
+          <div class="legend"><span><i style="background:var(--early)"></i>Earlier than average</span><span><i style="background:var(--late)"></i>Later</span><span><i style="background:var(--ink)"></i>Linear trend</span><span><i style="background:var(--neutral);width:2px;height:12px"></i>Leaflet series changes (Aug 2016)</span></div>
           <div class="chart"><canvas id="cYearly"></canvas></div>
           <p class="cap" id="capYearly"></p>
         </div>
         <div class="panel">
           <h3>How robust is the trend?</h3>
-          <div class="legend"><span><i style="background:var(--ink)"></i>Estimate</span><span><i style="background:var(--accent-soft);border:1px solid var(--accent);height:8px"></i>95% confidence interval</span></div>
-          <div class="chart"><canvas id="cRobust"></canvas></div>
-          <p class="cap">The sheets went from weekly to fortnightly in 2014 and grew from ~16 to ~23 plants per issue by 2008. Both changes could fake a trend. Each row reruns the pooled model on a subset that removes one of them. The last row drops long-flowering taxa (80% of mentions spread over more than 150 days), whose first mention is mostly noise. Bars show 95% confidence intervals, clustered by species and by year.</p>
+          <div class="legend"><span><i class="pt" style="background:var(--accent)"></i>Mid-flowering date</span><span><i class="pt" style="background:var(--ink-3)"></i>First appearance</span><span>Dot = estimate, bar = 95% confidence interval</span></div>
+          <div class="chart tall"><canvas id="cRobust"></canvas></div>
+          <p class="cap" id="capRobust"></p>
         </div>
       </div>
     </section>
 
     <section class="block">
       <div><div class="eyebrow">Species by species</div><h2>Which flowers are shifting</h2></div>
-      <p class="prose">326 taxa appear in at least 8 well-sampled seasons spanning 10+ years. The shift is a linear trend in first-appearance date, in days per decade. The table opens sorted by strength of evidence (p). Long-flowering taxa are hidden by default: when a plant is in flower most of the year, its "first appearance" depends on which week a volunteer walked past, so its trend is unreliable. Individual species' records are noisy, because a plant only shows up if the volunteer's walk that week passed it. So read single-species results as leads, and check the <b>q</b> value (false discovery rate across all 326 tests) before trusting one.</p>
+      <p class="prose" id="spIntro"></p>
       <div class="cards2">
         <div class="panel">
           <h3>Distribution of shifts</h3>
@@ -325,22 +326,22 @@ ol.reasons b{color:var(--ink)}
         <div class="panel">
           <h3>By plant family</h3>
           <div class="chart"><canvas id="cFam"></canvas></div>
-          <p class="cap">Mean onset shift for families with at least 3 wild species analysed. Numbers show species analysed.</p>
+          <p class="cap">Average mid-flowering shift for families with at least 3 wild species analysed. Numbers show species analysed.</p>
         </div>
       </div>
       <div class="controls">
         <input type="search" id="sq" placeholder="Filter species, common name or family" aria-label="Filter species">
         <select id="sKind" aria-label="Kind"><option value="">Species &amp; cultivars</option><option value="species">Wild species only</option><option value="cultivar">Cultivars only</option></select>
-        <select id="sSig" aria-label="Evidence"><option value="">Any evidence</option><option value="p">p &lt; 0.05</option><option value="rob">Earlier in all robustness runs</option></select>
+        <select id="sSig" aria-label="Evidence"><option value="">Any evidence</option><option value="p">p &lt; 0.05</option><option value="q">q &lt; 0.1 (survives multiple testing)</option><option value="rob">Earlier on both measures</option></select>
         <label class="tog"><input type="checkbox" id="sLong"> Include long-flowering taxa</label>
         <span class="count" id="scount"></span>
       </div>
       <div class="stbl"><table id="stable"><thead><tr>
         <th class="sortable" data-k="key">Taxon</th><th class="sortable" data-k="family">Family</th>
         <th class="sortable" data-k="typical_onset_doy">Typical onset</th><th class="sortable num" data-k="n_seasons">Seasons</th><th class="sortable num" data-k="spread" title="Days spanned by the middle 80% of all mentions">Spread</th>
-        <th class="sortable num" data-k="slope_first">Onset shift<br><span style="text-transform:none;letter-spacing:0">days / decade</span></th><th></th>
-        <th class="sortable num" data-k="p_first">p</th><th class="sortable num" data-k="q_first">q</th>
-        <th class="sortable num" data-k="slope_mean">Mid-flowering shift</th><th class="sortable num" data-k="temp_sens">Days per °C</th>
+        <th class="sortable num" data-k="slope_mean">Mid-flowering shift<br><span style="text-transform:none;letter-spacing:0">days / decade</span></th><th></th>
+        <th class="sortable num" data-k="p_mean">p</th><th class="sortable num" data-k="q_mean">q</th>
+        <th class="sortable num" data-k="slope_first">First-appearance shift</th><th class="sortable num" data-k="temp_sens">Days per °C</th>
       </tr></thead><tbody></tbody></table></div>
       <div class="panel" id="spDetail"></div>
     </section>
@@ -358,10 +359,10 @@ ol.reasons b{color:var(--ink)}
           <h3>Rainfall</h3>
           <div class="legend"><span><i style="background:var(--accent)"></i>Jun–Nov rainfall</span><span><i style="background:var(--neutral)"></i>Rest of year</span></div>
           <div class="chart"><canvas id="cRain"></canvas></div>
-          <p class="cap">Canberra was in the Millennium Drought until 2009, then 2010 was very wet. ERA5 reanalysis at the ANBG site.</p>
+          <p class="cap">The Millennium Drought lasted until 2009. 2010 and the La Niña years of 2021–2022 were very wet. ERA5 reanalysis at the ANBG site.</p>
         </div>
         <div class="panel">
-          <h3>Warm winters, early years</h3>
+          <h3>Warm years, early flowering</h3>
           <div class="chart"><canvas id="cScatter"></canvas></div>
           <p class="cap" id="capScatter"></p>
         </div>
@@ -380,13 +381,14 @@ ol.reasons b{color:var(--ink)}
       <div class="prose" id="method"></div>
     </section>
   </div>
+
   <!-- ============ CHECK ACCURACY ============ -->
   <div id="view-check" hidden>
     <div class="intro">
       <div class="eyebrow">Check accuracy</div>
       <h1>Check the extraction against the originals</h1>
       <div class="prose">
-        <p>This page draws a random sample of one brochure per year (20 in total). For each one, compare the original on the left with what was extracted on the right. Mark every row, add any bold plants that were missed, then mark the brochure done. The scores update as you go.</p>
+        <p>This page draws a random sample of one leaflet per year (<span id="ckN">30</span> in total). For each one, compare the original on the left with what was extracted on the right. Mark every row, add any bold plants that were missed, then mark the brochure done. The scores update as you go.</p>
         <p>Your marks save in this browser only. When you finish, use <b>Download results</b> and send the file to Ross. Several people's files can be combined.</p>
       </div>
     </div>
@@ -455,10 +457,16 @@ function route(){
 
 /* ================= ABOUT ================= */
 function initAbout(){
-  const R = A.community.robustness, lo = Math.abs(R.short_season_only.days_per_decade), hi = Math.abs(R.all_years.days_per_decade);
-  const vals = {brochures: B.length.toLocaleString(), wayback: B.filter(r=>r.src==="wayback").length,
-    records: B.reduce((s,r)=>s+r.np,0).toLocaleString(), plants: A.species.length,
-    range: `${Math.round(lo)} to ${Math.round(hi)}`, twenty: `${Math.round(lo*2)} to ${Math.round(hi*2)} days`};
+  const R = A.community.robustness.all_years, W = A.community.window_sensitivity;
+  const w60 = W.find(w=>w.window===60), w180 = W.find(w=>w.window===180);
+  const per = Math.abs(R.mean_days_per_decade), yrs = A.last_full_year + 1 - 1997;
+  const shLo = Math.abs(w60.sens_mean*w60.warming_per_decade)/per, shHi = Math.abs(w180.sens_mean*w180.warming_per_decade)/per;
+  const frac = x => x < 0.15 ? "a tenth" : x < 0.23 ? "a fifth" : x < 0.29 ? "a quarter" : x < 0.42 ? "a third" : x < 0.6 ? "half" : "most";
+  const total = Math.round(per*yrs/10);
+  const vals = {iftw: B.filter(r=>r.s==="IFTW").length.toLocaleString(), fff: B.filter(r=>r.s==="FFF").length.toLocaleString(),
+    wayback: B.filter(r=>r.src==="wayback").length, records: B.reduce((s,r)=>s+r.np,0).toLocaleString(), plants: A.species.length,
+    perdecade: Math.round(per), total: total >= 12 && total <= 17 ? "two weeks" : `${total} days`,
+    share: frac(shLo) === frac(shHi) ? frac(shLo) : `${frac(shLo)} to ${frac(shHi)}`};
   document.querySelectorAll("#view-about [data-n]").forEach(el => { if (vals[el.dataset.n] != null) el.textContent = vals[el.dataset.n]; });
 }
 
@@ -472,12 +480,12 @@ function initExtraction(){
   const nWb = B.filter(r=>r.src==="wayback").length, nFl = B.filter(r=>r.fl.length).length;
   const nRen = allP.filter(p=>p[6]).length;
   $("#xstats").innerHTML = [
-    [B.length, `brochures (${B.length-nWb} live, ${nWb} recovered from the Wayback Machine)`],
+    [B.length.toLocaleString(), `leaflets: ${B.filter(r=>r.s==="IFTW").length} ANBG (1997–2016) and ${B.filter(r=>r.s==="FFF").length} Friends (2016–now); ${nWb} recovered from the Wayback Machine`],
     [nP.toLocaleString(), "plant records extracted"],
     [taxa.size.toLocaleString(), "distinct taxa (species, subspecies and cultivars)"],
     [(100*nSp/nP).toFixed(1)+"%", `resolved to a species; ${(100*nFam/nP).toFixed(1)}% to at least a family`],
     [nRen.toLocaleString(), "records under an old name, mapped to the current accepted species"],
-    [nFl, "brochures flagged for a closer look"],
+    [nFl, "leaflets flagged for a closer look"],
   ].map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
   const years = [...new Set(B.map(r=>r.d.slice(0,4)))];
   $("#yearSel").innerHTML = `<option value="">All years</option>` + years.map(y=>`<option>${y}</option>`).join("");
@@ -493,13 +501,13 @@ function matches(r, q){
 function renderList(){
   const q = $("#q").value.trim().toLowerCase(), y = $("#yearSel").value, fo = $("#flagOnly").checked;
   filtered = B.filter(r => (!y || r.d.startsWith(y)) && (!fo || r.fl.length) && matches(r,q));
-  $("#xcount").textContent = `${filtered.length} of ${B.length} brochures`;
+  $("#xcount").textContent = `${filtered.length} of ${B.length} leaflets`;
   let html = "", cy = "";
   for (const r of [...filtered].reverse()){
     const yy = r.d.slice(0,4);
-    if (yy !== cy){ cy = yy; const n = filtered.filter(x=>x.d.startsWith(yy)).length; html += `<div class="yr">${yy} · ${n} issues</div>`; }
+    if (yy !== cy){ cy = yy; const n = filtered.filter(x=>x.d.startsWith(yy)).length; html += `<div class="yr">${yy} · ${n} leaflet${n===1?"":"s"}</div>`; }
     const dots = (r.src==="wayback"?`<span class="dot wb" title="Recovered from Wayback Machine"></span>`:"") + (r.fl.length?`<span class="dot warn" title="${esc(r.fl.join("; "))}"></span>`:"");
-    html += `<button class="brow" role="option" data-id="${r.id}" aria-selected="${r.id===sel}"><span class="d">${r.d}</span><span class="n">${r.np} plants</span><span class="f">${dots}</span></button>`;
+    html += `<button class="brow" role="option" data-id="${r.id}" aria-selected="${r.id===sel}"><span class="d">${r.d}</span><span class="n">${r.np} plants${r.s==="FFF"?" · Friends":""}</span><span class="f">${dots}</span></button>`;
   }
   $("#blist").innerHTML = html || `<p class="note" style="padding:16px">No brochures match. Clear the search or year filter.</p>`;
   $("#blist").querySelectorAll(".brow").forEach(b=>b.addEventListener("click",()=>select(b.dataset.id)));
@@ -525,18 +533,18 @@ function select(id){
   }).join("");
   const list = (arr, it) => arr && arr.length ? arr.map(x=>it?sci(x):esc(x)).join(", ") : `<span class="sub">none</span>`;
   $("#detail").innerHTML = `
-    <div class="dhead"><div><div class="eyebrow">In Flower This Week · ${r.id}</div><h2>${dt}</h2></div>
-      <a href="${esc(r.url)}" target="_blank" rel="noopener">Open original ${r.src==="wayback"?"(Wayback Machine)":"on anbg.gov.au"} ↗</a></div>
+    <div class="dhead"><div><div class="eyebrow">${r.s==="FFF"?"Flowers, Fruit &amp; Foliage (Friends of the ANBG)":"In Flower This Week (ANBG)"} · ${r.id}</div><h2>${dt}</h2></div>
+      <a href="${esc(r.url)}" target="_blank" rel="noopener">Open original ${r.src==="wayback"?"(Wayback Machine copy)":r.s==="FFF"?"PDF on friendsanbg.org.au":"on anbg.gov.au"} ↗</a></div>
     <dl class="meta">
-      <div><dt>Heading on sheet</dt><dd>${esc(r.hd||"–")}${r.dr?` <span class="sub">(covers ${esc(r.dr)})</span>`:""}</dd></div>
+      <div><dt>Heading on leaflet</dt><dd>${esc(r.hd||"–")}${r.dr?` <span class="sub">(covers ${esc(r.dr)})</span>`:""}</dd></div>
       <div><dt>Volunteer</dt><dd>${esc(r.au||"not signed")}</dd></div>
-      <div><dt>Plants extracted</dt><dd class="num">${r.np} <span class="sub">· ${r.qp} with a Section ref, ${r.qs} Section refs on page</span></dd></div>
+      <div><dt>Plants extracted</dt><dd class="num">${r.np} <span class="sub">· ${r.s==="FFF"?`${r.qs} numbered stops, ${r.qp} with a plant found`:`${r.qp} with a Section ref, ${r.qs} Section refs on page`}</span></dd></div>
       <div><dt>Weather noted</dt><dd>${list(r.wx)}</dd></div>
       <div><dt>Wildlife noted</dt><dd>${list(r.fa)}</dd></div>
-      <div><dt>Parser</dt><dd>${r.mode==="bold"?"Bold names":"Italic fallback"} ${flags}</dd></div>
+      <div><dt>Parser</dt><dd>${r.mode==="bold"?"Bold names (web page)":r.mode==="pdf-bold-italic"?"Bold names (PDF)":"Italic fallback"} ${flags}</dd></div>
     </dl>
     <p class="prose" style="padding-top:12px;font-size:14px"><span class="eyebrow">Opening line · </span>${esc(r.intro)}</p>
-    <div class="tablewrap"><table><thead><tr><th class="num">#</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th class="num">${r.s==="FFF"?"Stop":"#"}</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="side-lists">
       <div><h4>Photo on the sheet</h4>${list(r.cap,1)}</div>
       <div><h4>Named with a Section ref but not bold</h4>${list(r.lm,1)}<div class="sub">Usually landmarks such as tree ferns and conifers. Not treated as in flower.</div></div>
@@ -556,193 +564,212 @@ function baseOpts(extra={}){
 function mk(id, cfg){ if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); return charts[id]; }
 function linfit(xs, ys){ const n=xs.length, mx=xs.reduce((a,b)=>a+b)/n, my=ys.reduce((a,b)=>a+b)/n; let sxy=0,sxx=0; xs.forEach((x,i)=>{sxy+=(x-mx)*(ys[i]-my); sxx+=(x-mx)**2}); const b=sxy/sxx; return x=>my+b*(x-mx); }
 
+const axTitle = t => ({display:true,text:t,color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}});
 function initAnalysis(){
-  const C = A.community, S = A.species, ct = A.climate_trends, R = C.robustness;
-  const early = S.filter(s=>s.slope_first<0).length;
-  const sigE = S.filter(s=>s.slope_first<0 && s.p_first<.05).length, sigL = S.filter(s=>s.slope_first>0 && s.p_first<.05).length;
-  const ws = C.window_sensitivity, w180 = ws.find(w=>w.window===180), w60 = ws.find(w=>w.window===60);
-  const obs = R.all_years.days_per_decade, ss = R.short_season_only;
-  const expLo = w60.sens*w60.warming_per_decade, expHi = w180.sens*w180.warming_per_decade;
+  const C = A.community, S = A.species, ct = A.climate_trends, R = C.robustness, LY = A.last_full_year;
+  const SH = S.filter(s=>!s.long_flowering);
+  const earlyM = SH.filter(s=>s.slope_mean<0).length;
+  const qE = S.filter(s=>s.q_mean<.1 && s.slope_mean<0).length, qL = S.filter(s=>s.q_mean<.1 && s.slope_mean>0).length;
+  const W = C.window_sensitivity, w60 = W.find(w=>w.window===60), w180 = W.find(w=>w.window===180);
+  const obs = R.all_years.mean_days_per_decade, th = R.thinned_fortnightly;
+  const expLo = w60.sens_mean*w60.warming_per_decade, expHi = w180.sens_mean*w180.warming_per_decade;
+  const yc = C.year_corr_mean, step = C.series_step_mean.friends_series;
   $("#answer").innerHTML = `
-    <div class="eyebrow">Short answer</div>
-    <p class="big">In the brochure record, plants first appear about <em>${Math.abs(ss.days_per_decade).toFixed(0)}–${Math.abs(obs).toFixed(0)} days earlier per decade</em>. Warming contributes part of that.</p>
+    <div class="eyebrow">Short answer · ${A.series_counts.IFTW + A.series_counts.FFF} leaflets, 1997–${LY+1}</div>
+    <p class="big">Plants in the Gardens now flower about <em>${Math.abs(obs).toFixed(0)} days earlier per decade</em> than in 1997. Warmer years flower earlier, and warming explains roughly ${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}% of the shift.</p>
     <div class="stats" style="margin:0">
-      <div class="stat"><span class="v">${fmt(obs)} d</span><span class="l">onset shift per decade, all ${R.all_years.n_species} taxa (95% CI ${fmt(R.all_years.lo,0)} to ${fmt(R.all_years.hi,0)})</span></div>
-      <div class="stat"><span class="v">${fmt(ss.days_per_decade)} d</span><span class="l">excluding ${R.all_years.n_species-ss.n_species} long-flowering taxa, whose onset is poorly defined (95% CI ${fmt(ss.lo,0)} to ${fmt(ss.hi,0)})</span></div>
-      <div class="stat"><span class="v">${early} / ${S.length}</span><span class="l">taxa trending earlier; ${sigE} significantly earlier and ${sigL} significantly later at p&lt;0.05</span></div>
-      <div class="stat"><span class="v">${fmt(ct.winter.per_decade,2)} °C</span><span class="l">winter warming per decade in Canberra, 1997–2016 (spring ${fmt(ct.spring.per_decade,2)} °C)</span></div>
-      <div class="stat"><span class="v">${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}%</span><span class="l">of the shift matched by warmer pre-flowering weather (${fmt(expLo,1)} to ${fmt(expHi,1)} d/decade). Likely an underestimate.</span></div>
+      <div class="stat"><span class="v">${fmt(obs)} d</span><span class="l">mid-flowering shift per decade, all ${R.all_years.n_species} taxa (95% CI ${fmt(R.all_years.mean_lo,0)} to ${fmt(R.all_years.mean_hi,0)})</span></div>
+      <div class="stat"><span class="v">${fmt(th.days_per_decade)} d</span><span class="l">first-appearance shift per decade, with the weekly years thinned to match the fortnightly ones (95% CI ${fmt(th.lo,0)} to ${fmt(th.hi,0)})</span></div>
+      <div class="stat"><span class="v">${earlyM} / ${SH.length}</span><span class="l">taxa with a defined season trending earlier; ${qE} earlier and ${qL} later after correcting for multiple tests</span></div>
+      <div class="stat"><span class="v">${fmt(ct.annual.per_decade,2)} °C</span><span class="l">Canberra warming per decade, 1997–${LY} (spring ${fmt(ct.spring.per_decade,2)} °C)</span></div>
+      <div class="stat"><span class="v">${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}%</span><span class="l">of the shift matched by warmer weather before flowering (${fmt(expLo,1)} to ${fmt(expHi,1)} d/decade)</span></div>
     </div>
-    <p class="prose">The shift appears across most taxa and survives every sampling check. The confidence intervals allow for plants in the same year sharing weather, volunteers and walk routes, so they are wide. The size is at or above the 2–5 days per decade usually reported elsewhere, so part of it is probably not biological. Warm winters line up with early years, and plants flower ${Math.abs(w60.sens).toFixed(1)}–${Math.abs(w180.sens).toFixed(1)} days earlier per °C of pre-flowering warmth. Canberra warmed about a quarter of a degree per decade in those windows. On these numbers warming accounts for a day or so per decade. That figure is probably low, because a fixed temperature window only approximates when each plant responds. The remainder is likely a mix of the garden's own changes and how the sheets were written. See <a href="#analysis" data-scroll="reasons">Reading the evidence</a>.</p>`;
+    <p class="prose">The earlier shift appears across most taxa and in every sampling check. Warm years flower early: each 1 °C of extra warmth before flowering brings it forward by ${Math.abs(w60.sens_mean).toFixed(1)}–${Math.abs(w180.sens_mean).toFixed(1)} days, depending on how long a run-up period is measured. Canberra warmed about ${ct.annual.per_decade.toFixed(1)} °C per decade, which on those figures accounts for a day or two per decade. Wet years tend to flower later. Nothing jumps when the leaflets passed from the ANBG to the Friends in 2016 (${fmt(step.coef)} days, p ${pf(step.p)}). The remainder is likely a mix of the garden's own changes and how the leaflets were written. See <a href="#analysis" data-scroll="reasons">Reading the evidence</a>.</p>`;
 
-  // yearly index
-  const Y = C.yearly.filter(y=>y.n>=50);
-  const f = linfit(Y.map(y=>y.year), Y.map(y=>y.anom_first));
+  // yearly index (mid-flowering)
+  const Y = C.yearly.filter(y=>y.n>=A.params.min_year_n);
+  const f = linfit(Y.map(y=>y.year), Y.map(y=>y.anom_mean));
   const early_c = css("--early"), late_c = css("--late"), ink = css("--ink");
+  const switchLine = {id:"switch", afterDatasetsDraw(ch){ const x = ch.scales.x, i = Y.findIndex(y=>y.year>=A.series_switch); if (i<1) return;
+    const px = (x.getPixelForValue(i-1)+x.getPixelForValue(i))/2, c = ch.ctx; c.save(); c.strokeStyle = css("--neutral"); c.setLineDash([3,3]); c.beginPath(); c.moveTo(px, ch.chartArea.top); c.lineTo(px, ch.chartArea.bottom); c.stroke(); c.restore(); }};
   mk("cYearly",{type:"bar",data:{labels:Y.map(y=>y.year),datasets:[
     {type:"line",label:"Trend",data:Y.map(y=>f(y.year)),borderColor:ink,borderWidth:2,pointRadius:0,borderDash:[5,4]},
-    {label:"Onset index",data:Y.map(y=>y.anom_first),backgroundColor:Y.map(y=>y.anom_first<0?early_c:late_c),borderRadius:4,borderSkipped:"start",maxBarThickness:22}]},
+    {label:"Flowering index",data:Y.map(y=>y.anom_mean),backgroundColor:Y.map(y=>y.anom_mean<0?early_c:late_c),borderRadius:4,borderSkipped:"start",maxBarThickness:18}]},
+    plugins:[switchLine],
     options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>c.dataset.label==="Trend"?`Trend ${fmt(c.raw)} d`:`${fmt(c.raw)} days vs average · ${Y[c.dataIndex].n} species-seasons`}}},
-      scales:{...baseOpts().scales,y:{...baseOpts().scales.y,title:{display:true,text:"days vs species average",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
-  $("#capYearly").innerHTML = `Years with at least 50 species-seasons. The trend is ${fmt(obs)} days per decade (p ${pf(R.all_years.p)}; ${R.all_years.n_obs.toLocaleString()} species-seasons). The early 2008–2009 and 2013 seasons followed warm winters. The 2014–15 rebound coincides with the switch to fortnightly sheets, which delays when a plant is first recorded.`;
+      scales:{x:{...baseOpts().scales.x,ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>Y[i].year%4===0?Y[i].year:""}},y:{...baseOpts().scales.y,title:axTitle("days vs species average")}}})});
+  $("#capYearly").innerHTML = `Years with at least ${A.params.min_year_n} species-seasons. Trend ${fmt(obs)} days per decade (95% CI ${fmt(R.all_years.mean_lo)} to ${fmt(R.all_years.mean_hi)}, p ${pf(R.all_years.mean_p)}). Early years such as 2009, 2013 and 2023 were warm. The late 2021–2022 seasons were cool, wet La Niña years. 2019 and 2026 have few records (2026 is incomplete).`;
 
-  // robustness
-  const rb = [["All issues 1997–2016",R.all_years],["Weekly era only, 1997–2013",R.weekly_1997_2013],["Thinned to fortnightly throughout",R.thinned_fortnightly],["Stable sheet length, 2003–2013",R.stable_effort_2003_2013],["Short-season taxa only (≤120 d)",R.short_season_only]];
+  // robustness: both measures
+  const rb = [["All leaflets 1997–now",R.all_years],["Weekly thinned to fortnightly",R.thinned_fortnightly],["Weekly era only, 1997–2013",R.weekly_1997_2013],["Stable leaflet length, 2003–2013",R.stable_effort_2003_2013],["Short-season taxa only",R.short_season_only],["ANBG leaflets only, 1997–2016",R.iftw_1997_2016],["Friends leaflets only, 2016–now",R.friends_2016_now]];
+  const accent = css("--accent"), ink3 = css("--ink-3"), ciC = css("--line-strong");
+  // two interval bars per row (grouped); a plugin draws each estimate as a tick on its own interval
+  const estTicks = {id:"est", afterDatasetsDraw(ch){
+    const x = ch.scales.x, c = ch.ctx;
+    [[0, r=>r.mean_days_per_decade, accent], [1, r=>r.days_per_decade, ink3]].forEach(([di, val, col]) => {
+      ch.getDatasetMeta(di).data.forEach((el, i) => {
+        const px = x.getPixelForValue(val(rb[i][1]));
+        c.save(); c.fillStyle = col; c.strokeStyle = css("--surface"); c.lineWidth = 2;
+        c.beginPath(); c.arc(px, el.y, 5.5, 0, 2*Math.PI); c.fill(); c.stroke(); c.restore();
+      });
+    });
+  }};
   mk("cRobust",{type:"bar",data:{labels:rb.map(r=>r[0]),datasets:[
-    {label:"95% CI",data:rb.map(r=>[r[1].lo,r[1].hi]),backgroundColor:css("--accent-soft"),borderColor:css("--accent"),borderWidth:1,borderRadius:4,borderSkipped:false,barThickness:14,grouped:false},
-    {label:"Estimate",data:rb.map(r=>[r[1].days_per_decade-0.25,r[1].days_per_decade+0.25]),backgroundColor:ink,borderRadius:1,borderSkipped:false,barThickness:22,grouped:false}]},
-    options:baseOpts({indexAxis:"y",plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const r=rb[c.dataIndex][1];return `${fmt(r.days_per_decade)} d/decade [${fmt(r.lo)}, ${fmt(r.hi)}] · ${r.n_species} taxa`}}}},
-      scales:{x:{...baseOpts().scales.x,min:-25,max:5,title:{display:true,text:"days per decade (negative = earlier)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"IBM Plex Sans",size:12}}}}})});
+    {label:"Mid-flowering",data:rb.map(r=>[r[1].mean_lo,r[1].mean_hi]),backgroundColor:css("--accent-soft"),borderColor:accent,borderWidth:1,borderRadius:3,borderSkipped:false,barThickness:7},
+    {label:"First appearance",data:rb.map(r=>[r[1].lo,r[1].hi]),backgroundColor:css("--surface-2"),borderColor:ink3,borderWidth:1,borderRadius:3,borderSkipped:false,barThickness:7}]},
+    plugins:[estTicks],
+    options:baseOpts({indexAxis:"y",datasets:{bar:{categoryPercentage:.55,barPercentage:1}},
+      plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const r=rb[c.dataIndex][1], m=c.datasetIndex===0;
+        return `${c.dataset.label}: ${fmt(m?r.mean_days_per_decade:r.days_per_decade)} d/decade [${fmt(m?r.mean_lo:r.lo)}, ${fmt(m?r.mean_hi:r.hi)}] · ${r.n_species} taxa`}}}},
+      scales:{x:{...baseOpts().scales.x,min:-30,max:15,title:axTitle("days per decade (negative = earlier)")},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"IBM Plex Sans",size:12}}}}})});
+  $("#capRobust").innerHTML = `Each row reruns the garden-wide model on a subset that removes one possible distortion. The leaflets went from weekly to fortnightly in 2014, which makes <i>first appearance</i> look later. Thinning the weekly years to match removes that. Long-flowering taxa are those whose mentions spread over more than ${A.params.long_days} days. The Friends-only row has just ${R.friends_2016_now.n_species} taxa over ten years, too few to say much. Intervals are 95%, clustered by species and by year.`;
 
-  // histogram (long-flowering taxa excluded)
-  const SH = S.filter(s=>!s.long_flowering);
-  const bins = []; for(let b=-60;b<60;b+=5) bins.push(b);
-  const counts = bins.map(b=>SH.filter(s=>s.slope_first>=b && s.slope_first<b+5).length);
-  const lo = SH.filter(s=>s.slope_first<-60).length, hi = SH.filter(s=>s.slope_first>=60).length;
-  counts[0]+=lo; counts[counts.length-1]+=hi;
-  mk("cHist",{type:"bar",data:{labels:bins.map(b=>b),datasets:[{data:counts,backgroundColor:bins.map(b=>b<0?early_c:late_c),borderRadius:3,borderSkipped:"start",categoryPercentage:.92,barPercentage:1}]},
-    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${bins[c[0].dataIndex]} to ${bins[c[0].dataIndex]+5} d/decade`,label:c=>`${c.raw} taxa`}}},
-      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"onset shift, days per decade (ends include tails)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}},ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>bins[i]%20===0?bins[i]:""}},y:{...baseOpts().scales.y,title:{display:true,text:"taxa",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
-  const med = [...SH.map(s=>s.slope_first)].sort((a,b)=>a-b)[Math.floor(SH.length/2)];
-  const eSH = SH.filter(s=>s.slope_first<0).length;
-  $("#capHist").innerHTML = `${eSH} of ${SH.length} short-season taxa (${Math.round(100*eSH/SH.length)}%) moved earlier. If nothing were changing you'd expect about half. Median shift ${fmt(med)} days per decade. ${S.length-SH.length} long-flowering taxa are left out.`;
+  // histogram (mid-flowering, short-season taxa)
+  const bins = []; for(let b=-40;b<40;b+=4) bins.push(b);
+  const counts = bins.map(b=>SH.filter(s=>s.slope_mean>=b && s.slope_mean<b+4).length);
+  counts[0] += SH.filter(s=>s.slope_mean<-40).length; counts[counts.length-1] += SH.filter(s=>s.slope_mean>=40).length;
+  mk("cHist",{type:"bar",data:{labels:bins,datasets:[{data:counts,backgroundColor:bins.map(b=>b<0?early_c:late_c),borderRadius:3,borderSkipped:"start",categoryPercentage:.92,barPercentage:1}]},
+    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${bins[c[0].dataIndex]} to ${bins[c[0].dataIndex]+4} d/decade`,label:c=>`${c.raw} taxa`}}},
+      scales:{x:{...baseOpts().scales.x,title:axTitle("mid-flowering shift, days per decade (ends include tails)"),ticks:{...baseOpts().scales.x.ticks,autoSkip:false,maxRotation:0,callback:(v,i)=>bins[i]%20===0?bins[i]:""}},y:{...baseOpts().scales.y,title:axTitle("taxa")}}})});
+  const med = [...SH.map(s=>s.slope_mean)].sort((a,b)=>a-b)[Math.floor(SH.length/2)];
+  $("#capHist").innerHTML = `${earlyM} of ${SH.length} taxa with a defined season (${Math.round(100*earlyM/SH.length)}%) moved earlier. If nothing were changing you'd expect about half. Median shift ${fmt(med)} days per decade. ${S.length-SH.length} long-flowering taxa are left out.`;
 
-  // families
   const F = A.families;
   mk("cFam",{type:"bar",data:{labels:F.map(f=>f.family),datasets:[{data:F.map(f=>f.mean_slope),backgroundColor:F.map(f=>f.mean_slope<0?early_c:late_c),borderRadius:4,borderSkipped:"start",barThickness:10}]},
     options:baseOpts({indexAxis:"y",plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>`${fmt(c.raw)} d/decade · ${F[c.dataIndex].n_earlier} of ${F[c.dataIndex].n} species earlier`}}},
-      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"mean onset shift, days per decade",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"Spectral",size:12},callback:(v,i)=>`${F[i].family} (${F[i].n})`}}}})});
+      scales:{x:{...baseOpts().scales.x,title:axTitle("mean mid-flowering shift, days per decade")},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"Spectral",size:12},callback:(v,i)=>`${F[i].family} (${F[i].n})`}}}})});
   $("#cFam").parentElement.style.height = Math.max(280, F.length*20+60)+"px";
 
+  $("#spIntro").innerHTML = `${S.length} taxa appear in at least ${A.params.min_seasons} well-sampled seasons spanning ${A.params.min_span}+ years. The shift is a linear trend in each taxon's mid-flowering date, in days per decade. The table opens sorted by strength of evidence (p). Long-flowering taxa are hidden by default, because when a plant is in flower most of the year its dates mostly reflect which weeks a volunteer walked past. A plant only shows up if that week's walk passed it, so single-species results are leads. Check the <b>q</b> value (false discovery rate across all ${S.length} tests) before trusting one.`;
   initSpeciesTable();
   initWhy();
   initMethod();
 }
 
-let sortK = "p_first", sortDir = 1, selSp = null;
+let sortK = "p_mean", sortDir = 1, selSp = null;
 function initSpeciesTable(){
   document.querySelectorAll("#stable th.sortable").forEach(th=>th.addEventListener("click",()=>{ const k=th.dataset.k; sortDir = sortK===k ? -sortDir : 1; sortK=k; renderSpecies(); }));
   ["#sq","#sKind","#sSig","#sLong"].forEach(s=>$(s).addEventListener("input",renderSpecies));
   renderSpecies();
-  const best = [...A.species].filter(s=>s.kind==="species" && !s.long_flowering).sort((a,b)=>a.p_first-b.p_first).find(s=>s.slope_first<0);
+  const best = [...A.species].filter(s=>s.kind==="species" && !s.long_flowering && s.slope_mean<0).sort((a,b)=>a.p_mean-b.p_mean)[0];
   showSpecies(best.key);
 }
-function robustEarly(s){ return s.slope_first<0 && s.robustness.weekly_only!=null && s.robustness.weekly_only<0 && s.robustness.thinned_fortnightly!=null && s.robustness.thinned_fortnightly<0; }
+function robustEarly(s){ return s.slope_mean<0 && s.slope_first<0 && s.robustness.thinned_fortnightly!=null && s.robustness.thinned_fortnightly<0; }
 function renderSpecies(){
   const q=$("#sq").value.trim().toLowerCase(), kind=$("#sKind").value, sig=$("#sSig").value, inclLong=$("#sLong").checked;
   let S = A.species.filter(s=>(inclLong || !s.long_flowering) && (!kind||s.kind===kind) && (!q || (s.key+" "+(s.common||"")+" "+(s.family||"")+" "+s.names_as_written.join(" ")).toLowerCase().includes(q))
-    && (!sig || (sig==="p" ? s.p_first<.05 : robustEarly(s))));
+    && (!sig || (sig==="p" ? s.p_mean<.05 : sig==="q" ? s.q_mean<.1 : robustEarly(s))));
   S.sort((a,b)=>{ const x=a[sortK], y=b[sortK]; if(x==null) return 1; if(y==null) return -1; return (typeof x==="string"? x.localeCompare(y) : x-y)*sortDir; });
   $("#scount").textContent = `${S.length} of ${A.species.length} taxa`;
-  const max = 40;
+  const max = 30;
   $("#stable tbody").innerHTML = S.map(s=>{
-    const w = Math.min(Math.abs(s.slope_first),max)/max*65;
-    const bar = `<div class="barcell"><span class="mid"></span><span class="b" style="${s.slope_first<0?`right:50%;width:${w}px;background:var(--early);border-radius:4px 0 0 4px`:`left:50%;width:${w}px;background:var(--late);border-radius:0 4px 4px 0`}"></span></div>`;
-    return `<tr class="srow${s.long_flowering?" longf":""}" data-k="${esc(s.key)}" aria-selected="${s.key===selSp}" tabindex="0"><td>${sci(s.key)}${s.kind==="cultivar"?' <span class="chip">cultivar</span>':""}${s.long_flowering?' <span class="chip warn" title="80% of mentions spread over '+s.spread+' days. First-appearance trend is unreliable.">long-flowering</span>':""}<div class="sub">${esc(s.common||"")}</div></td><td>${esc(s.family||"–")}</td><td class="mono">${s.typical_onset}</td><td class="num">${s.n_seasons}</td><td class="num">${s.spread}d</td>
-      <td class="num">${fmt(s.slope_first)}</td><td>${bar}</td><td class="num">${pf(s.p_first)}</td><td class="num">${s.q_first.toFixed(2)}</td><td class="num">${fmt(s.slope_mean)}</td><td class="num">${fmt(s.temp_sens)}</td></tr>`;
+    const w = Math.min(Math.abs(s.slope_mean),max)/max*65;
+    const bar = `<div class="barcell"><span class="mid"></span><span class="b" style="${s.slope_mean<0?`right:50%;width:${w}px;background:var(--early);border-radius:4px 0 0 4px`:`left:50%;width:${w}px;background:var(--late);border-radius:0 4px 4px 0`}"></span></div>`;
+    return `<tr class="srow${s.long_flowering?" longf":""}" data-k="${esc(s.key)}" aria-selected="${s.key===selSp}" tabindex="0"><td>${sci(s.key)}${s.kind==="cultivar"?' <span class="chip">cultivar</span>':""}${s.long_flowering?' <span class="chip warn" title="80% of mentions spread over '+s.spread+' days. Trend is unreliable.">long-flowering</span>':""}<div class="sub">${esc(/^(a|an) /i.test(s.common||"")?"":s.common||"")}</div></td><td>${esc(s.family||"–")}</td><td class="mono">${s.typical_onset}</td><td class="num">${s.n_seasons}</td><td class="num">${s.spread}d</td>
+      <td class="num">${fmt(s.slope_mean)}</td><td>${bar}</td><td class="num">${pf(s.p_mean)}</td><td class="num">${s.q_mean.toFixed(2)}</td><td class="num">${fmt(s.slope_first)}</td><td class="num">${fmt(s.temp_sens)}</td></tr>`;
   }).join("");
   document.querySelectorAll(".srow").forEach(r=>{ r.addEventListener("click",()=>showSpecies(r.dataset.k)); r.addEventListener("keydown",e=>{if(e.key==="Enter")showSpecies(r.dataset.k)}); });
 }
 function showSpecies(k){
   selSp = k; document.querySelectorAll(".srow").forEach(r=>r.setAttribute("aria-selected", r.dataset.k===k));
   const s = A.species.find(x=>x.key===k); if(!s) return;
-  const st = s.season_start;
-  const cov = s.seasons.filter(x=>x.covered);
-  const f = linfit(cov.map(x=>x.season), cov.map(x=>x.first));
-  const yrs = cov.map(x=>x.season), x0=Math.min(...yrs), x1=Math.max(...yrs);
-  const rob = s.robustness;
+  const st = s.season_start, cov = s.seasons.filter(x=>x.covered);
+  const f = linfit(cov.map(x=>x.season), cov.map(x=>x.mean));
+  const yrs = cov.map(x=>x.season), x0=Math.min(...yrs), x1=Math.max(...yrs), rob = s.robustness;
   $("#spDetail").innerHTML = `
     <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:baseline">
       <div><div class="eyebrow">${esc(s.family||"")} · ${s.kind}</div><h3 style="font-size:24px">${sci(s.key)}</h3><div class="sub">${esc(s.common||"")}${s.names_as_written.length>1?` · printed as ${s.names_as_written.slice(0,4).map(sci).join(", ")}`:""}</div></div>
-      <span class="chip ${s.slope_first<0?"early":"late"}">${fmt(s.slope_first)} days per decade</span>
+      <span class="chip ${s.slope_mean<0?"early":"late"}">${fmt(s.slope_mean)} days per decade</span>
     </div>
-    <div class="legend"><span><i class="pt" style="background:var(--neutral)"></i>Each brochure mention</span><span><i class="pt" style="background:var(--early)"></i>First mention that season</span><span><i style="background:var(--ink)"></i>Onset trend</span><span><i class="pt" style="background:transparent;border:1.5px solid var(--ink-3)"></i>Season with sampling gaps (excluded)</span></div>
+    <div class="legend"><span><i class="pt" style="background:var(--neutral)"></i>Each leaflet mention</span><span><i class="pt" style="background:var(--accent)"></i>Mid-flowering date that season</span><span><i style="background:var(--ink)"></i>Trend</span><span><i class="pt" style="background:transparent;border:1.5px solid var(--ink-3)"></i>Season with sampling gaps (excluded)</span></div>
     <div class="chart tall"><canvas id="cSp"></canvas></div>
     <dl class="kv">
       <dt>Typical onset</dt><dd>${s.typical_onset} (mid-flowering ${s.typical_centroid}); seasons counted from ${s.season_start_label}</dd>
-      <dt>Onset trend</dt><dd>${fmt(s.slope_first)} d/decade, p ${pf(s.p_first)}, q ${s.q_first.toFixed(2)}, robust Theil–Sen ${fmt(s.theil_first)}</dd>
-      <dt>Mid-flowering trend</dt><dd>${fmt(s.slope_mean)} d/decade, p ${pf(s.p_mean)}</dd>
-      <dt>Sampling checks</dt><dd>weekly era only ${fmt(rob.weekly_only)} · thinned to fortnightly ${fmt(rob.thinned_fortnightly)}</dd>
+      <dt>Mid-flowering trend</dt><dd>${fmt(s.slope_mean)} d/decade, p ${pf(s.p_mean)}, q ${s.q_mean.toFixed(2)}</dd>
+      <dt>First-appearance trend</dt><dd>${fmt(s.slope_first)} d/decade (p ${pf(s.p_first)}); thinned to fortnightly ${fmt(rob.thinned_fortnightly)}</dd>
       <dt>Temperature</dt><dd>${s.temp_sens==null?"–":`${fmt(s.temp_sens)} days per °C of the 60 days before onset (p ${pf(s.temp_sens_p)})`}</dd>
       <dt>Evidence</dt><dd>${s.n_mentions} mentions over ${s.n_seasons} well-sampled seasons, ${s.first_season}–${s.last_season}</dd>
     </dl>`;
   const pts = s.points.map(([yr,d])=>({x:yr,y:d}));
-  const firsts = cov.map(x=>({x:x.season,y:x.first,t:x.temp_window,n:x.n}));
-  const gaps = s.seasons.filter(x=>!x.covered).map(x=>({x:x.season,y:x.first}));
+  const mids = cov.map(x=>({x:x.season,y:x.mean,t:x.temp_window,n:x.n}));
+  const gaps = s.seasons.filter(x=>!x.covered).map(x=>({x:x.season,y:x.mean}));
   const ys = pts.map(p=>p.y); const ymin=Math.max(0,Math.min(...ys)-10), ymax=Math.min(364,Math.max(...ys)+10);
   mk("cSp",{type:"scatter",data:{datasets:[
     {label:"Trend",type:"line",data:[{x:x0,y:f(x0)},{x:x1,y:f(x1)}],borderColor:css("--ink"),borderWidth:2,pointRadius:0},
-    {label:"First mention",data:firsts,backgroundColor:css("--early"),pointRadius:6,borderColor:css("--surface"),borderWidth:2,pointHoverRadius:8},
+    {label:"Mid-flowering",data:mids,backgroundColor:css("--accent"),pointRadius:6,borderColor:css("--surface"),borderWidth:2,pointHoverRadius:8},
     {label:"Excluded season",data:gaps,backgroundColor:"transparent",borderColor:css("--ink-3"),borderWidth:1.5,pointRadius:6},
-    {label:"Mention",data:pts,backgroundColor:css("--neutral"),pointRadius:3.5,pointHoverRadius:5}]},
-    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${c[0].raw.x} season`,label:c=>c.dataset.label==="Trend"?`trend`:`${c.dataset.label}: ${doyLabel(st+c.raw.y)}`+(c.raw.t!=null?` · pre-onset ${c.raw.t.toFixed(1)} °C`:"")}}},
-      scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:2016,ticks:{...baseOpts().scales.x.ticks,stepSize:2,callback:v=>v}},
-              y:{...baseOpts().scales.y,reverse:true,min:ymin,max:ymax,title:{display:true,text:"date (earlier ↑)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}},ticks:{...baseOpts().scales.y.ticks,callback:v=>doyLabel(st+v)}}}})});
+    {label:"Mention",data:pts,backgroundColor:css("--neutral"),pointRadius:3,pointHoverRadius:5}]},
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${c[0].raw.x} season`,label:c=>c.dataset.label==="Trend"?`trend`:`${c.dataset.label}: ${doyLabel(st+c.raw.y)}`+(c.raw.n?` · ${c.raw.n} mentions`:"")+(c.raw.t!=null?` · pre-onset ${c.raw.t.toFixed(1)} °C`:"")}}},
+      scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:A.last_full_year+2,ticks:{...baseOpts().scales.x.ticks,stepSize:4,callback:v=>v}},
+              y:{...baseOpts().scales.y,reverse:true,min:ymin,max:ymax,title:axTitle("date (earlier ↑)"),ticks:{...baseOpts().scales.y.ticks,callback:v=>doyLabel(st+v)}}}})});
 }
 
 function initWhy(){
-  const cl = A.climate.filter(c=>c.year>=1996), ct = A.climate_trends, C = A.community;
+  const LY = A.last_full_year, cl = A.climate.filter(c=>c.year>=1996 && c.year<=LY), ct = A.climate_trends, C = A.community, sp = A.climate_splice;
   const series = [["winter","Winter (Jun–Aug)","--early"],["spring","Spring (Sep–Nov)","--accent"],["annual","Annual mean","--ink-3"]];
   $("#legTemp").innerHTML = series.map(s=>`<span><i style="background:var(${s[2]})"></i>${s[1]}</span>`).join("") + `<span><i style="background:var(--ink-3);height:1px"></i>trend</span>`;
   const ds = [];
   series.forEach(([k,l,c])=>{
     const pts = cl.map(x=>({x:x.year,y:x[k]}));
     const f = linfit(pts.map(p=>p.x), pts.map(p=>p.y));
-    ds.push({type:"line",label:l,data:pts,borderColor:css(c),backgroundColor:css(c),borderWidth:2,pointRadius:2.5,tension:0});
-    ds.push({type:"line",label:l+" trend",data:[{x:1996,y:f(1996)},{x:2016,y:f(2016)}],borderColor:css(c),borderWidth:1,borderDash:[4,4],pointRadius:0});
+    ds.push({type:"line",label:l,data:pts,borderColor:css(c),backgroundColor:css(c),borderWidth:2,pointRadius:2,tension:0});
+    ds.push({type:"line",label:l+" trend",data:[{x:1996,y:f(1996)},{x:LY,y:f(LY)}],borderColor:css(c),borderWidth:1,borderDash:[4,4],pointRadius:0});
   });
   mk("cTemp",{type:"line",data:{datasets:ds},options:baseOpts({interaction:{mode:"index",intersect:false},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>!i.dataset.label.includes("trend"),callbacks:{label:c=>`${c.dataset.label}: ${c.raw.y.toFixed(1)} °C`}}},
-    scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:2016,ticks:{...baseOpts().scales.x.ticks,stepSize:4,callback:v=>v}},y:{...baseOpts().scales.y,title:{display:true,text:"mean temperature °C",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
-  $("#capTemp").innerHTML = `BOM ACORN-SAT homogenised record, Canberra Airport (070351). 1997–2016 trends per decade: winter ${fmt(ct.winter.per_decade,2)} °C (p ${pf(ct.winter.p)}), spring ${fmt(ct.spring.per_decade,2)} °C (p ${pf(ct.spring.p)}), summer ${fmt(ct.summer.per_decade,2)}, autumn ${fmt(ct.autumn.per_decade,2)}.`;
+    scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:LY,ticks:{...baseOpts().scales.x.ticks,stepSize:4,callback:v=>v}},y:{...baseOpts().scales.y,title:axTitle("mean temperature °C")}}})});
+  $("#capTemp").innerHTML = `BOM ACORN-SAT homogenised record, Canberra Airport (070351), to ${sp.acorn_end.slice(0,4)}. Later months come from ERA5 reanalysis, adjusted to match ACORN (monthly agreement r = ${sp.r_tmax.toFixed(2)}). Trends per decade, 1997–${LY}: annual ${fmt(ct.annual.per_decade,2)} °C (p ${pf(ct.annual.p)}), winter ${fmt(ct.winter.per_decade,2)}, spring ${fmt(ct.spring.per_decade,2)}, summer ${fmt(ct.summer.per_decade,2)}, autumn ${fmt(ct.autumn.per_decade,2)}.`;
 
-  mk("cRain",{type:"bar",data:{labels:cl.map(c=>c.year),datasets:[
-    {label:"Jun–Nov",data:cl.map(c=>c.rain_winter_spring),backgroundColor:css("--accent"),stack:"r",borderRadius:0},
-    {label:"Rest of year",data:cl.map(c=>c.rain_annual-c.rain_winter_spring),backgroundColor:css("--neutral"),stack:"r",borderRadius:{topLeft:4,topRight:4}}]},
-    options:baseOpts({interaction:{mode:"index",intersect:false},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>`${c.dataset.label}: ${Math.round(c.raw)} mm`}}},
-      scales:{x:{...baseOpts().scales.x,stacked:true,ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>cl[i].year%4===0?cl[i].year:""}},y:{...baseOpts().scales.y,stacked:true,title:{display:true,text:"mm",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  const clr = A.climate.filter(c=>c.year>=1996 && c.rain_annual!=null);
+  mk("cRain",{type:"bar",data:{labels:clr.map(c=>c.year),datasets:[
+    {label:"Jun–Nov",data:clr.map(c=>c.rain_winter_spring),backgroundColor:css("--accent"),stack:"r"},
+    {label:"Rest of year",data:clr.map(c=>c.rain_annual-c.rain_winter_spring),backgroundColor:css("--neutral"),stack:"r",borderRadius:{topLeft:4,topRight:4}}]},
+    options:baseOpts({interaction:{mode:"index",intersect:false},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${clr[c[0].dataIndex].year}${clr[c[0].dataIndex].year>LY?" (to date)":""}`,label:c=>`${c.dataset.label}: ${Math.round(c.raw)} mm`}}},
+      scales:{x:{...baseOpts().scales.x,stacked:true,ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>clr[i].year%4===0?clr[i].year:""}},y:{...baseOpts().scales.y,stacked:true,title:axTitle("mm")}}})});
 
-  // scatter: winter temp vs yearly onset index
   const cy = Object.fromEntries(A.climate.map(c=>[c.year,c]));
-  const Y = C.yearly.filter(y=>y.n>=50 && cy[y.year]);
-  const pts = Y.map(y=>({x:cy[y.year].winter,y:y.anom_first,yr:y.year}));
+  const Y = C.yearly.filter(y=>y.n>=A.params.min_year_n && cy[y.year] && y.year<=LY);
+  const pts = Y.map(y=>({x:cy[y.year].annual,y:y.anom_mean,yr:y.year}));
   const f = linfit(pts.map(p=>p.x), pts.map(p=>p.y)); const xs = pts.map(p=>p.x); const xa=Math.min(...xs), xb=Math.max(...xs);
   mk("cScatter",{type:"scatter",data:{datasets:[
     {type:"line",label:"fit",data:[{x:xa,y:f(xa)},{x:xb,y:f(xb)}],borderColor:css("--ink"),borderWidth:2,pointRadius:0},
     {label:"Year",data:pts,backgroundColor:pts.map(p=>p.y<0?css("--early"):css("--late")),pointRadius:6,borderColor:css("--surface"),borderWidth:2}]},
-    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>i.dataset.label!=="fit",callbacks:{title:c=>String(c[0].raw.yr),label:c=>`winter ${c.raw.x.toFixed(1)} °C · onset ${fmt(c.raw.y)} d`}}},
-      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"winter mean temperature °C",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,title:{display:true,text:"onset index, days",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
-  const yc = C.year_corr;
-  $("#capScatter").innerHTML = `Each dot is a year. Warmer winters go with earlier flowering (r = ${yc.winter.r.toFixed(2)}, p ${pf(yc.winter.p)}). After removing the shared upward trend from both series, the link weakens (r = ${yc.winter_detrended.r.toFixed(2)}, p ${pf(yc.winter_detrended.p)}), so part of this correlation is two things drifting together over time.`;
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>i.dataset.label!=="fit",callbacks:{title:c=>String(c[0].raw.yr),label:c=>`annual ${c.raw.x.toFixed(1)} °C · flowering ${fmt(c.raw.y)} d`}}},
+      scales:{x:{...baseOpts().scales.x,title:axTitle("annual mean temperature °C")},y:{...baseOpts().scales.y,title:axTitle("flowering index, days")}}})});
+  const yc = C.year_corr_mean;
+  $("#capScatter").innerHTML = `Each dot is a year. Warmer years flower earlier (r = ${yc.annual.r.toFixed(2)}, p ${pf(yc.annual.p)}). After removing the shared long-term trend from both, the link is still there (r = ${yc.annual_detrended.r.toFixed(2)}, p ${pf(yc.annual_detrended.p)}), so it isn't just two things drifting together. Wetter-than-trend years flower later (r = ${yc.rain_annual_detrended.r.toFixed(2)}, p ${pf(yc.rain_annual_detrended.p)}).`;
 
   const W = C.window_sensitivity;
   mk("cWin",{type:"bar",data:{labels:W.map(w=>w.window+" days"),datasets:[
-    {label:"95% CI",data:W.map(w=>[w.lo,w.hi]),backgroundColor:css("--accent-soft"),borderColor:css("--accent"),borderWidth:1,borderRadius:4,borderSkipped:false,barThickness:16,grouped:false},
-    {label:"Estimate",data:W.map(w=>[w.sens-0.06,w.sens+0.06]),backgroundColor:css("--ink"),borderRadius:1,borderSkipped:false,barThickness:26,grouped:false}]},
-    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const w=W[c.dataIndex];return `${fmt(w.sens)} d/°C [${fmt(w.lo)}, ${fmt(w.hi)}] · warming ${fmt(w.warming_per_decade,2)} °C/decade → ${fmt(w.sens*w.warming_per_decade)} d/decade`}}}},
-      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"temperature window before typical onset",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,title:{display:true,text:"days per °C (negative = earlier)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
-  const w60=W.find(w=>w.window===60), w180=W.find(w=>w.window===180);
-  $("#capWin").innerHTML = `Pooled across species: how many days onset moves for each 1 °C warmer than usual in the window before that species' typical start. Longer windows respond more strongly, up to ${fmt(w180.sens)} d/°C over 180 days. Multiplied by the warming actually seen in those windows (${fmt(w180.warming_per_decade,2)} °C/decade), that gives ${fmt(w180.sens*w180.warming_per_decade)} d/decade of the ${fmt(A.community.robustness.all_years.days_per_decade)} observed.`;
+    {label:"95% CI",data:W.map(w=>[w.lo_mean,w.hi_mean]),backgroundColor:css("--accent-soft"),borderColor:css("--accent"),borderWidth:1,borderRadius:4,borderSkipped:false,barThickness:16,grouped:false},
+    {label:"Estimate",data:W.map(w=>[w.sens_mean-0.08,w.sens_mean+0.08]),backgroundColor:css("--ink"),borderRadius:1,borderSkipped:false,barThickness:26,grouped:false}]},
+    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const w=W[c.dataIndex];return `${fmt(w.sens_mean)} d/°C [${fmt(w.lo_mean)}, ${fmt(w.hi_mean)}] · warming ${fmt(w.warming_per_decade,2)} °C/decade → ${fmt(w.sens_mean*w.warming_per_decade)} d/decade`}}}},
+      scales:{x:{...baseOpts().scales.x,title:axTitle("temperature window before typical onset")},y:{...baseOpts().scales.y,title:axTitle("days per °C (negative = earlier)")}}})});
+  const w60=W.find(w=>w.window===60), w180=W.find(w=>w.window===180), obs = A.community.robustness.all_years.mean_days_per_decade;
+  $("#capWin").innerHTML = `Pooled across species: how many days mid-flowering moves for each 1 °C warmer than usual in the run-up to that species' typical start. Longer run-ups respond more strongly, up to ${fmt(w180.sens_mean)} d/°C over 180 days. Multiplied by the warming actually seen in those windows (${fmt(w180.warming_per_decade,2)} °C/decade), that gives ${fmt(w60.sens_mean*w60.warming_per_decade)} to ${fmt(w180.sens_mean*w180.warming_per_decade)} d/decade of the ${fmt(obs)} observed.`;
 
-  const tr = C.temp_rain_first, obs = A.community.robustness.all_years.days_per_decade;
+  const trm = C.temp_rain_year_mean, R = A.community.robustness;
   $("#reasons").innerHTML = `
-    <li><b>The earlier trend is real in the record.</b> It shows up in ${Math.round(100*A.species.filter(s=>s.slope_first<0).length/A.species.length)}% of taxa, in first appearance and in mid-flowering date (${fmt(A.community.trend_mean.year.coef*10)} d/decade), and in every sampling subset (${fmt(A.community.robustness.short_season_only.days_per_decade)} to ${fmt(A.community.robustness.stable_effort_2003_2013.days_per_decade)} d/decade). The intervals are wide because there are only about 19 independent years.</li>
-    <li><b>Warming pushes in the right direction.</b> Canberra's winters and springs warmed about half a degree per decade over the archive. Warmer-than-usual pre-flowering periods bring flowering forward by 1–4 days per °C, and warm-winter years (2009, 2013) stand out as early.</li>
-    <li><b>Warming probably doesn't explain all of it.</b> That sensitivity times the warming gives roughly ${fmt(w60.sens*w60.warming_per_decade)} to ${fmt(w180.sens*w180.warming_per_decade)} days per decade, against ${fmt(obs)} observed. With temperature, rainfall and year in one model, the year term stays at ${fmt(C.temp_rain_year_first.year.coef*10)} d/decade.</li>
-    <li><b>Rain matters a little.</b> A wetter 90 days before onset goes with slightly earlier flowering (${fmt(tr.rain_anom.coef*100)} days per extra 100 mm, p ${pf(tr.rain_anom.p)}). The drought breaking in 2010 may have helped some species, but the effect is small.</li>
-    <li><b>Likely non-climate contributors.</b> The garden is maturing and irrigated, which can decouple plants from the weather. Newer plantings and cultivars are chosen for long or early flowering. Volunteers and routes changed over time, and later writers may have featured plants as soon as the first buds opened. The brochures can't separate these, so treat "why" as partly answered: warming contributes, and garden management and recording habits probably contribute more.</li>`;
+    <li><b>The earlier shift is real in the record.</b> Mid-flowering dates moved ${fmt(obs)} days per decade across ${R.all_years.n_species} taxa. The shift holds when the weekly years are thinned to match the fortnightly ones (${fmt(R.thinned_fortnightly.mean_days_per_decade)}), when long-flowering taxa are dropped (${fmt(R.short_season_only.mean_days_per_decade)}), and within the ANBG leaflets alone (${fmt(R.iftw_1997_2016.mean_days_per_decade)}).</li>
+    <li><b>First appearance tells the same story once sampling is matched.</b> Taken raw, the first-appearance trend is only ${fmt(R.all_years.days_per_decade)} d/decade, because fortnightly leaflets from 2014 spot plants about a week later on average. With the weekly years thinned to fortnightly it is ${fmt(R.thinned_fortnightly.days_per_decade)} (95% CI ${fmt(R.thinned_fortnightly.lo)} to ${fmt(R.thinned_fortnightly.hi)}).</li>
+    <li><b>Warmth brings flowering forward.</b> Canberra warmed ${fmt(A.climate_trends.annual.per_decade,2)} °C per decade from 1997 to ${A.last_full_year}. Warmer-than-usual run-ups bring flowering forward by ${Math.abs(w60.sens_mean).toFixed(1)}–${Math.abs(w180.sens_mean).toFixed(1)} days per °C, and warm years such as 2009, 2013 and 2023–24 were early.</li>
+    <li><b>Warming accounts for part of the shift.</b> Sensitivity times warming gives ${fmt(w60.sens_mean*w60.warming_per_decade)} to ${fmt(w180.sens_mean*w180.warming_per_decade)} days per decade, against ${fmt(obs)} observed. With temperature, rainfall and year in one model, the year term is still ${fmt(trm.year.coef*10)} d/decade. That figure may be too high if a fixed window misses when each plant responds.</li>
+    <li><b>Wet years flower later.</b> At the whole-garden level, wetter-than-trend years flowered later (r = ${A.community.year_corr_mean.rain_annual_detrended.r.toFixed(2)}). The cool, wet La Niña years of 2021–2022 are the clearest case. Rain before each plant's own season shows no clear effect, so this may be cloud and cool weather rather than rain itself.</li>
+    <li><b>No jump when the leaflets changed hands.</b> After allowing for the trend, the Friends' leaflets (2016 on) sit ${fmt(C.series_step_mean.friends_series.coef)} days from the ANBG ones (p ${pf(C.series_step_mean.friends_series.p)}), so the handover didn't create the result.</li>
+    <li><b>Likely non-climate contributors.</b> The garden is maturing and irrigated, which can decouple plants from the weather. Newer plantings and cultivars are chosen for long or early flowering. Volunteers and routes changed. The leaflets can't separate these.</li>`;
 }
 
 function initMethod(){
-  const p = A.params;
+  const p = A.params, sp = A.climate_splice, n = A.series_counts;
   $("#method").innerHTML = `
-    <p><b>Source.</b> All ${A.n_brochures} issues linked from the ANBG archive (Apr 1997 – Aug 2016). 52 links now return 404 (all of 1999 and April 2004); those were recovered from the Internet Archive's copies of the old <span class="mono">/iftw.old/</span> pages.</p>
-    <p><b>Extraction.</b> Pages are flattened with bold and italic tracked per character. Bold runs that look like botanical names (italic, followed by a <span class="mono">[Section]</span> ref, or starting with a known genus) become plant records. Five issues that used italics instead of bold go through a fallback parser, and they are flagged. Abbreviated genera (<span class="sp">G. sericea</span>) are expanded from the previous full name. Colour, flowering stage (buds, peak, finishing) and fruit-only mentions are read from the text after each name. Fruit or foliage records are excluded from the timing analysis.</p>
-    <p><b>Names.</b> Each name was matched with the Atlas of Living Australia name-matching service, kingdom Plantae, which maps synonyms to the current accepted species. Where ALA only knew the genus, the printed species name is kept. Cultivars are analysed as their own taxa. Hybrids are shown but not analysed.</p>
-    <p><b>Timing.</b> Each taxon's year starts at its quietest point in the calendar, so a summer bloomer isn't split across 31 December. A season counts only if the brochures covered that species' flowering window with no gap longer than ${p.max_gap} days. Taxa need ${p.min_seasons}+ such seasons spanning ${p.min_span}+ years. Per-taxon trends are ordinary least squares on first-mention date, with Theil–Sen as a check and Benjamini–Hochberg q-values for the ${A.species.length} tests. The garden-wide trend pools each species' anomalies with standard errors clustered by both species and year, because plants in the same year share weather, volunteers and routes.</p>
-    <p><b>Climate.</b> Daily max and min temperature from BOM's ACORN-SAT v2.6 homogenised dataset for Canberra (station 070351), from the Bureau's public FTP. Rainfall from ERA5 reanalysis (Open-Meteo archive) at the ANBG coordinates, because BOM station rainfall isn't available by FTP and the Climate Data Online site blocks scripted downloads.</p>
-    <p><b>Credits.</b> Brochures written by volunteers of the <a href="https://www.anbg.gov.au/gardens/visiting/iftw/iftw-archive/index.html" target="_blank" rel="noopener">Australian National Botanic Gardens</a>; short excerpts are quoted for analysis only. Taxonomy from the <a href="https://www.ala.org.au" target="_blank" rel="noopener">Atlas of Living Australia</a>. Temperature: Bureau of Meteorology ACORN-SAT (CC BY). Rainfall: Copernicus ERA5 via <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Code and data: <a href="https://github.com/Rossed/canberra-bloom-record" target="_blank" rel="noopener">github.com/Rossed/canberra-bloom-record</a>.</p>
-    <p><b>Limits.</b> A brochure is a guided walk, not a survey. A plant is recorded when a volunteer chose to feature it, so "first mention" is a late, noisy proxy for true first flower. Absence in a given week means little. Results for single species should be treated as hypotheses. Analysis generated ${esc(A.generated)}.</p>`;
+    <p><b>Sources.</b> ${n.IFTW} <i>In Flower This Week</i> pages from the ANBG archive (Apr 1997 – Aug 2016), and ${n.FFF} <i>Flowers, Fruit &amp; Foliage</i> PDFs from the Friends of the ANBG (Aug 2016 – now), listed on the Friends' current website and the older mirror of their site. Dead links were recovered from the Internet Archive. Some early Friends captures were cut off at 1 MB, so the largest complete capture was used. There are no leaflets for Apr–Jun 2020 or mid-Aug to Oct 2021 (COVID-19 restrictions).</p>
+    <p><b>Extraction.</b> Web pages are flattened with bold and italic tracked per character. PDFs are read the same way with PyMuPDF and split at the numbered stops, because the two-column layout scrambles reading order. Bold runs that look like botanical names become plant records, and bold roman cultivar names are joined to their italic genus. Ten 2019–20 PDFs made with "Microsoft Print to PDF" store text shifted 29 characters, and those are decoded. One PDF with no font information falls back to matching known genera, and it's flagged. Abbreviated genera (<span class="sp">G. sericea</span>) are expanded from the previous full name. Fruit and foliage-only records are excluded from timing.</p>
+    <p><b>Names.</b> Each name was matched with the Atlas of Living Australia name-matching service, kingdom Plantae, which maps synonyms to the current accepted species. Where ALA only knew the genus, the printed species name is kept. Cultivars are analysed as their own taxa. Hybrids are shown but not analysed. Reviewer corrections from the Check accuracy page override ALA.</p>
+    <p><b>Timing.</b> Each taxon's year starts at its quietest point in the calendar, so a summer bloomer isn't split across 31 December. A season counts only if the leaflets covered that species' flowering window with no gap longer than ${p.max_gap} days. Taxa need ${p.min_seasons}+ such seasons spanning ${p.min_span}+ years. The main measure is the mid-flowering date, the mean of a season's mention dates, because it isn't biased by the 2014 switch from weekly to fortnightly leaflets. First-appearance date is reported alongside, raw and with the weekly years thinned to fortnightly. Per-taxon trends are ordinary least squares with Benjamini–Hochberg q-values. The garden-wide trend pools each taxon's anomalies, with standard errors clustered by both species and year.</p>
+    <p><b>Climate.</b> Daily maximum and minimum temperature from BOM's ACORN-SAT v2.6 homogenised dataset for Canberra (070351), from the Bureau's public FTP, through ${sp.acorn_end}. After that, ERA5 reanalysis at the ANBG site, adjusted by calendar month to match ACORN over 1990–2024 (monthly anomaly r = ${sp.r_tmax.toFixed(2)} for maxima, ${sp.r_tmin.toFixed(2)} for minima). Rainfall is from ERA5 (Open-Meteo archive), because BOM station rainfall isn't on the public FTP and the Climate Data Online site blocks scripted downloads.</p>
+    <p><b>Limits.</b> A leaflet is a guided walk, not a survey. A plant is recorded when a volunteer chose to feature it, so these dates are noisy proxies for flowering. Results for single species should be treated as hypotheses. Analysis generated ${esc(A.generated)}.</p>
+    <p><b>Credits.</b> Leaflets written by volunteers of the <a href="https://www.anbg.gov.au/gardens/visiting/iftw/iftw-archive/index.html" target="_blank" rel="noopener">Australian National Botanic Gardens</a> and the <a href="https://friendsanbg.org.au/discover-the-gardens/flowers-fruit-and-foliage-walks/" target="_blank" rel="noopener">Friends of the ANBG</a>. Short excerpts are quoted for analysis only. Taxonomy from the <a href="https://www.ala.org.au" target="_blank" rel="noopener">Atlas of Living Australia</a>. Temperature: Bureau of Meteorology ACORN-SAT (CC BY). Rainfall and recent temperature: Copernicus ERA5 via <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Code and data: <a href="https://github.com/Rossed/canberra-bloom-record" target="_blank" rel="noopener">github.com/Rossed/canberra-bloom-record</a>.</p>`;
 }
+
 /* ================= CHECK ACCURACY ================= */
 const CK_KEY = "iftw-check-v1";
 let CK, RN = null, ckSel = null;
@@ -763,6 +790,7 @@ function bState(id){ return CK.brochures[id] ||= {rows:{}, missed:[], done:false
 function initCheck(){
   CK = ckLoad() || {reviewer:"", seed:1, brochures:{}, renames:{}};
   CK.sample = drawSample(CK.seed);
+  $("#ckN").textContent = CK.sample.length;
   $("#rvName").value = CK.reviewer || "";
   $("#rvName").addEventListener("input", e => { CK.reviewer = e.target.value; ckSave(); });
   $("#ckNew").addEventListener("click", () => { CK.seed += 1; CK.sample = drawSample(CK.seed); ckSave(); renderCkList(); ckOpen(CK.sample[0]); ckMsg(`New sample drawn. Brochures you already checked still count in the scores.`); });
