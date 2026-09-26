@@ -9,7 +9,7 @@ import statsmodels.api as sm
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(os.path.join(ROOT, "data", "brochures.json")))
-MIN_SEASONS, MIN_SPAN, MAX_GAP, TEMP_WINDOW = 8, 10, 28, 60
+MIN_SEASONS, MIN_SPAN, MAX_GAP, TEMP_WINDOW, LONG_DAYS = 8, 10, 28, 60, 150
 
 # ---------------- climate ----------------
 clim = {}
@@ -164,6 +164,11 @@ thin = [d for i, d in enumerate(all_dates) if d.year >= 2014 or i % 2 == 0]
 thinned = analyse(thin)
 
 keys = sorted(main)
+SPREAD, LONG = {}, {}
+for k in keys:
+    dos = [season_of(d, main[k]["start"])[1] for d in obs[k]]
+    SPREAD[k] = int(np.percentile(dos, 90) - np.percentile(dos, 10))
+    LONG[k] = SPREAD[k] > LONG_DAYS
 q_first = bh([main[k]["first"]["p"] for k in keys])
 q_mean = bh([main[k]["mean"]["p"] for k in keys])
 
@@ -213,6 +218,7 @@ for i, k in enumerate(keys):
         slope_mean=a["mean"]["slope"] * 10, p_mean=a["mean"]["p"], q_mean=float(q_mean[i]),
         theil_first=a["theil_first"] * 10,
         flower_span=int(np.median([s["last"] - s["first"] + 1 for s in ok])),
+        spread=SPREAD[k], long_flowering=LONG[k],
         temp_sens=(sens["slope"] if sens else None), temp_sens_p=(sens["p"] if sens else None),
         robustness=rob, seasons=a["seasons"], points=[[s, d] for s, d in pts], window=a["window"]))
 
@@ -221,7 +227,8 @@ def pooled(rows, y, xs):
     rows = [r for r in rows if all(r[x] is not None for x in xs)]
     X = sm.add_constant(np.array([[r[x] for x in xs] for r in rows], float))
     Y = np.array([r[y] for r in rows], float)
-    groups = np.array([keys.index(r["key"]) for r in rows])
+    # two-way clustering: species (repeated seasons) and year (shared weather, volunteer, route)
+    groups = np.column_stack([[keys.index(r["key"]) for r in rows], [r["year"] for r in rows]])
     fit = sm.OLS(Y, X).fit(cov_type="cluster", cov_kwds={"groups": groups})
     return {name: dict(coef=float(fit.params[j + 1]), se=float(fit.bse[j + 1]), p=float(fit.pvalues[j + 1]),
                        lo=float(fit.conf_int()[j + 1][0]), hi=float(fit.conf_int()[j + 1][1])) for j, name in enumerate(xs)} | {"n": len(rows), "r2": float(fit.rsquared)}
@@ -254,17 +261,18 @@ community["yearly"] = [dict(year=y, n=len(v), anom_first=float(np.mean([r["anom_
                        for y, v in sorted(by_year.items())]
 
 # robustness of the pooled trend
-def pooled_trend(res, span_max=None):
+def pooled_trend(res, short_only=False):
     rows = []
-    if span_max:
-        res = {k: a for k, a in res.items() if np.median([s["last"] - s["first"] + 1 for s in a["seasons"] if s["covered"]]) <= span_max}
+    if short_only:
+        res = {k: a for k, a in res.items() if not LONG[k]}
     for k, a in res.items():
         ok = [s for s in a["seasons"] if s["covered"]]
         mf = np.mean([s["first"] for s in ok])
         rows += [dict(key=k, year=s["season"], a=s["first"] - mf) for s in ok]
     ks = sorted(res)
     X = sm.add_constant(np.array([r["year"] for r in rows], float))
-    fit = sm.OLS(np.array([r["a"] for r in rows]), X).fit(cov_type="cluster", cov_kwds={"groups": np.array([ks.index(r["key"]) for r in rows])})
+    g2 = np.column_stack([[ks.index(r["key"]) for r in rows], [r["year"] for r in rows]])
+    fit = sm.OLS(np.array([r["a"] for r in rows]), X).fit(cov_type="cluster", cov_kwds={"groups": g2})
     return dict(days_per_decade=float(fit.params[1] * 10), lo=float(fit.conf_int()[1][0] * 10), hi=float(fit.conf_int()[1][1] * 10),
                 p=float(fit.pvalues[1]), n_species=len(res), n_obs=len(rows))
 
@@ -272,7 +280,7 @@ def pooled_trend(res, span_max=None):
 stable = analyse([d for d in all_dates if 2003 <= d.year <= 2013])
 community["robustness"] = dict(all_years=pooled_trend(main), weekly_1997_2013=pooled_trend(weekly),
                                thinned_fortnightly=pooled_trend(thinned), stable_effort_2003_2013=pooled_trend(stable),
-                               short_season_only=pooled_trend(main, 120))
+                               short_season_only=pooled_trend(main, True))
 
 # temperature window sensitivity: mean temp over N days before each species' climatological onset
 win_sens = []
@@ -349,7 +357,7 @@ for r in D:
 effort_out = [dict(year=y, brochures=effort[y], mean_plants=float(np.mean(plants_per[y]))) for y in sorted(effort)]
 
 out = dict(generated=datetime.datetime.now().isoformat(timespec="seconds"),
-           params=dict(min_seasons=MIN_SEASONS, min_span=MIN_SPAN, max_gap=MAX_GAP, temp_window=TEMP_WINDOW),
+           params=dict(long_days=LONG_DAYS, min_seasons=MIN_SEASONS, min_span=MIN_SPAN, max_gap=MAX_GAP, temp_window=TEMP_WINDOW),
            n_brochures=len(D), n_keys_total=len(obs), species=species_out, community=community,
            climate=climate, climate_trends=climate_trends, families=families, effort=effort_out)
 os.makedirs(os.path.join(ROOT, "site", "data"), exist_ok=True)

@@ -13,3 +13,9 @@ Live site: https://rossed.github.io/canberra-bloom-record/
 
 Note: `data/raw/` (the original brochure HTML) is not committed; `pipeline/01_download.py` and `02_recover_wayback.py` fetch it.
 Credits: brochures © Australian National Botanic Gardens volunteers; taxonomy from ALA; temperature BOM ACORN-SAT; rainfall ERA5 via Open-Meteo.
+
+## Checking accuracy
+The site's **3 · Check accuracy** page lets a reviewer mark a stratified random sample (one brochure per year) against the originals and review ALA name changes. Put exported result files in `validation/`, then:
+
+    python3 pipeline/08_apply_validation.py   # prints precision / recall / name accuracy with 95% CIs, writes data/name_overrides.json
+    python3 pipeline/05_taxonomy.py && python3 pipeline/06_analysis.py && python3 pipeline/07_site_data.py

@@ -41,13 +41,20 @@ with cf.ThreadPoolExecutor(4) as ex:
             json.dump(cache, open(CACHE, "w"))
 json.dump(cache, open(CACHE, "w"), indent=0)
 
+# reviewer corrections exported from the site's "Check accuracy" screen (see 08_apply_validation.py)
+OV_PATH = os.path.join(ROOT, "data", "name_overrides.json")
+overrides = json.load(open(OV_PATH)) if os.path.exists(OV_PATH) else {}
 stats = collections.Counter()
 for r in d:
     for p in r["plants"]:
         res = cache.get(query_for(p)) or {}
         ok = bool(res.get("success") and res.get("family"))
         hybrid = "×" in p["name"] or "×" in (p["epithet"] or "")
-        if ok and res.get("rank") not in ("genus", "family") and res.get("matchType") != "higherMatch":
+        if hybrid:
+            species, src = None, None
+        elif p["species_key"] in overrides:
+            species, src = overrides[p["species_key"]], "reviewer override"
+        elif ok and res.get("rank") not in ("genus", "family") and res.get("matchType") != "higherMatch":
             species, src = res.get("species"), "ALA accepted"
         elif ok and p["epithet"] and not hybrid:
             species, src = f"{p['genus'] if res.get('matchType') != 'fuzzyMatch' else res.get('genus')} {p['epithet']}", "as written (ALA matched genus only)"
