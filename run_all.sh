@@ -12,4 +12,5 @@ python3 pipeline/05_taxonomy.py
 python3 pipeline/06_analysis.py
 python3 pipeline/07_site_data.py
 [ -n "$(ls validation/*.json 2>/dev/null)" ] && python3 pipeline/08_apply_validation.py || true
+python3 pipeline/11_report.py
 echo "Done. Serve with: python3 -m http.server 8765 --directory site"

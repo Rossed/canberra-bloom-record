@@ -11,6 +11,7 @@ Extraction + phenology analysis of the Australian National Botanic Gardens flowe
 - `data/extract_iftw.json`, `data/extract_fff.json` – raw extractions; `05_taxonomy.py` merges them into `data/brochures.json`
 - `data/climate/` – BOM ACORN-SAT v2.6 Canberra (070351) Tmax/Tmin via BOM anon FTP (to Dec 2024), then ERA5 bias-corrected per month (see `splice_check.json`); ERA5 rainfall via Open-Meteo
 - `pipeline/01…07` – numbered steps; `./run_all.sh` rebuilds everything
+- `site/report/canberra-bloom-record.pdf` – shareable PDF report, rebuilt by `pipeline/11_report.py` (fonts in `data/fonts/`, SIL OFL)
 - `site/` – static website (page 1 extraction validation, page 2 analysis). `python3 -m http.server 8765 --directory site`
 
 Live site: https://rossed.github.io/canberra-bloom-record/
