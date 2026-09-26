@@ -1,0 +1,591 @@
+<meta charset="utf-8">
+<title>Canberra Bloom Record</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f7f3; --surface:#ffffff; --surface-2:#eef1ec; --line:#dde2dc; --line-strong:#c4cbc4;
+  --ink:#1b2420; --ink-2:#4b5751; --ink-3:#7a857f;
+  --accent:#3d6b58; --accent-soft:#e2ece6;
+  --early:#2a78d6; --late:#eb6834; --neutral:#8a918c;
+  --warn:#a86a00; --warn-soft:#fbf0d9; --bad:#b93a39; --bad-soft:#f8e1e0; --good:#2c7a3f; --good-soft:#e0f0e3;
+  --grid:rgba(27,36,32,.08);
+  --serif:"Spectral",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#121614; --surface:#1a1f1c; --surface-2:#222924; --line:#2e3631; --line-strong:#414b45;
+  --ink:#e9eee9; --ink-2:#b4beb8; --ink-3:#86918b;
+  --accent:#7fb39b; --accent-soft:#223a30;
+  --early:#3987e5; --late:#d95926; --neutral:#8d948f;
+  --warn:#e0a83a; --warn-soft:#3a2e14; --bad:#e66767; --bad-soft:#3d1f1f; --good:#6cc07f; --good-soft:#1c3322;
+  --grid:rgba(233,238,233,.08);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121614; --surface:#1a1f1c; --surface-2:#222924; --line:#2e3631; --line-strong:#414b45;
+  --ink:#e9eee9; --ink-2:#b4beb8; --ink-3:#86918b;
+  --accent:#7fb39b; --accent-soft:#223a30;
+  --early:#3987e5; --late:#d95926; --neutral:#8d948f;
+  --warn:#e0a83a; --warn-soft:#3a2e14; --bad:#e66767; --bad-soft:#3d1f1f; --good:#6cc07f; --good-soft:#1c3322;
+  --grid:rgba(233,238,233,.08);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--sans);margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:0 64px}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sp{font-family:var(--serif);font-style:italic}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;letter-spacing:-.01em}
+h2{font-size:26px;line-height:1.2}
+h3{font-size:19px;line-height:1.3}
+.eyebrow{font:500 11px/1.2 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+p{margin:0}
+.prose{max-width:68ch;color:var(--ink-2)}
+.prose p+p{margin-top:.8em}
+
+/* masthead */
+header.mast{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:env(safe-area-inset-top,0px);z-index:10}
+.mast .wrap{display:flex;align-items:center;gap:24px;padding-block:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px;margin-right:auto}
+.brand b{font:600 20px/1 var(--serif)}
+.brand span{font-size:12px;color:var(--ink-3)}
+nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:8px}
+nav.tabs a{padding:7px 14px;border-radius:6px;text-decoration:none;color:var(--ink-2);font-weight:500;font-size:14px}
+nav.tabs a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+.intro{padding-block:32px 20px;display:grid;gap:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-block:8px 24px}
+.stat{background:var(--surface);padding:14px 16px;display:grid;gap:4px}
+.stat .v{font:500 24px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--ink-2);line-height:1.35}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;line-height:1;padding:4px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.good{background:var(--good-soft);color:var(--good)}
+.chip.acc{background:var(--accent-soft);color:var(--accent)}
+.chip.early{background:color-mix(in srgb,var(--early) 16%,transparent);color:var(--early)}
+.chip.late{background:color-mix(in srgb,var(--late) 16%,transparent);color:var(--late)}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+input[type=search],select{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--ink)}
+input[type=search]{min-width:0;flex:1 1 240px}
+label.tog{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--ink-2)}
+.count{font-size:13px;color:var(--ink-3);margin-left:auto}
+
+/* extraction layout */
+.xgrid{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:20px;align-items:start}
+@media (max-width:860px){.xgrid{grid-template-columns:1fr}}
+.blist{background:var(--surface);border:1px solid var(--line);border-radius:10px;max-height:calc(100vh - 170px);overflow:auto;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+@media (max-width:860px){.blist{position:static;max-height:360px}}
+.yr{position:sticky;top:0;background:var(--surface-2);font:600 12px/1 var(--mono);padding:8px 12px;color:var(--ink-2);border-bottom:1px solid var(--line);z-index:1}
+.brow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);cursor:pointer;width:100%;background:none;border-left:3px solid transparent;border-top:0;border-right:0;text-align:left;color:inherit;font:inherit}
+.brow:hover{background:var(--surface-2)}
+.brow[aria-selected="true"]{background:var(--accent-soft);border-left-color:var(--accent)}
+.brow .d{font:500 13px var(--mono)}
+.brow .n{font:12px var(--mono);color:var(--ink-3)}
+.brow .f{display:flex;gap:4px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)} .dot.wb{background:var(--accent)}
+
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;min-width:0}
+.dhead{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:baseline;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px 20px;padding-block:14px;border-bottom:1px solid var(--line)}
+.meta dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.meta dd{margin:2px 0 0;font-size:14px}
+.tablewrap{overflow-x:auto;margin-top:14px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font:500 11px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:8px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:var(--surface);position:sticky;top:0}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right}
+tr.ctx td{padding-top:0;color:var(--ink-2);font-size:12.5px;border-bottom:1px solid var(--line)}
+tr.hasctx td{border-bottom:0}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:2px;vertical-align:-1px;border:1px solid var(--line-strong)}
+.sub{color:var(--ink-3);font-size:12px}
+.side-lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:18px}
+.side-lists div{font-size:13px;color:var(--ink-2)}
+.side-lists h4{margin:0 0 4px;font:500 11px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+button.lnk{background:none;border:0;color:var(--accent);cursor:pointer;font:inherit;font-size:12.5px;padding:0}
+
+/* analysis */
+section.block{padding-block:28px;border-top:1px solid var(--line);display:grid;gap:16px}
+.answer{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:14px}
+.answer .big{font:600 clamp(22px,3vw,30px)/1.2 var(--serif);max-width:32ch}
+.answer .big em{color:var(--early);font-style:normal}
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+@media (max-width:420px){.cards2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:10px;min-width:0}
+.panel .cap{font-size:13px;color:var(--ink-2);max-width:70ch}
+.chart{position:relative;height:280px;width:100%}
+.chart.tall{height:360px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.legend i.pt{width:8px;height:8px;border-radius:50%}
+.bar{display:inline-block;height:8px;border-radius:0 4px 4px 0;vertical-align:middle}
+.barcell{position:relative;width:130px;height:14px}
+.barcell .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-strong)}
+.barcell .b{position:absolute;top:3px;height:8px}
+.srow{cursor:pointer}
+.srow:hover td{background:var(--surface-2)}
+.srow[aria-selected="true"] td{background:var(--accent-soft)}
+.stbl{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--ink)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0}
+ol.reasons{margin:0;padding-left:1.2em;display:grid;gap:10px;max-width:74ch;color:var(--ink-2)}
+ol.reasons b{color:var(--ink)}
+.note{font-size:13px;color:var(--ink-3)}
+.loading{padding:60px 0;text-align:center;color:var(--ink-3)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="brand"><b>Canberra Bloom Record</b><span>ANBG “In Flower This Week”, 1997–2016</span></div>
+    <nav class="tabs" aria-label="Pages">
+      <a href="#extraction" id="tab-extraction">1 · Extraction</a>
+      <a href="#analysis" id="tab-analysis">2 · Analysis</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="loading" class="loading">Loading 899 brochures…</div>
+
+  <!-- ============ EXTRACTION ============ -->
+  <div id="view-extraction" hidden>
+    <div class="intro">
+      <div class="eyebrow">Page 1 · Validate the extraction</div>
+      <h1>Every brochure, and what was pulled out of it</h1>
+      <p class="prose">Each ANBG volunteer walk sheet puts the plants in flower in <b>bold</b>, usually followed by a garden bed reference like <span class="mono">[Section 30]</span>. The parser reads that convention, cleans the name, and resolves it against the Atlas of Living Australia so misspellings and renamed species (e.g. <span class="sp">Bracteantha bracteata</span> → <span class="sp">Xerochrysum bracteatum</span>) join up across 20 years. Pick a brochure to compare the extraction with the original page.</p>
+    </div>
+    <div class="stats" id="xstats"></div>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Search a plant, family or brochure date (e.g. Grevillea, Proteaceae, 2009-09)" aria-label="Search">
+      <select id="yearSel" aria-label="Year"></select>
+      <label class="tog"><input type="checkbox" id="flagOnly"> Flagged only</label>
+      <span class="count" id="xcount"></span>
+    </div>
+    <div class="xgrid">
+      <div class="blist" id="blist" role="listbox" aria-label="Brochures"></div>
+      <div class="detail" id="detail"></div>
+    </div>
+  </div>
+
+  <!-- ============ ANALYSIS ============ -->
+  <div id="view-analysis" hidden>
+    <div class="intro">
+      <div class="eyebrow">Page 2 · Analysis</div>
+      <h1>Which flowers are blooming earlier, and why?</h1>
+    </div>
+    <div class="answer" id="answer"></div>
+
+    <section class="block">
+      <div><div class="eyebrow">The garden-wide signal</div><h2>Flowering onset, all taxa combined</h2></div>
+      <p class="prose">For each species, every season's first appearance in the brochures is compared with that species' own average. Averaging those differences across all species in a year gives a garden-wide onset index. Below zero means the garden flowered earlier than usual.</p>
+      <div class="cards2">
+        <div class="panel">
+          <h3>Onset index by year</h3>
+          <div class="legend"><span><i style="background:var(--early)"></i>Earlier than species average</span><span><i style="background:var(--late)"></i>Later</span><span><i style="background:var(--ink)"></i>Linear trend</span></div>
+          <div class="chart"><canvas id="cYearly"></canvas></div>
+          <p class="cap" id="capYearly"></p>
+        </div>
+        <div class="panel">
+          <h3>How robust is the trend?</h3>
+          <div class="legend"><span><i style="background:var(--ink)"></i>Estimate</span><span><i style="background:var(--accent-soft);border:1px solid var(--accent);height:8px"></i>95% confidence interval</span></div>
+          <div class="chart"><canvas id="cRobust"></canvas></div>
+          <p class="cap">The sheets went from weekly to fortnightly in 2014 and grew from ~16 to ~23 plants per issue by 2008. Both changes could fake a trend. Each row reruns the pooled model on a subset that removes one of them. The last row drops near year-round flowerers, whose first mention is mostly noise. Bars show 95% confidence intervals (clustered by species).</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div><div class="eyebrow">Species by species</div><h2>Which flowers are shifting</h2></div>
+      <p class="prose">326 taxa appear in at least 8 well-sampled seasons spanning 10+ years. The shift is a linear trend in first-appearance date, in days per decade. The table opens sorted by strength of evidence (p). Very large shifts usually belong to long-flowering plants and are not reliable. Individual species' records are noisy, because a plant only shows up if the volunteer's walk that week passed it. So read single-species results as leads, and check the <b>q</b> value (false discovery rate across all 326 tests) before trusting one.</p>
+      <div class="cards2">
+        <div class="panel">
+          <h3>Distribution of shifts</h3>
+          <div class="chart"><canvas id="cHist"></canvas></div>
+          <p class="cap" id="capHist"></p>
+        </div>
+        <div class="panel">
+          <h3>By plant family</h3>
+          <div class="chart"><canvas id="cFam"></canvas></div>
+          <p class="cap">Mean onset shift for families with at least 3 wild species analysed. Numbers show species analysed.</p>
+        </div>
+      </div>
+      <div class="controls">
+        <input type="search" id="sq" placeholder="Filter species, common name or family" aria-label="Filter species">
+        <select id="sKind" aria-label="Kind"><option value="">Species &amp; cultivars</option><option value="species">Wild species only</option><option value="cultivar">Cultivars only</option></select>
+        <select id="sSig" aria-label="Evidence"><option value="">Any evidence</option><option value="p">p &lt; 0.05</option><option value="rob">Earlier in all robustness runs</option></select>
+        <span class="count" id="scount"></span>
+      </div>
+      <div class="stbl"><table id="stable"><thead><tr>
+        <th class="sortable" data-k="key">Taxon</th><th class="sortable" data-k="family">Family</th>
+        <th class="sortable" data-k="typical_onset_doy">Typical onset</th><th class="sortable num" data-k="n_seasons">Seasons</th><th class="sortable num" data-k="flower_span" title="Median days between first and last mention in a season">Span</th>
+        <th class="sortable num" data-k="slope_first">Onset shift<br><span style="text-transform:none;letter-spacing:0">days / decade</span></th><th></th>
+        <th class="sortable num" data-k="p_first">p</th><th class="sortable num" data-k="q_first">q</th>
+        <th class="sortable num" data-k="slope_mean">Mid-flowering shift</th><th class="sortable num" data-k="temp_sens">Days per °C</th>
+      </tr></thead><tbody></tbody></table></div>
+      <div class="panel" id="spDetail"></div>
+    </section>
+
+    <section class="block">
+      <div><div class="eyebrow">The why</div><h2>Is it the warming?</h2></div>
+      <div class="cards2">
+        <div class="panel">
+          <h3>Canberra seasonal temperature</h3>
+          <div class="legend" id="legTemp"></div>
+          <div class="chart"><canvas id="cTemp"></canvas></div>
+          <p class="cap" id="capTemp"></p>
+        </div>
+        <div class="panel">
+          <h3>Rainfall</h3>
+          <div class="legend"><span><i style="background:var(--accent)"></i>Jun–Nov rainfall</span><span><i style="background:var(--neutral)"></i>Rest of year</span></div>
+          <div class="chart"><canvas id="cRain"></canvas></div>
+          <p class="cap">Canberra was in the Millennium Drought until 2009, then 2010 was very wet. ERA5 reanalysis at the ANBG site.</p>
+        </div>
+        <div class="panel">
+          <h3>Warm winters, early years</h3>
+          <div class="chart"><canvas id="cScatter"></canvas></div>
+          <p class="cap" id="capScatter"></p>
+        </div>
+        <div class="panel">
+          <h3>How many days per degree?</h3>
+          <div class="legend"><span><i style="background:var(--ink)"></i>Estimate</span><span><i style="background:var(--accent-soft);border:1px solid var(--accent);height:8px"></i>95% confidence interval</span></div>
+          <div class="chart"><canvas id="cWin"></canvas></div>
+          <p class="cap" id="capWin"></p>
+        </div>
+      </div>
+      <div class="panel"><h3>Reading the evidence</h3><ol class="reasons" id="reasons"></ol></div>
+    </section>
+
+    <section class="block">
+      <div><div class="eyebrow">Method</div><h2>How this was built</h2></div>
+      <div class="prose" id="method"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt = (x, d=1) => x == null || isNaN(x) ? "–" : (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(d);
+const pf = p => p == null ? "–" : p < 0.001 ? "<0.001" : p.toFixed(3);
+const REF = Date.UTC(2001,0,1);
+const doyLabel = doy => { const d = new Date(REF + (((Math.round(doy)%365)+365)%365)*864e5); return d.getUTCDate()+" "+d.toLocaleString("en-AU",{month:"short",timeZone:"UTC"}); };
+const COLOUR_HEX = {red:"#c9302c",pink:"#e88fb0",orange:"#ee8a2f",yellow:"#f2c80f",cream:"#f3ead0",white:"#ffffff",green:"#5d9c4a",blue:"#3b6fd1",mauve:"#b28ad6",purple:"#7a3fa0",brown:"#8a5a33"};
+// italicise scientific part of a name (genus + epithets), keep cultivar quotes / ranks roman
+function sci(name){
+  if(!name) return "";
+  return esc(name).replace(/('[^']*'?)|\b(subsp\.|var\.|f\.|sp\.|×)|([^'\s][^'\s]*)/g,(m,c,r,w)=> c ? c : r ? r : `<span class="sp">${w}</span>`);
+}
+let B = [], A = null, charts = {};
+
+Promise.all([fetch("data/brochures.json").then(r=>r.json()), fetch("data/analysis.json").then(r=>r.json())])
+.then(([b,a]) => { document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; $("#loading").hidden = true; initExtraction(); route(); window.addEventListener("hashchange", route); })
+.catch(e => { $("#loading").textContent = "Couldn't load the data files (" + e.message + "). Serve this folder over HTTP rather than opening the file directly."; });
+
+let analysisReady = false;
+function route(){
+  const an = location.hash === "#analysis";
+  $("#view-extraction").hidden = an; $("#view-analysis").hidden = !an;
+  $("#tab-extraction").setAttribute("aria-current", an ? "false" : "page");
+  $("#tab-analysis").setAttribute("aria-current", an ? "page" : "false");
+  if (an && !analysisReady){ analysisReady = true; initAnalysis(); }
+}
+
+/* ================= EXTRACTION ================= */
+let sel = null, filtered = [];
+function initExtraction(){
+  const nP = B.reduce((s,r)=>s+r.np,0);
+  const allP = B.flatMap(r=>r.p);
+  const nSp = allP.filter(p=>p[3]).length, nFam = allP.filter(p=>p[5]).length;
+  const taxa = new Set(allP.map(p=>p[3]||p[2]));
+  const nWb = B.filter(r=>r.src==="wayback").length, nFl = B.filter(r=>r.fl.length).length;
+  const nRen = allP.filter(p=>p[6]).length;
+  $("#xstats").innerHTML = [
+    [B.length, `brochures (${B.length-nWb} live, ${nWb} recovered from the Wayback Machine)`],
+    [nP.toLocaleString(), "plant records extracted"],
+    [taxa.size.toLocaleString(), "distinct taxa (species, subspecies and cultivars)"],
+    [(100*nSp/nP).toFixed(1)+"%", `resolved to a species; ${(100*nFam/nP).toFixed(1)}% to at least a family`],
+    [nRen.toLocaleString(), "records under an old name, mapped to the current accepted species"],
+    [nFl, "brochures flagged for a closer look"],
+  ].map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
+  const years = [...new Set(B.map(r=>r.d.slice(0,4)))];
+  $("#yearSel").innerHTML = `<option value="">All years</option>` + years.map(y=>`<option>${y}</option>`).join("");
+  ["#q","#yearSel","#flagOnly"].forEach(s=>$(s).addEventListener("input", renderList));
+  renderList();
+  select(B[B.length-1].id);
+}
+function matches(r, q){
+  if(!q) return true;
+  if(r.d.includes(q) || r.id.includes(q)) return true;
+  return r.p.some(p => (p[1]+" "+p[2]+" "+(p[3]||"")+" "+(p[5]||"")+" "+(p[8]||"")).toLowerCase().includes(q));
+}
+function renderList(){
+  const q = $("#q").value.trim().toLowerCase(), y = $("#yearSel").value, fo = $("#flagOnly").checked;
+  filtered = B.filter(r => (!y || r.d.startsWith(y)) && (!fo || r.fl.length) && matches(r,q));
+  $("#xcount").textContent = `${filtered.length} of ${B.length} brochures`;
+  let html = "", cy = "";
+  for (const r of [...filtered].reverse()){
+    const yy = r.d.slice(0,4);
+    if (yy !== cy){ cy = yy; const n = filtered.filter(x=>x.d.startsWith(yy)).length; html += `<div class="yr">${yy} · ${n} issues</div>`; }
+    const dots = (r.src==="wayback"?`<span class="dot wb" title="Recovered from Wayback Machine"></span>`:"") + (r.fl.length?`<span class="dot warn" title="${esc(r.fl.join("; "))}"></span>`:"");
+    html += `<button class="brow" role="option" data-id="${r.id}" aria-selected="${r.id===sel}"><span class="d">${r.d}</span><span class="n">${r.np} plants</span><span class="f">${dots}</span></button>`;
+  }
+  $("#blist").innerHTML = html || `<p class="note" style="padding:16px">No brochures match. Clear the search or year filter.</p>`;
+  $("#blist").querySelectorAll(".brow").forEach(b=>b.addEventListener("click",()=>select(b.dataset.id)));
+}
+function select(id){
+  sel = id;
+  document.querySelectorAll(".brow").forEach(b=>b.setAttribute("aria-selected", b.dataset.id===id));
+  const r = B.find(x=>x.id===id); if(!r) return;
+  const q = $("#q").value.trim().toLowerCase();
+  const dt = new Date(r.d+"T00:00:00Z").toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"});
+  const flags = r.fl.map(f=>`<span class="chip warn">${esc(f)}</span>`).join(" ");
+  const rows = r.p.map((p,i)=>{
+    const [li,raw,tk,acc,src,fam,ren,sec,common,cols,stage,phase,ctx,ak] = p;
+    const hit = q && (raw+" "+tk+" "+(acc||"")+" "+(fam||"")+" "+(common||"")).toLowerCase().includes(q);
+    let accCell = acc ? sci(acc) : `<span class="chip bad">unresolved</span>`;
+    if (ren) accCell += ` <span class="chip acc" title="Printed under an older name">renamed</span>`;
+    if (acc && src && src.startsWith("as written")) accCell += ` <span class="chip" title="ALA recognised the genus only; the name is used as printed">genus-matched</span>`;
+    const colours = (cols? cols.split(","):[]).map(c=>`<span class="sw" title="${c}" style="background:${COLOUR_HEX[c]||"transparent"}"></span>`).join("");
+    const st = stage ? `<span class="chip ${stage==="early"?"early":stage==="late"?"late":""}">${stage}</span>` : "";
+    const ph = phase!=="flowering" ? `<span class="chip warn" title="Excluded from phenology analysis">${phase}</span>` : "";
+    return `<tr class="hasctx" ${hit?'style="background:var(--accent-soft)"':''}><td class="num">${li??(i+1)}</td><td>${sci(raw)}</td><td>${sci(tk)}</td><td>${accCell}</td><td>${esc(fam||"–")}</td><td class="mono">${esc(sec||"–")}</td><td>${esc(common||"")}</td><td>${colours} ${st} ${ph}</td></tr>
+      <tr class="ctx"><td></td><td colspan="7">${esc(ctx)}</td></tr>`;
+  }).join("");
+  const list = (arr, it) => arr && arr.length ? arr.map(x=>it?sci(x):esc(x)).join(", ") : `<span class="sub">none</span>`;
+  $("#detail").innerHTML = `
+    <div class="dhead"><div><div class="eyebrow">In Flower This Week · ${r.id}</div><h2>${dt}</h2></div>
+      <a href="${esc(r.url)}" target="_blank" rel="noopener">Open original ${r.src==="wayback"?"(Wayback Machine)":"on anbg.gov.au"} ↗</a></div>
+    <dl class="meta">
+      <div><dt>Heading on sheet</dt><dd>${esc(r.hd||"–")}${r.dr?` <span class="sub">(covers ${esc(r.dr)})</span>`:""}</dd></div>
+      <div><dt>Volunteer</dt><dd>${esc(r.au||"not signed")}</dd></div>
+      <div><dt>Plants extracted</dt><dd class="num">${r.np} <span class="sub">· ${r.qp} with a Section ref, ${r.qs} Section refs on page</span></dd></div>
+      <div><dt>Weather noted</dt><dd>${list(r.wx)}</dd></div>
+      <div><dt>Wildlife noted</dt><dd>${list(r.fa)}</dd></div>
+      <div><dt>Parser</dt><dd>${r.mode==="bold"?"Bold names":"Italic fallback"} ${flags}</dd></div>
+    </dl>
+    <p class="prose" style="padding-top:12px;font-size:14px"><span class="eyebrow">Opening line · </span>${esc(r.intro)}</p>
+    <div class="tablewrap"><table><thead><tr><th class="num">#</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="side-lists">
+      <div><h4>Photo on the sheet</h4>${list(r.cap,1)}</div>
+      <div><h4>Named with a Section ref but not bold</h4>${list(r.lm,1)}<div class="sub">Usually landmarks such as tree ferns and conifers. Not treated as in flower.</div></div>
+      <div><h4>Other species mentioned in passing</h4>${list(r.inc,1)}</div>
+    </div>`;
+}
+
+/* ================= ANALYSIS ================= */
+function baseOpts(extra={}){
+  const ink2 = css("--ink-2"), grid = css("--grid");
+  return Object.assign({responsive:true, maintainAspectRatio:false, animation:false,
+    interaction:{mode:"nearest", intersect:false},
+    plugins:{legend:{display:false}, tooltip:{backgroundColor:css("--surface"), titleColor:css("--ink"), bodyColor:css("--ink-2"), borderColor:css("--line-strong"), borderWidth:1, padding:10, titleFont:{family:"IBM Plex Sans",weight:"600"}, bodyFont:{family:"IBM Plex Mono"}}},
+    scales:{x:{grid:{color:grid,drawTicks:false}, border:{color:css("--line-strong")}, ticks:{color:ink2,font:{family:"IBM Plex Mono",size:11},padding:6}},
+            y:{grid:{color:grid,drawTicks:false}, border:{display:false}, ticks:{color:ink2,font:{family:"IBM Plex Mono",size:11},padding:6}}}}, extra);
+}
+function mk(id, cfg){ if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); return charts[id]; }
+function linfit(xs, ys){ const n=xs.length, mx=xs.reduce((a,b)=>a+b)/n, my=ys.reduce((a,b)=>a+b)/n; let sxy=0,sxx=0; xs.forEach((x,i)=>{sxy+=(x-mx)*(ys[i]-my); sxx+=(x-mx)**2}); const b=sxy/sxx; return x=>my+b*(x-mx); }
+
+function initAnalysis(){
+  const C = A.community, S = A.species, ct = A.climate_trends, R = C.robustness;
+  const early = S.filter(s=>s.slope_first<0).length;
+  const sigE = S.filter(s=>s.slope_first<0 && s.p_first<.05).length, sigL = S.filter(s=>s.slope_first>0 && s.p_first<.05).length;
+  const ws = C.window_sensitivity, w180 = ws.find(w=>w.window===180), w60 = ws.find(w=>w.window===60);
+  const obs = R.all_years.days_per_decade;
+  const expLo = w60.sens*w60.warming_per_decade, expHi = w180.sens*w180.warming_per_decade;
+  $("#answer").innerHTML = `
+    <div class="eyebrow">Short answer</div>
+    <p class="big">Across the garden, flowering now starts about <em>${Math.abs(obs).toFixed(0)} days earlier per decade</em>. Warming explains only a small part of that.</p>
+    <div class="stats" style="margin:0">
+      <div class="stat"><span class="v">${fmt(obs)} d</span><span class="l">onset shift per decade, all taxa pooled (95% CI ${fmt(R.all_years.lo,0)} to ${fmt(R.all_years.hi,0)})</span></div>
+      <div class="stat"><span class="v">${early} / ${S.length}</span><span class="l">taxa trending earlier; ${sigE} significantly earlier and ${sigL} significantly later at p&lt;0.05</span></div>
+      <div class="stat"><span class="v">${fmt(ct.winter.per_decade,2)} °C</span><span class="l">winter warming per decade in Canberra, 1997–2016 (spring ${fmt(ct.spring.per_decade,2)} °C)</span></div>
+      <div class="stat"><span class="v">${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}%</span><span class="l">of the shift accounted for by warmer pre-flowering weather (${fmt(expLo,1)} to ${fmt(expHi,1)} d/decade)</span></div>
+    </div>
+    <p class="prose">Earlier flowering is garden-wide and survives every sampling check. Warm winters line up with early years, and each species flowers ${Math.abs(w60.sens).toFixed(1)}–${Math.abs(w180.sens).toFixed(1)} days earlier per °C, depending on the window measured. But Canberra only warmed about a quarter of a degree per decade in those windows, which is too little to produce a week-per-decade shift. The rest is likely a mix of the garden's own changes and how the sheets were written. See <a href="#analysis" data-scroll="reasons">Reading the evidence</a>.</p>`;
+
+  // yearly index
+  const Y = C.yearly.filter(y=>y.n>=50);
+  const f = linfit(Y.map(y=>y.year), Y.map(y=>y.anom_first));
+  const early_c = css("--early"), late_c = css("--late"), ink = css("--ink");
+  mk("cYearly",{type:"bar",data:{labels:Y.map(y=>y.year),datasets:[
+    {type:"line",label:"Trend",data:Y.map(y=>f(y.year)),borderColor:ink,borderWidth:2,pointRadius:0,borderDash:[5,4]},
+    {label:"Onset index",data:Y.map(y=>y.anom_first),backgroundColor:Y.map(y=>y.anom_first<0?early_c:late_c),borderRadius:4,borderSkipped:"start",maxBarThickness:22}]},
+    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>c.dataset.label==="Trend"?`Trend ${fmt(c.raw)} d`:`${fmt(c.raw)} days vs average · ${Y[c.dataIndex].n} species-seasons`}}},
+      scales:{...baseOpts().scales,y:{...baseOpts().scales.y,title:{display:true,text:"days vs species average",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  $("#capYearly").innerHTML = `Years with at least 50 species-seasons. The trend is ${fmt(obs)} days per decade (p ${pf(R.all_years.p)}; ${R.all_years.n_obs.toLocaleString()} species-seasons). The early 2008–2009 and 2013 seasons followed warm winters. The 2014–15 rebound coincides with the switch to fortnightly sheets, which delays when a plant is first recorded.`;
+
+  // robustness
+  const rb = [["All issues 1997–2016",R.all_years],["Weekly era only, 1997–2013",R.weekly_1997_2013],["Thinned to fortnightly throughout",R.thinned_fortnightly],["Stable sheet length, 2003–2013",R.stable_effort_2003_2013],["Short-season taxa only (≤120 d)",R.short_season_only]];
+  mk("cRobust",{type:"bar",data:{labels:rb.map(r=>r[0]),datasets:[
+    {label:"95% CI",data:rb.map(r=>[r[1].lo,r[1].hi]),backgroundColor:css("--accent-soft"),borderColor:css("--accent"),borderWidth:1,borderRadius:4,borderSkipped:false,barThickness:14,grouped:false},
+    {label:"Estimate",data:rb.map(r=>[r[1].days_per_decade-0.25,r[1].days_per_decade+0.25]),backgroundColor:ink,borderRadius:1,borderSkipped:false,barThickness:22,grouped:false}]},
+    options:baseOpts({indexAxis:"y",plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const r=rb[c.dataIndex][1];return `${fmt(r.days_per_decade)} d/decade [${fmt(r.lo)}, ${fmt(r.hi)}] · ${r.n_species} taxa`}}}},
+      scales:{x:{...baseOpts().scales.x,min:-25,max:5,title:{display:true,text:"days per decade (negative = earlier)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"IBM Plex Sans",size:12}}}}})});
+
+  // histogram
+  const bins = []; for(let b=-60;b<60;b+=5) bins.push(b);
+  const counts = bins.map(b=>S.filter(s=>s.slope_first>=b && s.slope_first<b+5).length);
+  const lo = S.filter(s=>s.slope_first<-60).length, hi = S.filter(s=>s.slope_first>=60).length;
+  counts[0]+=lo; counts[counts.length-1]+=hi;
+  mk("cHist",{type:"bar",data:{labels:bins.map(b=>b),datasets:[{data:counts,backgroundColor:bins.map(b=>b<0?early_c:late_c),borderRadius:3,borderSkipped:"start",categoryPercentage:.92,barPercentage:1}]},
+    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${bins[c[0].dataIndex]} to ${bins[c[0].dataIndex]+5} d/decade`,label:c=>`${c.raw} taxa`}}},
+      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"onset shift, days per decade (ends include tails)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}},ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>bins[i]%20===0?bins[i]:""}},y:{...baseOpts().scales.y,title:{display:true,text:"taxa",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  const med = [...S.map(s=>s.slope_first)].sort((a,b)=>a-b)[Math.floor(S.length/2)];
+  $("#capHist").innerHTML = `${early} of ${S.length} taxa (${Math.round(100*early/S.length)}%) moved earlier. If nothing were changing you'd expect about half. Median shift ${fmt(med)} days per decade.`;
+
+  // families
+  const F = A.families;
+  mk("cFam",{type:"bar",data:{labels:F.map(f=>f.family),datasets:[{data:F.map(f=>f.mean_slope),backgroundColor:F.map(f=>f.mean_slope<0?early_c:late_c),borderRadius:4,borderSkipped:"start",barThickness:10}]},
+    options:baseOpts({indexAxis:"y",plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>`${fmt(c.raw)} d/decade · ${F[c.dataIndex].n_earlier} of ${F[c.dataIndex].n} species earlier`}}},
+      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"mean onset shift, days per decade",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"Spectral",size:12},callback:(v,i)=>`${F[i].family} (${F[i].n})`}}}})});
+  $("#cFam").parentElement.style.height = Math.max(280, F.length*20+60)+"px";
+
+  initSpeciesTable();
+  initWhy();
+  initMethod();
+}
+
+let sortK = "p_first", sortDir = 1, selSp = null;
+function initSpeciesTable(){
+  document.querySelectorAll("#stable th.sortable").forEach(th=>th.addEventListener("click",()=>{ const k=th.dataset.k; sortDir = sortK===k ? -sortDir : 1; sortK=k; renderSpecies(); }));
+  ["#sq","#sKind","#sSig"].forEach(s=>$(s).addEventListener("input",renderSpecies));
+  renderSpecies();
+  const best = [...A.species].filter(s=>s.kind==="species").sort((a,b)=>a.p_first-b.p_first).find(s=>s.slope_first<0);
+  showSpecies(best.key);
+}
+function robustEarly(s){ return s.slope_first<0 && s.robustness.weekly_only!=null && s.robustness.weekly_only<0 && s.robustness.thinned_fortnightly!=null && s.robustness.thinned_fortnightly<0; }
+function renderSpecies(){
+  const q=$("#sq").value.trim().toLowerCase(), kind=$("#sKind").value, sig=$("#sSig").value;
+  let S = A.species.filter(s=>(!kind||s.kind===kind) && (!q || (s.key+" "+(s.common||"")+" "+(s.family||"")+" "+s.names_as_written.join(" ")).toLowerCase().includes(q))
+    && (!sig || (sig==="p" ? s.p_first<.05 : robustEarly(s))));
+  S.sort((a,b)=>{ const x=a[sortK], y=b[sortK]; if(x==null) return 1; if(y==null) return -1; return (typeof x==="string"? x.localeCompare(y) : x-y)*sortDir; });
+  $("#scount").textContent = `${S.length} of ${A.species.length} taxa`;
+  const max = 40;
+  $("#stable tbody").innerHTML = S.map(s=>{
+    const w = Math.min(Math.abs(s.slope_first),max)/max*65;
+    const bar = `<div class="barcell"><span class="mid"></span><span class="b" style="${s.slope_first<0?`right:50%;width:${w}px;background:var(--early);border-radius:4px 0 0 4px`:`left:50%;width:${w}px;background:var(--late);border-radius:0 4px 4px 0`}"></span></div>`;
+    return `<tr class="srow" data-k="${esc(s.key)}" aria-selected="${s.key===selSp}" tabindex="0"><td>${sci(s.key)}${s.kind==="cultivar"?' <span class="chip">cultivar</span>':""}<div class="sub">${esc(s.common||"")}</div></td><td>${esc(s.family||"–")}</td><td class="mono">${s.typical_onset}</td><td class="num">${s.n_seasons}</td><td class="num">${s.flower_span}d</td>
+      <td class="num">${fmt(s.slope_first)}</td><td>${bar}</td><td class="num">${pf(s.p_first)}</td><td class="num">${s.q_first.toFixed(2)}</td><td class="num">${fmt(s.slope_mean)}</td><td class="num">${fmt(s.temp_sens)}</td></tr>`;
+  }).join("");
+  document.querySelectorAll(".srow").forEach(r=>{ r.addEventListener("click",()=>showSpecies(r.dataset.k)); r.addEventListener("keydown",e=>{if(e.key==="Enter")showSpecies(r.dataset.k)}); });
+}
+function showSpecies(k){
+  selSp = k; document.querySelectorAll(".srow").forEach(r=>r.setAttribute("aria-selected", r.dataset.k===k));
+  const s = A.species.find(x=>x.key===k); if(!s) return;
+  const st = s.season_start;
+  const cov = s.seasons.filter(x=>x.covered);
+  const f = linfit(cov.map(x=>x.season), cov.map(x=>x.first));
+  const yrs = cov.map(x=>x.season), x0=Math.min(...yrs), x1=Math.max(...yrs);
+  const rob = s.robustness;
+  $("#spDetail").innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:baseline">
+      <div><div class="eyebrow">${esc(s.family||"")} · ${s.kind}</div><h3 style="font-size:24px">${sci(s.key)}</h3><div class="sub">${esc(s.common||"")}${s.names_as_written.length>1?` · printed as ${s.names_as_written.slice(0,4).map(sci).join(", ")}`:""}</div></div>
+      <span class="chip ${s.slope_first<0?"early":"late"}">${fmt(s.slope_first)} days per decade</span>
+    </div>
+    <div class="legend"><span><i class="pt" style="background:var(--neutral)"></i>Each brochure mention</span><span><i class="pt" style="background:var(--early)"></i>First mention that season</span><span><i style="background:var(--ink)"></i>Onset trend</span><span><i class="pt" style="background:transparent;border:1.5px solid var(--ink-3)"></i>Season with sampling gaps (excluded)</span></div>
+    <div class="chart tall"><canvas id="cSp"></canvas></div>
+    <dl class="kv">
+      <dt>Typical onset</dt><dd>${s.typical_onset} (mid-flowering ${s.typical_centroid}); seasons counted from ${s.season_start_label}</dd>
+      <dt>Onset trend</dt><dd>${fmt(s.slope_first)} d/decade, p ${pf(s.p_first)}, q ${s.q_first.toFixed(2)}, robust Theil–Sen ${fmt(s.theil_first)}</dd>
+      <dt>Mid-flowering trend</dt><dd>${fmt(s.slope_mean)} d/decade, p ${pf(s.p_mean)}</dd>
+      <dt>Sampling checks</dt><dd>weekly era only ${fmt(rob.weekly_only)} · thinned to fortnightly ${fmt(rob.thinned_fortnightly)}</dd>
+      <dt>Temperature</dt><dd>${s.temp_sens==null?"–":`${fmt(s.temp_sens)} days per °C of the 60 days before onset (p ${pf(s.temp_sens_p)})`}</dd>
+      <dt>Evidence</dt><dd>${s.n_mentions} mentions over ${s.n_seasons} well-sampled seasons, ${s.first_season}–${s.last_season}</dd>
+    </dl>`;
+  const pts = s.points.map(([yr,d])=>({x:yr,y:d}));
+  const firsts = cov.map(x=>({x:x.season,y:x.first,t:x.temp_window,n:x.n}));
+  const gaps = s.seasons.filter(x=>!x.covered).map(x=>({x:x.season,y:x.first}));
+  const ys = pts.map(p=>p.y); const ymin=Math.max(0,Math.min(...ys)-10), ymax=Math.min(364,Math.max(...ys)+10);
+  mk("cSp",{type:"scatter",data:{datasets:[
+    {label:"Trend",type:"line",data:[{x:x0,y:f(x0)},{x:x1,y:f(x1)}],borderColor:css("--ink"),borderWidth:2,pointRadius:0},
+    {label:"First mention",data:firsts,backgroundColor:css("--early"),pointRadius:6,borderColor:css("--surface"),borderWidth:2,pointHoverRadius:8},
+    {label:"Excluded season",data:gaps,backgroundColor:"transparent",borderColor:css("--ink-3"),borderWidth:1.5,pointRadius:6},
+    {label:"Mention",data:pts,backgroundColor:css("--neutral"),pointRadius:3.5,pointHoverRadius:5}]},
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${c[0].raw.x} season`,label:c=>c.dataset.label==="Trend"?`trend`:`${c.dataset.label}: ${doyLabel(st+c.raw.y)}`+(c.raw.t!=null?` · pre-onset ${c.raw.t.toFixed(1)} °C`:"")}}},
+      scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:2016,ticks:{...baseOpts().scales.x.ticks,stepSize:2,callback:v=>v}},
+              y:{...baseOpts().scales.y,reverse:true,min:ymin,max:ymax,title:{display:true,text:"date (earlier ↑)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}},ticks:{...baseOpts().scales.y.ticks,callback:v=>doyLabel(st+v)}}}})});
+}
+
+function initWhy(){
+  const cl = A.climate.filter(c=>c.year>=1996), ct = A.climate_trends, C = A.community;
+  const series = [["winter","Winter (Jun–Aug)","--early"],["spring","Spring (Sep–Nov)","--accent"],["annual","Annual mean","--ink-3"]];
+  $("#legTemp").innerHTML = series.map(s=>`<span><i style="background:var(${s[2]})"></i>${s[1]}</span>`).join("") + `<span><i style="background:var(--ink-3);height:1px"></i>trend</span>`;
+  const ds = [];
+  series.forEach(([k,l,c])=>{
+    const pts = cl.map(x=>({x:x.year,y:x[k]}));
+    const f = linfit(pts.map(p=>p.x), pts.map(p=>p.y));
+    ds.push({type:"line",label:l,data:pts,borderColor:css(c),backgroundColor:css(c),borderWidth:2,pointRadius:2.5,tension:0});
+    ds.push({type:"line",label:l+" trend",data:[{x:1996,y:f(1996)},{x:2016,y:f(2016)}],borderColor:css(c),borderWidth:1,borderDash:[4,4],pointRadius:0});
+  });
+  mk("cTemp",{type:"line",data:{datasets:ds},options:baseOpts({interaction:{mode:"index",intersect:false},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>!i.dataset.label.includes("trend"),callbacks:{label:c=>`${c.dataset.label}: ${c.raw.y.toFixed(1)} °C`}}},
+    scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:2016,ticks:{...baseOpts().scales.x.ticks,stepSize:4,callback:v=>v}},y:{...baseOpts().scales.y,title:{display:true,text:"mean temperature °C",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  $("#capTemp").innerHTML = `BOM ACORN-SAT homogenised record, Canberra Airport (070351). 1997–2016 trends per decade: winter ${fmt(ct.winter.per_decade,2)} °C (p ${pf(ct.winter.p)}), spring ${fmt(ct.spring.per_decade,2)} °C (p ${pf(ct.spring.p)}), summer ${fmt(ct.summer.per_decade,2)}, autumn ${fmt(ct.autumn.per_decade,2)}.`;
+
+  mk("cRain",{type:"bar",data:{labels:cl.map(c=>c.year),datasets:[
+    {label:"Jun–Nov",data:cl.map(c=>c.rain_winter_spring),backgroundColor:css("--accent"),stack:"r",borderRadius:0},
+    {label:"Rest of year",data:cl.map(c=>c.rain_annual-c.rain_winter_spring),backgroundColor:css("--neutral"),stack:"r",borderRadius:{topLeft:4,topRight:4}}]},
+    options:baseOpts({interaction:{mode:"index",intersect:false},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>`${c.dataset.label}: ${Math.round(c.raw)} mm`}}},
+      scales:{x:{...baseOpts().scales.x,stacked:true,ticks:{...baseOpts().scales.x.ticks,callback:(v,i)=>cl[i].year%4===0?cl[i].year:""}},y:{...baseOpts().scales.y,stacked:true,title:{display:true,text:"mm",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+
+  // scatter: winter temp vs yearly onset index
+  const cy = Object.fromEntries(A.climate.map(c=>[c.year,c]));
+  const Y = C.yearly.filter(y=>y.n>=50 && cy[y.year]);
+  const pts = Y.map(y=>({x:cy[y.year].winter,y:y.anom_first,yr:y.year}));
+  const f = linfit(pts.map(p=>p.x), pts.map(p=>p.y)); const xs = pts.map(p=>p.x); const xa=Math.min(...xs), xb=Math.max(...xs);
+  mk("cScatter",{type:"scatter",data:{datasets:[
+    {type:"line",label:"fit",data:[{x:xa,y:f(xa)},{x:xb,y:f(xb)}],borderColor:css("--ink"),borderWidth:2,pointRadius:0},
+    {label:"Year",data:pts,backgroundColor:pts.map(p=>p.y<0?css("--early"):css("--late")),pointRadius:6,borderColor:css("--surface"),borderWidth:2}]},
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>i.dataset.label!=="fit",callbacks:{title:c=>String(c[0].raw.yr),label:c=>`winter ${c.raw.x.toFixed(1)} °C · onset ${fmt(c.raw.y)} d`}}},
+      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"winter mean temperature °C",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,title:{display:true,text:"onset index, days",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  const yc = C.year_corr;
+  $("#capScatter").innerHTML = `Each dot is a year. Warmer winters go with earlier flowering (r = ${yc.winter.r.toFixed(2)}, p ${pf(yc.winter.p)}). After removing the shared upward trend from both series, the link weakens (r = ${yc.winter_detrended.r.toFixed(2)}, p ${pf(yc.winter_detrended.p)}), so part of this correlation is two things drifting together over time.`;
+
+  const W = C.window_sensitivity;
+  mk("cWin",{type:"bar",data:{labels:W.map(w=>w.window+" days"),datasets:[
+    {label:"95% CI",data:W.map(w=>[w.lo,w.hi]),backgroundColor:css("--accent-soft"),borderColor:css("--accent"),borderWidth:1,borderRadius:4,borderSkipped:false,barThickness:16,grouped:false},
+    {label:"Estimate",data:W.map(w=>[w.sens-0.06,w.sens+0.06]),backgroundColor:css("--ink"),borderRadius:1,borderSkipped:false,barThickness:26,grouped:false}]},
+    options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>{const w=W[c.dataIndex];return `${fmt(w.sens)} d/°C [${fmt(w.lo)}, ${fmt(w.hi)}] · warming ${fmt(w.warming_per_decade,2)} °C/decade → ${fmt(w.sens*w.warming_per_decade)} d/decade`}}}},
+      scales:{x:{...baseOpts().scales.x,title:{display:true,text:"temperature window before typical onset",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}},y:{...baseOpts().scales.y,title:{display:true,text:"days per °C (negative = earlier)",color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}}}}})});
+  const w60=W.find(w=>w.window===60), w180=W.find(w=>w.window===180);
+  $("#capWin").innerHTML = `Pooled across species: how many days onset moves for each 1 °C warmer than usual in the window before that species' typical start. Longer windows respond more strongly, up to ${fmt(w180.sens)} d/°C over 180 days. Multiplied by the warming actually seen in those windows (${fmt(w180.warming_per_decade,2)} °C/decade), that gives ${fmt(w180.sens*w180.warming_per_decade)} d/decade of the ${fmt(A.community.robustness.all_years.days_per_decade)} observed.`;
+
+  const tr = C.temp_rain_first, obs = A.community.robustness.all_years.days_per_decade;
+  $("#reasons").innerHTML = `
+    <li><b>The earlier trend is real in the record.</b> It shows up in ${Math.round(100*A.species.filter(s=>s.slope_first<0).length/A.species.length)}% of taxa, in first appearance and in mid-flowering date (${fmt(A.community.trend_mean.year.coef*10)} d/decade), and in every sampling subset (${fmt(A.community.robustness.weekly_1997_2013.days_per_decade)} to ${fmt(A.community.robustness.stable_effort_2003_2013.days_per_decade)} d/decade).</li>
+    <li><b>Warming pushes in the right direction.</b> Canberra's winters and springs warmed about half a degree per decade over the archive. Warmer-than-usual pre-flowering periods bring flowering forward by 1–4 days per °C, and warm-winter years (2009, 2013) stand out as early.</li>
+    <li><b>Warming isn't big enough to explain all of it.</b> That sensitivity times the warming gives roughly ${fmt(w60.sens*w60.warming_per_decade)} to ${fmt(w180.sens*w180.warming_per_decade)} days per decade, against ${fmt(obs)} observed. With temperature, rainfall and year in one model, the year term stays at ${fmt(C.temp_rain_year_first.year.coef*10)} d/decade.</li>
+    <li><b>Rain matters a little.</b> A wetter 90 days before onset goes with slightly earlier flowering (${fmt(tr.rain_anom.coef*100)} days per extra 100 mm, p ${pf(tr.rain_anom.p)}). The drought breaking in 2010 may have helped some species, but the effect is small.</li>
+    <li><b>Likely non-climate contributors.</b> The garden is maturing and irrigated, which can decouple plants from the weather. Newer plantings and cultivars are chosen for long or early flowering. Volunteers and routes changed over time, and later writers may have featured plants as soon as the first buds opened. The brochures can't separate these, so treat "why" as partly answered: warming contributes, and garden management and recording habits probably contribute more.</li>`;
+}
+
+function initMethod(){
+  const p = A.params;
+  $("#method").innerHTML = `
+    <p><b>Source.</b> All ${A.n_brochures} issues linked from the ANBG archive (Apr 1997 – Aug 2016). 52 links now return 404 (all of 1999 and April 2004); those were recovered from the Internet Archive's copies of the old <span class="mono">/iftw.old/</span> pages.</p>
+    <p><b>Extraction.</b> Pages are flattened with bold and italic tracked per character. Bold runs that look like botanical names (italic, followed by a <span class="mono">[Section]</span> ref, or starting with a known genus) become plant records. Five issues that used italics instead of bold go through a fallback parser, and they are flagged. Abbreviated genera (<span class="sp">G. sericea</span>) are expanded from the previous full name. Colour, flowering stage (buds, peak, finishing) and fruit-only mentions are read from the text after each name. Fruit or foliage records are excluded from the timing analysis.</p>
+    <p><b>Names.</b> Each name was matched with the Atlas of Living Australia name-matching service, kingdom Plantae, which maps synonyms to the current accepted species. Where ALA only knew the genus, the printed species name is kept. Cultivars are analysed as their own taxa. Hybrids are shown but not analysed.</p>
+    <p><b>Timing.</b> Each taxon's year starts at its quietest point in the calendar, so a summer bloomer isn't split across 31 December. A season counts only if the brochures covered that species' flowering window with no gap longer than ${p.max_gap} days. Taxa need ${p.min_seasons}+ such seasons spanning ${p.min_span}+ years. Per-taxon trends are ordinary least squares on first-mention date, with Theil–Sen as a check and Benjamini–Hochberg q-values for the ${A.species.length} tests. The garden-wide trend pools each species' anomalies with standard errors clustered by species.</p>
+    <p><b>Climate.</b> Daily max and min temperature from BOM's ACORN-SAT v2.6 homogenised dataset for Canberra (station 070351), from the Bureau's public FTP. Rainfall from ERA5 reanalysis (Open-Meteo archive) at the ANBG coordinates, because BOM station rainfall isn't available by FTP and the Climate Data Online site blocks scripted downloads.</p>
+    <p><b>Credits.</b> Brochures written by volunteers of the <a href="https://www.anbg.gov.au/gardens/visiting/iftw/iftw-archive/index.html" target="_blank" rel="noopener">Australian National Botanic Gardens</a>; short excerpts are quoted for analysis only. Taxonomy from the <a href="https://www.ala.org.au" target="_blank" rel="noopener">Atlas of Living Australia</a>. Temperature: Bureau of Meteorology ACORN-SAT (CC BY). Rainfall: Copernicus ERA5 via <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0). Code and data: <a href="https://github.com/Rossed/canberra-bloom-record" target="_blank" rel="noopener">github.com/Rossed/canberra-bloom-record</a>.</p>
+    <p><b>Limits.</b> A brochure is a guided walk, not a survey. A plant is recorded when a volunteer chose to feature it, so "first mention" is a late, noisy proxy for true first flower. Absence in a given week means little. Results for single species should be treated as hypotheses. Analysis generated ${esc(A.generated)}.</p>`;
+}
+})();
+</script>
