@@ -350,7 +350,8 @@ def on_cover(c, doc):
         y = y0 + (r["n_plants"] / 40) * (y1 - y0) * 0.9
         c.circle(x, min(y, y1), 0.95, stroke=0, fill=1)
     c.setFillColor(colors.HexColor("#d7e5dd")); c.setFont("Plex", 7)
-    c.drawString(M_L, PAGE_H - 88 * mm, f"Each dot is one leaflet: its date (left to right, 1997–{LY + 1}) and how many plants it featured (bottom to top).")
+    c.drawString(M_L, PAGE_H - 85 * mm, f"Each dot is one leaflet: its date (left to right, 1997–{LY + 1}) and how many plants it featured (bottom to top).")
+    c.drawString(M_L, PAGE_H - 88.5 * mm, "The flat line from 2014 is a change of format: leaflets became a fixed walk of 15 stops, published fortnightly.")
     c.setFillColor(colors.HexColor(INK3)); c.setFont("Plex", 8)
     c.drawString(M_L, 14 * mm, f"Generated {GEN}  ·  {SITE}")
     c.restoreState()
@@ -451,7 +452,7 @@ s += [P("1 · THE EVIDENCE", "eyebrow"), P("Thirty years of flower-walk leaflets
                   ["<i>Flowers, Fruit &amp; Foliage</i>", "Friends of the ANBG", "Aug 2016 – " + datetime.date.fromisoformat(max(r['date'] for r in D)).strftime("%b %Y"), "PDF leaflets; fortnightly", f"{n_fff}"]],
                  [W * .22, W * .25, W * .19, W * .24, W * .10], numcols=(4,)),
       Spacer(1, 5 * mm), chart_leaflets(),
-      P(f"Leaflets per year. The drop in 2014 is the switch from weekly to fortnightly leaflets. {n_wb} leaflets are no longer on their original websites and were recovered from the Internet Archive's copies. There are no leaflets for April–June 2020 or mid-August to October 2021, the periods of COVID-19 restrictions in Canberra.", "cap"),
+      P(f"Leaflets per year. The drop in 2014 is the switch from weekly to fortnightly leaflets. At the same time each leaflet became a fixed walk of 15 stops, down from an average of about 16–23 plants, so later years have about a third as many records. Section 2 explains how the analysis allows for this. {n_wb} leaflets are no longer on their original websites and were recovered from the Internet Archive's copies. There are no leaflets for April–June 2020 or mid-August to October 2021, the periods of COVID-19 restrictions in Canberra.", "cap"),
       P("Weather data", "h2"),
       P(f"Daily temperatures come from the Bureau of Meteorology's ACORN-SAT record for Canberra Airport, a long-running series that the Bureau adjusts for changes in instruments and location. It currently runs to {sp['acorn_end'][:4]}. For the months since then, the ERA5 global weather reanalysis for the Gardens' location was used, corrected month by month to match the Bureau's record (the two agree closely: r = {sp['r_tmax']:.2f}). Rainfall comes from ERA5 throughout."),
       PageBreak()]
