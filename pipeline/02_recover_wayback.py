@@ -8,8 +8,10 @@ for line in open(os.path.join(ROOT, "data", "wayback_cdx_iftw.txt")):
     orig, ts, code = line.split()
     key = re.sub(r"^https?://(www\.)?anbg\.gov\.au(:80)?", "", orig)
     cdx.setdefault(key, ts)  # earliest capture
-recovered = {}
-for f, _ in log["failures"]:
+# keep earlier recoveries: once a file is cached, 01_download no longer reports it as a failure
+REC_PATH = os.path.join(ROOT, "data", "wayback_recovered.json")
+recovered = json.load(open(REC_PATH)) if os.path.exists(REC_PATH) else {}
+for f, _ in [x for x in log["failures"] if x[0] not in recovered]:
     m = re.match(r"iftw-(\d+)-(\d\d)-(\d\d)\.html", f)
     y, mo, d = m.groups()
     cands = [f"/iftw.old/iftw_{y[-2:]}_{mo}_{d}.html", f"/iftw.old/iftw-{y}-{mo}-{d}.htm",
