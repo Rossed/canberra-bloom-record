@@ -107,24 +107,33 @@ def season_start(doys):
     return int(best[len(best) // 2])
 
 
-def season_of(d, start):
+def season_of(d, start, off=0):
+    """(season label, day-of-season). Seasons run from the plant's quietest day; `off` relabels a season by the
+    calendar year in which the plant typically flowers (so an April record is never shown under the previous year)."""
     dy = doy0(d)
     sy = d.year if dy >= start else d.year - 1
-    return sy, (dy - start) % 365
+    return sy + off, (dy - start) % 365
 
 
-def seasons_for(dates, start, sample_dates):
+def label_offset(start, dates):
+    """1 if the plant's typical flowering falls in the calendar year after its season starts."""
+    med = float(np.median([(doy0(d) - start) % 365 for d in dates]))
+    return 1 if start + med >= 365 else 0
+
+
+def seasons_for(dates, start, sample_dates, off=0):
     """Per season-year metrics, with a coverage check against the brochure calendar."""
     by = collections.defaultdict(list)
+    real = collections.defaultdict(list)
     for d in dates:
-        sy, dos = season_of(d, start)
-        by[sy].append(dos)
+        sy, dos = season_of(d, start, off)
+        by[sy].append(dos); real[sy].append(d)
     firsts = [min(v) for v in by.values()]
     lasts = [max(v) for v in by.values()]
     lo, hi = max(0, np.percentile(firsts, 10) - 30), min(364, np.percentile(lasts, 90) + 15)
     samp = collections.defaultdict(list)
     for d in sample_dates:
-        sy, dos = season_of(d, start)
+        sy, dos = season_of(d, start, off)
         samp[sy].append(dos)
     out = []
     for sy in sorted(by):
@@ -135,7 +144,7 @@ def seasons_for(dates, start, sample_dates):
         covered = max(gaps) <= MAX_GAP
         v = sorted(by[sy])
         out.append(dict(season=sy, first=v[0], mean=float(np.mean(v)), last=v[-1], n=len(v), covered=covered,
-                        max_gap=int(max(gaps))))
+                        max_gap=int(max(gaps)), first_date=min(real[sy]).isoformat(), last_date=max(real[sy]).isoformat()))
     return out, (lo, hi)
 
 
@@ -148,7 +157,8 @@ def analyse(sample_dates, year_max=None, keep=None, min_seasons=None, min_span=N
         if len(dates) < ms:
             continue
         start = season_start([doy0(d) for d in dates])
-        ss, win = seasons_for(dates, start, sample_dates)
+        off = label_offset(start, dates)
+        ss, win = seasons_for(dates, start, sample_dates, off)
         ok = [s for s in ss if s["covered"]]
         if len(ok) < ms or ok[-1]["season"] - ok[0]["season"] < mspan:
             continue
@@ -156,7 +166,7 @@ def analyse(sample_dates, year_max=None, keep=None, min_seasons=None, min_span=N
         f = ols(yrs, [s["first"] for s in ok])
         mn = ols(yrs, [s["mean"] for s in ok])
         ts = stats.theilslopes([s["first"] for s in ok], yrs)
-        res[k] = dict(start=start, seasons=ss, window=win, first=f, mean=mn, theil_first=float(ts.slope))
+        res[k] = dict(start=start, off=off, seasons=ss, window=win, first=f, mean=mn, theil_first=float(ts.slope))
     return res
 
 
@@ -186,13 +196,13 @@ for i, k in enumerate(keys):
     rows = []
     for s in a["seasons"]:
         # climatological onset date in that season-year
-        onset = datetime.date(s["season"], 1, 1) + datetime.timedelta(a["start"] + int(round(mean_first)))
+        onset = datetime.date(s["season"] - a["off"], 1, 1) + datetime.timedelta(a["start"] + int(round(mean_first)))
         t = window_mean(onset, TEMP_WINDOW)
         rn = window_sum(onset, 90)
         s["temp_window"] = round(t, 2) if t is not None else None
         s["rain_90d"] = round(rn, 1) if rn is not None else None
-        s["first_label"] = dos_label(s["first"], a["start"])
-        s["last_label"] = dos_label(s["last"], a["start"])
+        s["first_label"] = datetime.date.fromisoformat(s["first_date"]).strftime("%-d %b %Y")
+        s["last_label"] = datetime.date.fromisoformat(s["last_date"]).strftime("%-d %b %Y")
         if s["covered"] and t is not None:
             rows.append(s)
     sens = None
@@ -205,7 +215,7 @@ for i, k in enumerate(keys):
                                     anom_mean=r["mean"] - mean_mean, temp_anom=r["temp_window"] - tm,
                                     rain_anom=(r["rain_90d"] - rm) if r["rain_90d"] is not None else None))
     # all individual mentions as (season, dos) for the raster plot
-    pts = sorted({(season_of(d, a["start"])) for d in obs[k]})
+    pts = sorted({(*season_of(d, a["start"], a["off"]), d.isoformat()) for d in obs[k]})
     m = meta[k]
     common = m["vernacular"] or (m["common"].most_common(1)[0][0] if m["common"] else None)
     rob = {lab: (res[k]["first"]["slope"] * 10 if k in res else None) for lab, res in
@@ -223,7 +233,7 @@ for i, k in enumerate(keys):
         flower_span=int(np.median([s["last"] - s["first"] + 1 for s in ok])),
         spread=SPREAD[k], long_flowering=LONG[k],
         temp_sens=(sens["slope"] if sens else None), temp_sens_p=(sens["p"] if sens else None),
-        robustness=rob, seasons=a["seasons"], points=[[s, d] for s, d in pts], window=a["window"]))
+        robustness=rob, seasons=a["seasons"], points=[[s_, d_, iso] for s_, d_, iso in pts], window=a["window"]))
 
 # ---------------- pooled (community) models ----------------
 def pooled(rows, y, xs):
@@ -309,7 +319,7 @@ for W in (30, 60, 90, 120, 180):
         mf = np.mean([s["first"] for s in ok])
         tmp = []
         for s in ok:
-            onset = datetime.date(s["season"], 1, 1) + datetime.timedelta(a["start"] + int(round(mf)))
+            onset = datetime.date(s["season"] - a["off"], 1, 1) + datetime.timedelta(a["start"] + int(round(mf)))
             t = window_mean(onset, W)
             if t is not None:
                 tmp.append((s, t))

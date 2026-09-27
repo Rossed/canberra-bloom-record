@@ -112,6 +112,13 @@ def bullets(items):
 
 # ---------------------------------------------------------------- charts
 FIG = []
+_YR = sorted([y for y in C["yearly"] if y["n"] >= A["params"]["min_year_n"] and y["year"] <= LY], key=lambda y: y["anom_mean"])
+EARLY_YEARS = sorted(y["year"] for y in _YR[:3]); LATE_YEARS = sorted(y["year"] for y in _YR[-3:])
+
+
+def yearlist(ys):
+    ys = [str(y) for y in ys]
+    return ", ".join(ys[:-1]) + " and " + ys[-1] if len(ys) > 1 else ys[0]
 
 
 def fig_to_image(fig, width_mm):
@@ -157,7 +164,7 @@ def chart_yearly():
     ax.axvline(2016.6, color=NEUTRAL, lw=0.9, ls=":")
     ax.text(2016.8, ys.max() + 1, "Friends' leaflets\nfrom Aug 2016", fontsize=7, color=INK3, va="top")
     ax.axhline(0, color=INK3, lw=0.6)
-    for yr in (2009, 2013, 2022, 2023):
+    for yr in EARLY_YEARS + LATE_YEARS:
         if yr in xs:
             v = ys[list(xs).index(yr)]
             ax.annotate(str(yr), (yr, v), xytext=(0, -9 if v < 0 else 3), textcoords="offset points", ha="center", fontsize=6.8, color=INK3)
@@ -215,7 +222,7 @@ def chart_species(s):
     st_ = s["season_start"]
     cov = [x for x in s["seasons"] if x["covered"]]
     fig, ax = plt.subplots(figsize=(7.2, 2.7))
-    pts = np.array(s["points"])
+    pts = np.array([[p[0], p[1]] for p in s["points"]], dtype=float)
     ax.scatter(pts[:, 0], pts[:, 1], s=9, color=NEUTRAL, zorder=2, label="each leaflet mention")
     ax.scatter([x["season"] for x in cov], [x["mean"] for x in cov], s=34, color=ACCENT, edgecolor="white", lw=1, zorder=3, label="mid-flowering date that year")
     b = np.polyfit([x["season"] for x in cov], [x["mean"] for x in cov], 1)
@@ -264,7 +271,7 @@ def chart_scatter():
     ax.scatter(xs, ys, s=30, c=[EARLY if v < 0 else LATE for v in ys], edgecolor="white", lw=0.8, zorder=3)
     b = np.polyfit(xs, ys, 1); xx = np.array([xs.min(), xs.max()]); ax.plot(xx, np.polyval(b, xx), color=INK, lw=1.4)
     for y, x, v in zip([y["year"] for y in Y], xs, ys):
-        if y in (2013, 2022, 2023, 2019, 1998, 2009):
+        if y in EARLY_YEARS + LATE_YEARS:
             ax.annotate(str(y), (x, v), xytext=(4, 2), textcoords="offset points", fontsize=6.5, color=INK3)
     ax.axhline(0, color=INK3, lw=0.6)
     style_ax(ax, "annual mean temperature °C", "flowering index, days")
@@ -438,7 +445,7 @@ s += bullets([
     f"<b>Flowering is earlier.</b> Across {len(S)} plants seen in at least eight years, the middle of each plant's flowering period moved {fmt(obs)} days per decade (95% confidence interval {fmt(R['all_years']['mean_lo'])} to {fmt(R['all_years']['mean_hi'])}). Of the {len(SH)} plants with a clear flowering season, {earlyM} ({round(100 * earlyM / len(SH))}%) moved earlier.",
     f"<b>The result holds when checked.</b> It holds when the weekly leaflets of the early years are thinned to match the later fortnightly ones, when long-flowering plants are left out, and within the Gardens' own leaflets alone. Nothing jumps at the 2016 handover to the Friends.",
     f"<b>Warmth brings flowering forward.</b> Canberra warmed by about {ct['annual']['per_decade']:.1f} °C per decade from 1997 to {LY}. In years that were warmer than usual before a plant's season, it flowered {abs(w60['sens_mean']):.0f}–{abs(w180['sens_mean']):.0f} days earlier per degree.",
-    f"<b>Warming explains only part of the change.</b> Multiplying that sensitivity by the actual warming gives {fmt(expLo)} to {fmt(expHi)} days per decade, about {shLo}–{shHi}% of the {fmt(obs)} observed. Wet years tended to flower later. The rest is probably the Gardens themselves changing (plants maturing, new plantings, watering) and changes in who wrote the leaflets and which paths they walked.",
+    f"<b>Warming explains only part of the change.</b> Multiplying that sensitivity by the actual warming gives {fmt(expLo)} to {fmt(expHi)} days per decade, about {shLo}–{shHi}% of the {fmt(obs)} observed. Rainfall made no clear difference. The rest is probably the Gardens themselves changing (plants maturing, new plantings, watering) and changes in who wrote the leaflets and which paths they walked.",
 ])
 s += [Spacer(1, 3 * mm), callout([P("How much weight does this bear?", "h3"),
       P("The leaflets were written to guide visitors, not as a scientific survey. A plant only appears when a volunteer chose to walk past it and mention it. The overall pattern across hundreds of plants is fairly robust. The result for any single plant is weak evidence and should be treated as a lead to follow up, not a finding. Read the whole report as a strong hint rather than proof.", "body")], W),
@@ -488,7 +495,7 @@ yr = R["all_years"]
 s += [P("3 · FINDINGS", "eyebrow"), P("The whole garden is flowering earlier", "h1"),
       P(f"The chart below combines all {yr['n_species']} plants. For each plant and year, it takes how many days earlier or later than that plant's usual mid-flowering date it flowered, then averages across plants. Bars below zero are years when the garden as a whole flowered early."),
       chart_yearly(),
-      P(f"Garden-wide flowering index by year (years with at least {A['params']['min_year_n']} plant records). The dashed line is the trend: {fmt(obs)} days per decade (95% CI {fmt(yr['mean_lo'])} to {fmt(yr['mean_hi'])}). Early years such as 2009, 2013 and 2023 were warm. The late 2021–22 seasons were cool, wet La Niña years.", "cap"),
+      P(f"Garden-wide flowering index by year (years with at least {A['params']['min_year_n']} plant records). The dashed line is the trend: {fmt(obs)} days per decade (95% CI {fmt(yr['mean_lo'])} to {fmt(yr['mean_hi'])}). The earliest years were {yearlist(EARLY_YEARS)}, and the latest {yearlist(LATE_YEARS)}.", "cap"),
       P("Is the result robust?", "h2"),
       P("Changes in how the leaflets were produced could create a false trend. So the analysis was repeated on subsets of the data that each remove one possible distortion. Green shows the main measure (mid-flowering date) and grey the first-sighting measure. A result is solid when the green dots stay left of zero and their bars don't cross it."),
       chart_robust(),
@@ -532,14 +539,14 @@ trm = C["temp_rain_year_mean"]
 s += [P("5 · WHY", "eyebrow"), P("Is it the warming?", "h1"),
       P(f"Canberra has warmed over the period, especially in winter and spring. Warmer years clearly flower earlier. But the warming is modest, and on its own it accounts for only part of the change."),
       two_up([chart_temp(), P(f"Canberra seasonal mean temperature with trend lines. Per decade, 1997–{LY}: annual {fmt(ct['annual']['per_decade'], 2)} °C, winter {fmt(ct['winter']['per_decade'], 2)}, spring {fmt(ct['spring']['per_decade'], 2)}.", "cap")],
-             [chart_rain(), P("Rainfall. The Millennium Drought lasted until 2009. 2010 and the La Niña years of 2021–22 were very wet.", "cap")], W),
+             [chart_rain(), P("Rainfall. The Millennium Drought lasted until 2009. 2010 and the La Niña years of 2021–22 were very wet. Unlike temperature, rainfall shows no clear link with flowering time.", "cap")], W),
       two_up([chart_scatter(), P(f"Each dot is a year. Warmer years flowered earlier (r = {yc['annual']['r']:.2f}). With the long-term trend removed from both, the link remains (r = {yc['annual_detrended']['r']:.2f}, p {pf(yc['annual_detrended']['p'])}).", "cap")],
              [chart_window(), P(f"Days earlier per °C, depending on how long a warm-up before flowering is measured. Longer periods show stronger effects, up to {abs(w180['sens_mean']):.1f} days per °C.", "cap")], W),
       PageBreak(), P("5 · WHY (CONTINUED)", "eyebrow"), P("Putting it together", "h2")]
 s += bullets([
     f"<b>How much can warming explain?</b> Plants flower {abs(w60['sens_mean']):.1f}–{abs(w180['sens_mean']):.1f} days earlier per °C, and the relevant periods warmed about {w180['warming_per_decade']:.2f}–{w60['warming_per_decade']:.2f} °C per decade. That predicts {fmt(expLo)} to {fmt(expHi)} days per decade, against {fmt(obs)} observed, or about {shLo}–{shHi}%.",
     f"<b>The rest isn't explained by weather.</b> With temperature, rainfall and time in one model, a shift of {fmt(trm['year']['coef'] * 10)} days per decade remains. This is a lower bound on warming's share, because a fixed warm-up period only approximates when each plant responds.",
-    f"<b>Wet years flower later.</b> Wetter-than-usual years flowered later across the garden (r = {yc['rain_annual_detrended']['r']:.2f} after removing trends). Rain before each plant's own season shows no clear effect, so this may reflect the cloud and cool weather that come with wet years.",
+    f"<b>Rainfall makes no clear difference.</b> Neither wetter years (r = {yc['rain_annual_detrended']['r']:.2f} after removing trends) nor rain before each plant's own season shows a consistent effect on flowering time.",
     "<b>Other likely causes.</b> The garden is maturing and watered, which can make plants less tied to the weather. New plantings and cultivars are often chosen because they flower early or for long periods. The volunteers and their routes changed over time. The leaflets can't separate these effects.",
 ])
 s += [Spacer(1, 6 * mm), Rule(W), Spacer(1, 2 * mm)]
