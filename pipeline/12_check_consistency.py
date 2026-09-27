@@ -47,6 +47,8 @@ REQUIRED = {
     "year_r": ["analysis", "report"],
     "rain_r": ["analysis", "report"],
     "handover_step": ["analysis", "report"],
+    "sentence_rule": ["about", "analysis", "report"],
+    "n_used": ["extraction", "analysis", "report"],
 }
 # ---- wording that must never come back ---------------------------------------------------------------
 FORBIDDEN = [
@@ -113,6 +115,12 @@ def main():
         for pl in places:
             if val not in text[pl]:
                 problems.append(f"[{pl}] missing {key}: “{val[:90]}”")
+    # every assumption must appear, word for word, on the Findings page and in the report
+    for a in F["assumptions"]:
+        for pl in ("analysis", "report"):
+            for part in (a["title"], a["rule"][:80]):
+                if norm(part) not in text[pl]:
+                    problems.append(f"[{pl}] assumption missing or reworded: “{part[:70]}”")
     for pat in FORBIDDEN:
         for pl, t in text.items():
             for m in re.finditer(pat, t, re.I):

@@ -261,6 +261,7 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
 
       <h2>Things to keep in mind</h2>
       <ul class="caveats">
+        <li><span data-fx="sentence_rule"></span> Every other assumption is listed on the Findings page and in the report.</li>
         <li>The leaflets were written to guide visitors, not as scientific records. A plant only appears when a volunteer chose to walk past it and mention it.</li>
         <li>Because of this, the result for any single plant is not reliable. The overall pattern across hundreds of plants is much more trustworthy.</li>
         <li>Since 2014 each leaflet features 15 plants and comes out every two weeks, so recent years have about a third as many records as the early years. The analysis allows for this, but it does make recent years less certain.</li>
@@ -398,6 +399,12 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
       <div class="panel"><h3>Reading the evidence</h3><ol class="reasons" id="reasons"></ol></div>
     </section>
 
+    <section class="block" id="assumptions">
+      <div><div class="eyebrow">Rules and assumptions</div><h2>What was assumed, and how often it applies</h2></div>
+      <p class="prose"><b data-fx="sentence_rule"></b> Every other rule and assumption behind the results is listed below, with how many records or plants it affects. The Leaflets page shows, for every record, whether it was used and why not.</p>
+      <div class="tablewrap"><table id="asTable"><thead><tr><th>Assumption</th><th>What was done</th><th class="num">Affects</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
     <section class="block">
       <div><div class="eyebrow">Method</div><h2>How this was built</h2></div>
       <div class="prose" id="method"></div>
@@ -514,6 +521,7 @@ function initExtraction(){
     [taxa.size.toLocaleString(), "distinct taxa (species, subspecies and cultivars)"],
     [(100*nSp/nP).toFixed(1)+"%", `resolved to a species; ${(100*nFam/nP).toFixed(1)}% to at least a family`],
     [nRen.toLocaleString(), "records under an old name, mapped to the current accepted species"],
+    [FX.n_used, "records used in the analysis (genus and species both printed)"],
     [nFl, "leaflets flagged for a closer look"],
   ].map(([v,l])=>`<div class="stat"><span class="v">${v}</span><span class="l">${l}</span></div>`).join("");
   const years = [...new Set(B.map(r=>r.d.slice(0,4)))];
@@ -549,14 +557,14 @@ function select(id){
   const dt = new Date(r.d+"T00:00:00Z").toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"});
   const flags = r.fl.map(f=>`<span class="chip warn">${esc(f)}</span>`).join(" ");
   const rows = r.p.map((p,i)=>{
-    const [li,raw,tk,acc,src,fam,ren,sec,common,cols,stage,phase,ctx,ak] = p;
+    const [li,raw,tk,acc,src,fam,ren,sec,common,cols,stage,phase,ctx,ak,excl] = p;
     const hit = (q && (raw+" "+tk+" "+(acc||"")+" "+(fam||"")+" "+(common||"")).toLowerCase().includes(q)) || (hlPlant && (ak===hlPlant || acc===hlPlant));
     let accCell = acc ? sci(acc) : `<span class="chip bad">unresolved</span>`;
     if (ren) accCell += ` <span class="chip acc" title="Printed under an older name">renamed</span>`;
     if (acc && src && src.startsWith("as written")) accCell += ` <span class="chip" title="ALA recognised the genus only; the name is used as printed">genus-matched</span>`;
     const colours = (cols? cols.split(","):[]).map(c=>`<span class="sw" title="${c}" style="background:${COLOUR_HEX[c]||"transparent"}"></span>`).join("");
     const st = stage ? `<span class="chip ${stage==="early"?"early":stage==="late"?"late":""}">${stage}</span>` : "";
-    const ph = phase!=="flowering" ? `<span class="chip warn" title="Excluded from phenology analysis">${phase}</span>` : "";
+    const ph = excl ? `<span class="chip" title="This record is not used in the analysis">not used: ${esc(excl)}</span>` : `<span class="chip good" title="This record is used in the analysis">used</span>`;
     return `<tr class="hasctx" ${hit?'style="background:var(--accent-soft)"':''}><td class="num">${li??(i+1)}</td><td>${sci(raw)}</td><td>${sci(tk)}</td><td>${accCell}</td><td>${esc(fam||"–")}</td><td class="mono">${esc(sec||"–")}</td><td>${esc(common||"")}</td><td>${colours} ${st} ${ph}</td></tr>
       <tr class="ctx"><td></td><td colspan="7">${esc(ctx)}</td></tr>`;
   }).join("");
@@ -573,7 +581,7 @@ function select(id){
       <div><dt>Parser</dt><dd>${r.mode==="bold"?"Bold names (web page)":r.mode==="pdf-bold-italic"?"Bold names (PDF)":"Italic fallback"} ${flags}</dd></div>
     </dl>
     <p class="prose" style="padding-top:12px;font-size:14px"><span class="eyebrow">Opening line · </span>${esc(r.intro)}</p>
-    <div class="tablewrap"><table><thead><tr><th class="num">${r.s==="FFF"?"Stop":"#"}</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="tablewrap"><table><thead><tr><th class="num">${r.s==="FFF"?"Stop":"#"}</th><th>As printed</th><th>Parsed</th><th>Accepted name (ALA)</th><th>Family</th><th>Section</th><th>Common name</th><th>Colour · stage · used?</th></tr></thead><tbody>${rows}</tbody></table></div>
     <div class="side-lists">
       <div><h4>Photo on the leaflet</h4>${list(r.cap,1)}</div>
       <div><h4>Named with a Section ref but not bold</h4>${list(r.lm,1)}<div class="sub">Usually landmarks such as tree ferns and conifers. Not treated as in flower.</div></div>
@@ -685,6 +693,7 @@ function initAnalysis(){
   safely("species", initSpeciesTable, "#spDetail");
   safely("climate", initWhy, "#reasons");
   safely("method", initMethod, "#method");
+  safely("assumptions", initAssumptions, "#asTable");
 }
 
 function initFamilies(){
@@ -855,12 +864,21 @@ function initWhy(){
     <li><b>Likely non-climate contributors.</b> The garden is maturing and irrigated, which can decouple plants from the weather. Newer plantings and cultivars are chosen for long or early flowering. Volunteers and routes changed. The leaflets can't separate these.</li>`;
 }
 
+function initAssumptions(){
+  let g = "", html = "";
+  for (const a of FX.assumptions){
+    if (a.group !== g){ g = a.group; html += `<tr><td colspan="3" style="padding-top:14px"><span class="eyebrow">${esc(g)}</span></td></tr>`; }
+    html += `<tr><td style="min-width:180px"><b>${esc(a.title)}</b></td><td style="color:var(--ink-2)">${esc(a.rule)}</td><td class="num" style="white-space:nowrap">${esc(a.count)}</td></tr>`;
+  }
+  $("#asTable tbody").innerHTML = html;
+  document.querySelectorAll("#assumptions [data-fx]").forEach(el => { el.textContent = FX[el.dataset.fx]; });
+}
 function initMethod(){
   const p = A.params, sp = A.climate_splice, n = A.series_counts;
   $("#method").innerHTML = `
     <p><b>Sources.</b> ${n.IFTW} <i>In Flower This Week</i> pages from the ANBG archive (Apr 1997 – Aug 2016), and ${n.FFF} <i>Flowers, Fruit &amp; Foliage</i> PDFs from the Friends of the ANBG (Aug 2016 – now), listed on the Friends' current website and the older mirror of their site. Dead links were recovered from the Internet Archive. Some early Friends captures were cut off at 1 MB, so the largest complete capture was used. There are no leaflets for Apr–Jun 2020 or mid-Aug to Oct 2021 (COVID-19 restrictions).</p>
     <p><b>Extraction.</b> Web pages are flattened with bold and italic tracked per character. PDFs are read the same way with PyMuPDF and split at the numbered stops, because the two-column layout scrambles reading order. Bold runs that look like botanical names become plant records, and bold roman cultivar names are joined to their italic genus. Ten 2019–20 PDFs made with "Microsoft Print to PDF" store text shifted 29 characters, and those are decoded. One PDF with no font information falls back to matching known genera, and it's flagged. Abbreviated genera (<span class="sp">G. sericea</span>) are expanded from the previous full name. Fruit and foliage-only records are excluded from timing.</p>
-    <p><b>Names.</b> Each name was matched with the Atlas of Living Australia name-matching service, kingdom Plantae, which maps synonyms to the current accepted species. Where ALA only knew the genus, the printed species name is kept. Cultivars are analysed as their own taxa. Hybrids are shown but not analysed. Reviewer corrections from the Check accuracy page override ALA.</p>
+    <p><b>Names.</b> Each name was matched with the Atlas of Living Australia name-matching service, kingdom Plantae, which maps synonyms to the current accepted species. Where ALA only knew the genus, the printed species name is kept. Only records that print both the genus in full and the species are analysed. Cultivars printed with their species are analysed as their own taxa; cultivars printed without a species, abbreviated genera and hybrids are shown but not analysed. See <a href="#analysis" data-scroll="assumptions">Rules and assumptions</a>. Reviewer corrections from the Check accuracy page override ALA.</p>
     <p><b>Timing.</b> Each taxon's year starts at its quietest point in the calendar, so a summer bloomer isn't split across 31 December. A season counts only if the leaflets covered that species' flowering window with no gap longer than ${p.max_gap} days. Taxa need ${p.min_seasons}+ such seasons spanning ${p.min_span}+ years. The main measure is the mid-flowering date, the mean of a season's mention dates, because it isn't biased by the 2014 switch from weekly to fortnightly leaflets. First-appearance date is reported alongside, raw and with the weekly years thinned to fortnightly. Per-taxon trends are ordinary least squares with Benjamini–Hochberg q-values. The garden-wide trend pools each taxon's anomalies, with standard errors clustered by both species and year.</p>
     <p><b>Climate.</b> Daily maximum and minimum temperature from BOM's ACORN-SAT v2.6 homogenised dataset for Canberra (070351), from the Bureau's public FTP, through ${sp.acorn_end}. After that, ERA5 reanalysis at the ANBG site, adjusted by calendar month to match ACORN over 1990–2024 (monthly anomaly r = ${sp.r_tmax.toFixed(2)} for maxima, ${sp.r_tmin.toFixed(2)} for minima). Rainfall is from ERA5 (Open-Meteo archive), because BOM station rainfall isn't on the public FTP and the Climate Data Online site blocks scripted downloads.</p>
     <p><b>Limits.</b> A leaflet is a guided walk, not a survey. A plant is recorded when a volunteer chose to feature it, so these dates are noisy proxies for flowering. Results for single species should be treated as hypotheses. Analysis generated ${esc(A.generated)}.</p>

@@ -7,41 +7,41 @@
  "n_fff": "248",
  "n_wayback": "181",
  "n_records": "22,307",
- "n_taxa": "436",
+ "n_taxa": "376",
  "n_flagged": "56",
  "pct_species": "83%",
  "n_renamed": "1,078",
- "shift": "−5.5",
+ "shift": "−5.2",
  "shift_abs_round": "5",
- "shift_ci": "−8.0 to −2.9",
+ "shift_ci": "−7.9 to −2.5",
  "shift_total_words": "two weeks",
- "shift_total_days": "16",
- "thinned_first": "−4.1",
- "thinned_first_ci": "−6.7 to −1.6",
- "raw_first": "−1.4",
- "n_short": "322",
- "n_short_earlier": "215",
- "pct_short_earlier": "67%",
- "q_earlier": "6",
+ "shift_total_days": "15",
+ "thinned_first": "−3.9",
+ "thinned_first_ci": "−6.5 to −1.2",
+ "raw_first": "−1.2",
+ "n_short": "282",
+ "n_short_earlier": "187",
+ "pct_short_earlier": "66%",
+ "q_earlier": "7",
  "q_later": "1",
  "warming": "+0.32 °C",
  "warming_1dp": "0.3 °C",
  "warming_words": "about a third of a degree",
  "warming_spring": "+0.50 °C",
- "sens_range": "3.4–7.4",
- "expected_range": "−1.0 to −2.0",
- "share": "18–36%",
+ "sens_range": "3.4–7.9",
+ "expected_range": "−1.0 to −2.2",
+ "share": "19–42%",
  "share_words": "a fifth to a third",
- "year_r": "−0.63",
- "year_r_detrended": "−0.45",
- "rain_r": "+0.08",
+ "year_r": "−0.61",
+ "year_r_detrended": "−0.43",
+ "rain_r": "+0.09",
  "earliest_years": "2014, 2019 and 2024",
- "latest_years": "1997, 1999 and 2004",
- "handover_step": "+3.4",
+ "latest_years": "1997, 2000 and 2004",
+ "handover_step": "+3.1",
  "family_share": "6%",
- "family_perm_p": "0.359",
+ "family_perm_p": "0.362",
  "family_n_clear": "4",
- "family_clear": "Ericaceae, Cunoniaceae, Rutaceae and Proteaceae",
+ "family_clear": "Ericaceae, Cunoniaceae, Proteaceae and Rutaceae",
  "family_n": "13",
  "family_within_sd": "±21",
  "family_noise_sd": "±15",
@@ -49,10 +49,140 @@
  "fabaceae_shift": "+1.8",
  "acacia_shift": "−0.3",
  "genus_p": "0.046",
- "report_pages": "12",
+ "report_pages": "14",
  "last_leaflet": "2026-09-16",
+ "n_used": "17,883",
+ "sentence_rule": "Only records where the leaflet prints both the genus and the species name in full are used: 17,883 of the 22,307 plant records.",
+ "assumptions": [
+  {
+   "group": "Which records count",
+   "title": "Bold means in flower",
+   "rule": "A plant counts as flowering on a leaflet's date only if the leaflet prints its name in bold. Plants mentioned in plain text (landmarks, relatives, hybrid parents) are ignored.",
+   "count": "22,307 bold records"
+  },
+  {
+   "group": "Which records count",
+   "title": "Genus and species must both be printed",
+   "rule": "A record is used only if the leaflet prints the genus in full and the species name. Excluded: cultivars printed without a species (3,012), genus-only names such as “Grevillea sp.” (735), abbreviated genera such as “H. suaveolens” (5), hybrids (236) and names the Atlas of Living Australia doesn't recognise (37).",
+   "count": "17,883 used"
+  },
+  {
+   "group": "Which records count",
+   "title": "Fruit and foliage mentions are left out",
+   "rule": "If the text about a plant describes only fruit, seeds, cones or foliage and no flowers, the record is not treated as flowering. This is judged by keywords, so a few may be misclassified.",
+   "count": "399 left out"
+  },
+  {
+   "group": "Which records count",
+   "title": "Italics used where a leaflet has no bold",
+   "rule": "Five early ANBG pages print plant names in italics instead of bold; there, italic names followed by a garden bed number are used. One Friends PDF has no font information at all; its names were matched against known genera at each numbered stop.",
+   "count": "79 + 10 records"
+  },
+  {
+   "group": "Which records count",
+   "title": "One record per plant per leaflet",
+   "rule": "If a leaflet names the same plant twice, it counts once.",
+   "count": "195 repeats merged"
+  },
+  {
+   "group": "Reading the names",
+   "title": "Spelling and line-break repairs",
+   "rule": "Names split across lines (“Leptosper- mum”), run together (“Banksiarepens”), or carrying stray punctuation are re-joined. Misspellings (“Grevillia”) are corrected to the closest name the Atlas of Living Australia recognises.",
+   "count": "115 spellings corrected"
+  },
+  {
+   "group": "Reading the names",
+   "title": "Old names mapped to current names",
+   "rule": "Names are converted to the currently accepted species using the Atlas of Living Australia (e.g. Bracteantha bracteata → Xerochrysum bracteatum). A few mappings may be misapplied; they can be reviewed on the Check accuracy page.",
+   "count": "1,027 records renamed"
+  },
+  {
+   "group": "Reading the names",
+   "title": "Printed species kept when the Atlas knows only the genus",
+   "rule": "Where the Atlas recognises the genus but not the printed species, the species is used exactly as printed.",
+   "count": "329 records"
+  },
+  {
+   "group": "Reading the names",
+   "title": "Subspecies and varieties grouped with their species",
+   "rule": "Records naming a subspecies or variety are counted under the species (e.g. Banksia spinulosa var. spinulosa → Banksia spinulosa).",
+   "count": "2,027 records"
+  },
+  {
+   "group": "Reading the names",
+   "title": "Cultivars kept separate",
+   "rule": "A cultivar printed with its species (e.g. Corymbia ficifolia ‘Dwarf Orange’) is tracked as its own plant, separate from the wild species.",
+   "count": "21 cultivars analysed"
+  },
+  {
+   "group": "Dates",
+   "title": "A record is dated by the leaflet's start date",
+   "rule": "Each record takes the first day of the leaflet's period (weekly, or fortnightly from 2014). The walk itself may have been on a later day within that period. Friends leaflets start on a Wednesday; where a file name and the leaflet's own dates disagreed, the Wednesday was used.",
+   "count": "all records"
+  },
+  {
+   "group": "Measuring flowering time",
+   "title": "Each plant's year starts at its quietest time",
+   "rule": "So that summer flowerers aren't split at New Year, each plant's flowering year starts at the quietest point in its calendar, and is labelled by the calendar year in which it flowers.",
+   "count": "376 plants"
+  },
+  {
+   "group": "Measuring flowering time",
+   "title": "Mid-flowering date is the main measure",
+   "rule": "A plant's flowering time in a year is the average date of its mentions that year. First appearance is reported as a check, because the 2014 switch to fortnightly 15-stop leaflets makes first sightings look later.",
+   "count": "—"
+  },
+  {
+   "group": "Measuring flowering time",
+   "title": "Only well-covered years count",
+   "rule": "A plant's year counts only if the leaflets covered its flowering window with no gap longer than 28 days. A plant needs at least 8 such years spread over 10+ years.",
+   "count": "376 plants qualify"
+  },
+  {
+   "group": "Measuring flowering time",
+   "title": "Long-flowering plants are flagged",
+   "rule": "Plants whose mentions spread over more than 150 days of the year are labelled long-flowering; their dates mostly reflect which weeks a volunteer walked past. They are included in the all-plants figures, hidden by default in the species table, and left out of the spread chart and the family comparison.",
+   "count": "94 plants"
+  },
+  {
+   "group": "Measuring flowering time",
+   "title": "Trends are straight lines",
+   "rule": "Change over time is measured as a straight-line trend in days per decade. Real change may speed up, slow down or reverse.",
+   "count": "—"
+  },
+  {
+   "group": "Weather",
+   "title": "Airport weather stands in for the Gardens",
+   "rule": "Temperatures come from Canberra Airport, about 8 km away. Year-to-year changes track the Gardens well, but the Gardens' own conditions differ, and beds are watered.",
+   "count": "—"
+  },
+  {
+   "group": "Weather",
+   "title": "Recent months come from a weather model",
+   "rule": "The Bureau's adjusted record ends in 2024. Later months use the ERA5 weather model, adjusted to match the Bureau's figures (monthly agreement r = 0.95). Rainfall comes from ERA5 throughout.",
+   "count": "—"
+  },
+  {
+   "group": "Weather",
+   "title": "Warmth measured over fixed run-up periods",
+   "rule": "The weather that matters is taken to be the average temperature in the 30 to 180 days before a plant usually starts flowering. The true period varies by plant, so warming's share of the shift is probably underestimated.",
+   "count": "—"
+  },
+  {
+   "group": "Statistics",
+   "title": "Plants in the same year aren't independent",
+   "rule": "Uncertainty ranges allow for plants in the same year sharing weather, volunteers and walk routes, which makes the ranges wider.",
+   "count": "—"
+  },
+  {
+   "group": "Statistics",
+   "title": "Many plants tested at once",
+   "rule": "With hundreds of plants tested, some will look significant by chance. q values correct for this; single-plant results are treated as leads, not findings.",
+   "count": "—"
+  }
+ ],
  "sentence_shift": "The plants in the Gardens now flower about 5 days earlier per decade than in 1997, roughly two weeks over the whole period.",
- "sentence_warming": "Canberra has warmed by about a third of a degree each decade since 1997, and in warmer years plants flowered 3.4–7.4 days earlier for each degree of extra warmth.",
- "sentence_share": "On these figures, warming accounts for roughly a fifth to a third of the change (18–36%). Rainfall made no clear difference.",
+ "sentence_warming": "Canberra has warmed by about a third of a degree each decade since 1997, and in warmer years plants flowered 3.4–7.9 days earlier for each degree of extra warmth.",
+ "sentence_share": "On these figures, warming accounts for roughly a fifth to a third of the change (19–42%). Rainfall made no clear difference.",
  "sentence_families": "Plant families are not shifting in their own distinctive ways: family explains only 6% of the differences between species. Most families are moving earlier along with the garden as a whole, and the wattles are the main exception."
 }

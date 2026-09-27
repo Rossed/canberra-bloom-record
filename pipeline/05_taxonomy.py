@@ -1,6 +1,6 @@
 """Resolve every extracted name to an accepted taxon via the ALA name-matching service (cached).
 Adds to each plant: accepted_species, accepted_name, family, match_type, vernacular, analysis_key."""
-import os, json, urllib.request, urllib.parse, concurrent.futures as cf, time, collections
+import os, re, json, urllib.request, urllib.parse, concurrent.futures as cf, time, collections
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "data", "ala_cache.json")
 cache = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
@@ -72,12 +72,22 @@ for r in d:
         p["match_type"] = res.get("matchType") if res else "no-response"
         p["vernacular"] = res.get("vernacularName") if ok else None
         p["renamed"] = bool(species and src == "ALA accepted" and species != f"{p['genus']} {p['epithet']}" and not p["cultivar"])
-        if species and not p["cultivar"] and not hybrid:
-            p["analysis_key"] = species
-        elif p["cultivar"] and ok:
-            p["analysis_key"] = f"{res.get('genus') or p['genus']} '{p['cultivar']}'"
-        else:
+        # Analysis rule: a record is used only if the leaflet prints BOTH the genus (in full) and the species name.
+        raw = p["raw"].strip(" ,.;:").replace("\u2018", "'").replace("\u2019", "'")
+        genus_abbrev = bool(re.match(r"^[A-Z]\.\s", raw))
+        if hybrid:
+            p["analysis_key"], p["excluded"] = None, "hybrid (not analysed)"
+        elif not p["epithet"]:
             p["analysis_key"] = None
+            p["excluded"] = "no species name printed (genus and cultivar only)" if p["cultivar"] else "no species name printed (genus only)"
+        elif genus_abbrev:
+            p["analysis_key"], p["excluded"] = None, "genus abbreviated in the leaflet (not printed in full)"
+        elif not species:
+            p["analysis_key"], p["excluded"] = None, "name not recognised by the Atlas of Living Australia"
+        elif p["cultivar"]:
+            p["analysis_key"], p["excluded"] = f"{species} '{p['cultivar']}'", None
+        else:
+            p["analysis_key"], p["excluded"] = species, None
         stats["species" if species else "genus-only" if p["family"] else "unmatched"] += 1
         stats["renamed"] += p["renamed"]
 json.dump(d, open(os.path.join(ROOT, "data", "brochures.json"), "w"), indent=0, ensure_ascii=False)

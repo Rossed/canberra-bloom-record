@@ -10,7 +10,8 @@ for r in D:
                     inc=r["incidental_mentions"], qs=r["qa_section_refs"], qp=r["qa_plants_with_section"],
                     p=[[pl["list_no"], pl["raw"], pl["taxon_key"], pl.get("accepted_species"), pl.get("species_source"),
                         pl.get("family"), pl.get("renamed"), ",".join(pl["sections"]), pl.get("common_name") or pl.get("vernacular"),
-                        ",".join(pl["colours"]), pl["stage"], pl["phase"], pl["context"][:260], pl.get("analysis_key")]
+                        ",".join(pl["colours"]), pl["stage"], pl["phase"], pl["context"][:260], pl.get("analysis_key"),
+                        pl.get("excluded") or ("fruit or foliage only" if pl.get("analysis_key") and pl["phase"] != "flowering" else "")]
                        for pl in r["plants"]]))
 json.dump(out, open(os.path.join(ROOT, "site", "data", "brochures.json"), "w"), separators=(",", ":"), ensure_ascii=False)
 print(os.path.getsize(os.path.join(ROOT, "site", "data", "brochures.json")) / 1e6, "MB")

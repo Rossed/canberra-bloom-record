@@ -25,6 +25,13 @@ The site's **3 · Check accuracy** page lets a reviewer mark a stratified random
     python3 pipeline/08_apply_validation.py   # prints precision / recall / name accuracy with 95% CIs, writes data/name_overrides.json
     python3 pipeline/05_taxonomy.py && python3 pipeline/06_analysis.py && python3 pipeline/07_site_data.py
 
+## Record-selection rule
+A record is used only if the leaflet prints BOTH the genus in full and the species name. Cultivars printed without a
+species, genus-only names ("sp."), abbreviated genera ("H. suaveolens"), hybrids and names the Atlas of Living
+Australia doesn't recognise are kept for display but excluded from analysis; each record carries its reason
+(`excluded` in data/brochures.json). Every other assumption, with counts, is generated in `pipeline/facts.py`
+(`assumptions`) and shown identically on the Findings page and in section 7 of the report.
+
 ## Keeping the website and report consistent
 Headline figures and the plain-language summary sentences are defined once in `pipeline/facts.py`.
 The website reads them from `site/data/facts.json`, and the PDF report imports them directly.

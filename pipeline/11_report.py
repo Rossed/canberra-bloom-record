@@ -212,7 +212,7 @@ def chart_hist():
 
 def chart_families():
     F = sorted(A["families"], key=lambda f: f["mean_slope"]); LIM = 60
-    fig, ax = plt.subplots(figsize=(7.2, 0.24 * len(F) + 0.75))
+    fig, ax = plt.subplots(figsize=(7.2, 0.21 * len(F) + 0.7))
     rng = np.random.default_rng(3)
     for i, f in enumerate(F):
         xs = np.clip([sp["slope"] for sp in f["species"]], -LIM, LIM)
@@ -446,7 +446,7 @@ s += [Spacer(1, 4 * mm), P("A REPORT FROM THE CANBERRA BLOOM RECORD", "eyebrow")
 # ---- summary
 s += [P("SUMMARY", "eyebrow"), P("The short answer", "h1"),
       Paragraph(FX["sentence_shift"].replace(f"about {FX['shift_abs_round']} days earlier per decade", f"about <font color='{EARLY}'>{FX['shift_abs_round']} days earlier per decade</font>") + f" Warming explains roughly {FX['share']} of the shift.", st["big"]),
-      P("<b>Where the evidence comes from.</b> Every week or two since 1997 a volunteer has walked through the Gardens and written a leaflet naming the plants in flower along the way. The Gardens published these as <i>In Flower This Week</i> until August 2016, and the Friends of the ANBG have continued them since as <i>Flowers, Fruit &amp; Foliage</i>. In every leaflet the featured plants are printed in bold. That makes it possible to list, for each plant, the dates it was in flower, year after year."),
+      P(f"<b>Where the evidence comes from.</b> Every week or two since 1997 a volunteer has walked through the Gardens and written a leaflet naming the plants in flower along the way. The Gardens published these as <i>In Flower This Week</i> until August 2016, and the Friends of the ANBG have continued them since as <i>Flowers, Fruit &amp; Foliage</i>. In every leaflet the featured plants are printed in bold. That makes it possible to list, for each plant, the dates it was in flower, year after year. {FX['sentence_rule']} Section 7 lists every other assumption."),
       P("What was found", "h2")]
 s += bullets([
     f"<b>Flowering is earlier.</b> Across {FX['n_taxa']} plants seen in at least eight years, the middle of each plant's flowering period moved {FX['shift']} days per decade (95% confidence interval {FX['shift_ci']}). Of the {FX['n_short']} plants with a clear flowering season, {FX['n_short_earlier']} ({FX['pct_short_earlier']}) moved earlier.",
@@ -478,7 +478,7 @@ s += [P("2 · METHOD", "eyebrow"), P("From leaflets to flowering dates", "h1"),
 steps = [
     ("Collect every leaflet", f"All {n_iftw} Gardens web pages and {n_fff} Friends PDFs listed on the organisations' websites were downloaded. Where a link had gone dead, the Internet Archive's copy was used. Some early archived PDFs had been cut short at 1 MB, and for those the most complete copy was chosen."),
     ("Pick out the plants", f"A program read each leaflet and kept the words printed in bold that look like plant names. Italic Latin names and cultivar names in quotes, such as <i>Grevillea</i> ‘Lady O’, were joined up. The Friends' PDFs are laid out in two columns, so they were read stop by stop. Ten leaflets from 2019–20 stored their text in a scrambled form and were decoded. This gave {n_rec:,} records of a plant in flower on a given date."),
-    ("Tidy the names", f"Botanists rename plants, and leaflets sometimes misspell them. Every name was checked against the Atlas of Living Australia, which gives the currently accepted name. For example, <i>Bracteantha bracteata</i> is now <i>Xerochrysum bracteatum</i>. {pct_sp:.0f}% of records were matched to a species and {pct_fam:.1f}% to at least a plant family. {n_ren:,} records were printed under an older name."),
+    ("Tidy the names", f"Botanists rename plants, and leaflets sometimes misspell them. Every name was checked against the Atlas of Living Australia, which gives the currently accepted name. For example, <i>Bracteantha bracteata</i> is now <i>Xerochrysum bracteatum</i>. {pct_sp:.0f}% of records were matched to a species and {pct_fam:.1f}% to at least a plant family. {n_ren:,} records were printed under an older name. Only records that print both the genus in full and the species are analysed: {FX['n_used']} of {FX['n_records']}."),
     ("Work out flowering time", f"For each plant and each year, the middle of the dates it was mentioned is its <b>mid-flowering date</b>. Each plant's year starts at its quietest time, so summer bloomers aren't split at New Year. A year only counts if the leaflets covered that plant's season with no gap longer than {A['params']['max_gap']} days. Plants needed at least {A['params']['min_seasons']} such years spread over {A['params']['min_span']}+ years, which left {len(S)} plants and cultivars."),
     ("Compare with the weather", "For each plant and year, the average temperature in the weeks before its usual flowering start was compared with how early or late it flowered that year. Garden-wide results pool all plants, and the uncertainty allows for plants in the same year sharing the same weather, volunteer and route."),
 ]
@@ -493,10 +493,9 @@ for i, (h, t) in enumerate(steps, 1):
 s += [P("Why the middle of flowering, not the first sighting?", "h2"),
       P(f"The most obvious measure would be the first date each year a plant appears. But in 2014 the leaflets went from weekly to fortnightly, and with half as many leaflets a plant tends to be spotted about a week later, even if nothing has changed. Taken at face value, first sightings show only {fmt(R['all_years']['days_per_decade'])} days per decade. When the early weekly years are thinned to fortnightly so both periods are sampled alike, first sightings show {fmt(th['days_per_decade'])} days per decade (95% CI {fmt(th['lo'])} to {fmt(th['hi'])}), close to the mid-flowering result. The mid-flowering date isn't thrown off by the sampling change, so it is the main measure in this report."),
       P("Checking the extraction", "h2"),
-      P(f"The website's Leaflets page shows every leaflet next to the plants taken from it, and flags {n_flag} leaflets for a closer look. A Check accuracy page lets reviewers compare a random sample of leaflets with the originals." +
+      P(f"The website's Leaflets page shows every leaflet beside the plants taken from it ({n_flag} flagged for a closer look), and each dot on a plant's chart links to its leaflet. The Check accuracy page lets reviewers compare a random sample with the originals." +
         (f" So far {val['done']} leaflets ({val['checked']} records) have been checked: {100 * val['prec']:.1f}% of extracted records were genuine featured plants, {100 * val['rec']:.1f}% of featured plants were found, and {100 * val['name']:.1f}% of names were correct." if val else
-         " Reviewer results will appear here when available.") +
-        " On the website, each dot on a plant's chart links to its leaflet."),
+         " Results will appear here when available.")),
       PageBreak()]
 
 # ---- 3. findings, garden-wide
@@ -592,6 +591,15 @@ s += bullets([
     f"<b>Weather is measured at the airport.</b> Canberra Airport is about 8 km from the Gardens. Year-to-year changes track well, but the Gardens' own conditions differ, and it is irrigated. Temperatures after {sp['acorn_end'][:4]} come from a weather model, not the Bureau's adjusted record.",
     "<b>Correlation is not proof of cause.</b> Warm years flowering early fits a warming effect, but the leaflets alone can't rule out other explanations.",
 ])
+# ---- 7. rules and assumptions (same list, same wording as the website's Findings page)
+s += [PageBreak(), P("7 · RULES AND ASSUMPTIONS", "eyebrow"), P("What was assumed, and how often it applies", "h1"),
+      P(f"<b>{FX['sentence_rule']}</b> Every other rule and assumption behind the results is listed here, with how many records or plants it affects. The website's Leaflets page shows, for every record, whether it was used and why not.")]
+_rows, _g = [], None
+for a in FX["assumptions"]:
+    if a["group"] != _g:
+        _g = a["group"]; _rows.append([P(f"<font name='Plex-Md' color='{INK3}' size='7.5'>{esc(_g.upper())}</font>", "cell"), "", ""])
+    _rows.append([P(f"<b>{esc(a['title'])}</b>", "cell"), P(esc(a["rule"]), "cell"), P(esc(a["count"]), "cellnum")])
+s += [data_table(["Assumption", "What was done", "Affects"], _rows, [W * .25, W * .58, W * .17], numcols=(2,))]
 s += [PageBreak(), P("GLOSSARY AND CREDITS", "eyebrow"), P("Glossary", "h2")]
 gl = [("Mid-flowering date", "The middle of the dates a plant was mentioned in a given year. The main measure in this report."),
       ("First appearance", "The first date in a year a plant was mentioned. Affected by how often leaflets were published."),
