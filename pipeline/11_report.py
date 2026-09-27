@@ -208,14 +208,18 @@ def chart_hist():
 
 
 def chart_families():
-    F = A["families"]
-    fig, ax = plt.subplots(figsize=(3.6, 0.2 * len(F) + 0.8))
-    ys = range(len(F))
-    ax.barh(list(ys), [f["mean_slope"] for f in F], color=[EARLY if f["mean_slope"] < 0 else LATE for f in F], height=0.6)
-    ax.set_yticks(list(ys)); ax.set_yticklabels([f"{f['family']} ({f['n']})" for f in F], fontsize=7.4, fontfamily="Spectral")
-    ax.invert_yaxis(); ax.axvline(0, color=INK3, lw=0.8); ax.grid(axis="y", visible=False)
-    style_ax(ax, "average shift, days per decade")
-    return fig_to_image(fig, 82)
+    F = sorted(A["families"], key=lambda f: f["mean_slope"]); LIM = 60
+    fig, ax = plt.subplots(figsize=(7.2, 0.24 * len(F) + 0.75))
+    rng = np.random.default_rng(3)
+    for i, f in enumerate(F):
+        xs = np.clip([sp["slope"] for sp in f["species"]], -LIM, LIM)
+        ax.scatter(xs, i + rng.uniform(-0.22, 0.22, len(xs)), s=11, c=[EARLY if v < 0 else LATE for v in xs], alpha=0.45, lw=0, zorder=2)
+        ax.plot([max(-LIM, f["lo"]), min(LIM, f["hi"])], [i, i], color=INK, lw=1.8, zorder=3)
+        ax.plot(f["mean_slope"], i, "o", color=INK, ms=6, mec="white", mew=1.2, zorder=4)
+    ax.set_yticks(range(len(F))); ax.set_yticklabels([f"{f['family']} ({f['n']})" for f in F], fontsize=8, fontfamily="Spectral")
+    ax.invert_yaxis(); ax.axvline(0, color=INK3, lw=0.8, ls=":"); ax.set_xlim(-LIM, LIM); ax.grid(axis="y", visible=False)
+    style_ax(ax, "mid-flowering shift, days per decade (negative = earlier); values beyond ±60 drawn at the edge")
+    return fig_to_image(fig, 170)
 
 
 def chart_species(s):
@@ -401,7 +405,7 @@ qE = sum(1 for s in S if s["q_mean"] < .1 and s["slope_mean"] < 0); qL = sum(1 f
 ct = A["climate_trends"]; yc = C["year_corr_mean"]; step = C["series_step_mean"]["friends_series"]
 yrs_span = LY + 1 - 1997
 total_days = round(abs(obs) * yrs_span / 10)
-th = R["thinned_fortnightly"]; sp = A["climate_splice"]
+th = R["thinned_fortnightly"]; sp = A["climate_splice"]; FT = A["family_test"]
 
 # validation results, if any reviewer files have been added
 val = None
@@ -506,9 +510,9 @@ s += [P("3 · FINDINGS", "eyebrow"), P("The whole garden is flowering earlier", 
 best = sorted([x for x in S if x["kind"] == "species" and not x["long_flowering"] and x["slope_mean"] < 0], key=lambda x: x["p_mean"])
 ex = best[0]
 s += [P("4 · WHICH PLANTS", "eyebrow"), P("Which plants are shifting", "h1"),
-      P(f"Most plants moved earlier, but by different amounts, and a few moved later. The left chart shows the spread across the {len(SH)} plants with a clear flowering season. The right chart averages by plant family."),
+      P(f"Most plants moved earlier, but by different amounts, and a few moved later. The left chart shows the spread across the {len(SH)} plants with a clear flowering season. The box on the right summarises whether plant families shift together."),
       two_up([chart_hist(), P(f"{earlyM} of {len(SH)} plants ({round(100 * earlyM / len(SH))}%) moved earlier. If nothing were changing, about half would by chance.", "cap")],
-             [chart_families(), P("Families with at least three wild species analysed. Numbers show how many species.", "cap")], W),
+             [P("Do families shift together?", "h3"), P(f"Mostly no. Family explains only {round(100 * FT['share_between'])}% of the differences between species, no more than random groupings would (p {pf(FT['permutation_p'])}). Species within a family vary widely. The detail follows the species tables.", "body")], W),
       P("One plant in detail", "h2"),
       P(f"<b>{sci(ex['key'])}</b>{(' (' + esc(ex['common']) + ')') if ex['common'] and not re.match(r'(?i)^(a|an) ', ex['common']) else ''} has the strongest evidence of an earlier shift among wild species. Each grey dot is one leaflet that mentioned it. The green dots mark the middle of each year's mentions."),
       chart_species(ex),
@@ -532,6 +536,28 @@ s += [P("4 · WHICH PLANTS (CONTINUED)", "eyebrow"), P("Plants with the clearest
       P("Moving earlier", "h3"), data_table(hdr, [sp_row(x) for x in top], cw, numcols=(3, 4, 5, 6)),
       Spacer(1, 4 * mm), KeepTogether([P("Moving later", "h3"), data_table(hdr, [sp_row(x) for x in later], cw, numcols=(3, 4, 5, 6))]),
       P("Long-flowering plants (in flower for more than about five months of the year) are left out. Their dates mostly reflect which weeks a volunteer happened to pass, not when they flowered. The full list of plants, with search and charts, is on the website's Findings page.", "cap"),
+      Spacer(1, 5 * mm), Rule(W), Spacer(1, 2 * mm)]
+
+# ---- 4b. families
+clearF = [f for f in A["families"] if f["hi"] < 0 and f["q"] < 0.1]
+fab = next((f for f in A["families"] if f["family"] == "Fabaceae"), None)
+acacia = next((g for g in A["genera"] if g["genus"] == "Acacia"), None)
+names = lambda xs: ", ".join(xs[:-1]) + " and " + xs[-1] if len(xs) > 1 else (xs[0] if xs else "none")
+fam_rows = []
+for f in sorted(A["families"], key=lambda f: f["mean_slope"]):
+    verdict = "clearly earlier" if f["hi"] < 0 and f["q"] < 0.1 else "clearly later" if f["lo"] > 0 and f["q"] < 0.1 else "no clear shift"
+    fam_rows.append([P(f"<font name='Spectral'>{esc(f['family'])}</font>", "cell"), str(f["n"]), fmt(f["mean_slope"]), f"{fmt(f['lo'], 0)} to {fmt(f['hi'], 0)}",
+                     f"±{f['sd']:.0f}", f"{f['n_earlier']}/{f['n']}", f"{f['q']:.2f}", verdict])
+s += [KeepTogether([P("Do plant families shift together?", "h2"),
+      P(f"Each family's figure is simply the average of its species. The chart shows every species as a dot, so the spread is visible. Species within a family typically differ by ±{FT['within_sd']:.0f} days per decade. About ±{FT['noise_se']:.0f} of that is noise in the leaflet records, leaving roughly ±{FT['true_sd']:.0f} of real difference between species."),
+      chart_families(),
+      P(f"Wild species with a defined season, in families with at least {FT['min_species']} such species ({FT['n_species']} species). Small dots are species (blue earlier, orange later). The black dot is the family average and the line its 95% confidence interval. When the line doesn't cross zero, the family as a whole is shifting.", "cap")]),
+      P(f"<b>The verdict.</b> Family explains only {round(100 * FT['share_between'])}% of the differences between species. Random groupings of the same species do as well {round(100 * FT['permutation_p'])}% of the time (permutation test p {pf(FT['permutation_p'])}), so families are not moving in their own distinctive ways. Most drift earlier with the garden as a whole. {len(clearF)} families are clearly earlier even after allowing for testing {FT['n_families']} families: {names([f['family'] for f in clearF])}." +
+        (f" The pea and wattle family (Fabaceae) is the exception at {fmt(fab['mean_slope'])} days per decade{', with <i>Acacia</i> at ' + fmt(acacia['mean_slope']) if acacia else ''}." if fab else "") +
+        f" Genera differ slightly more than families (p {pf(FT['genus_kruskal_p'])}), a hint worth following up rather than a finding."),
+      data_table(["Family", "Species", "Average", "95% CI", "Spread", "Earlier", "q", "Verdict"], fam_rows,
+                 [W * .22, W * .08, W * .1, W * .15, W * .09, W * .09, W * .08, W * .19], numcols=(1, 2, 3, 4, 5, 6)),
+      P("Shifts in days per decade. Spread is the standard deviation across the family's species. q is corrected for testing all families at once.", "cap"),
       PageBreak()]
 
 # ---- 5. why

@@ -228,7 +228,7 @@ for i, k in enumerate(keys):
         typical_onset=dos_label(mean_first, a["start"]), typical_onset_doy=typical_onset_doy,
         typical_centroid=dos_label(mean_mean, a["start"]),
         slope_first=a["first"]["slope"] * 10, p_first=a["first"]["p"], q_first=float(q_first[i]), r_first=a["first"]["r"],
-        slope_mean=a["mean"]["slope"] * 10, p_mean=a["mean"]["p"], q_mean=float(q_mean[i]),
+        slope_mean=a["mean"]["slope"] * 10, slope_mean_se=a["mean"]["se"] * 10, p_mean=a["mean"]["p"], q_mean=float(q_mean[i]),
         theil_first=a["theil_first"] * 10,
         flower_span=int(np.median([s["last"] - s["first"] + 1 for s in ok])),
         spread=SPREAD[k], long_flowering=LONG[k],
@@ -378,13 +378,53 @@ for v in ["annual", "winter", "spring", "rain_annual", "rain_winter_spring"]:
 climate_trends = {v: ols([c["year"] for c in c9716], [c[v] for c in c9716]) for v in ["annual", "winter", "spring", "summer", "autumn", "tmax_annual", "tmin_annual", "rain_annual"]}
 climate_trends = {k: dict(per_decade=v["slope"] * 10, p=v["p"]) for k, v in climate_trends.items()}
 
-# family summary
-fam = collections.defaultdict(list)
-for s in species_out:
-    if s["kind"] == "species" and s["family"]:
-        fam[s["family"]].append(s["slope_mean"])
-families = sorted([dict(family=f, n=len(v), mean_slope=float(np.mean(v)), n_earlier=sum(x < 0 for x in v))
-                   for f, v in fam.items() if len(v) >= 3], key=lambda x: x["mean_slope"])
+# ---------------- do families (and genera) shift together?
+# Wild species with a defined season (long-flowering taxa excluded, as in the species histogram).
+FAM_MIN, GEN_MIN = 3, 5
+fam_sp = collections.defaultdict(list)
+for s_ in species_out:
+    if s_["kind"] == "species" and s_["family"] and not s_["long_flowering"]:
+        fam_sp[s_["family"]].append(s_)
+fam_sp = {f: v for f, v in fam_sp.items() if len(v) >= FAM_MIN}
+families = []
+for f, v in fam_sp.items():
+    x = np.array([s_["slope_mean"] for s_ in v]); n = len(x)
+    ci = stats.t.ppf(.975, n - 1) * x.std(ddof=1) / math.sqrt(n)
+    families.append(dict(family=f, n=n, mean_slope=float(x.mean()), lo=float(x.mean() - ci), hi=float(x.mean() + ci),
+                         median=float(np.median(x)), sd=float(x.std(ddof=1)), n_earlier=int((x < 0).sum()),
+                         p=float(stats.ttest_1samp(x, 0).pvalue),
+                         species=[dict(key=s_["key"], common=s_["common"], slope=s_["slope_mean"], se=s_["slope_mean_se"]) for s_ in v]))
+families.sort(key=lambda r: r["mean_slope"])
+for r, q in zip(families, bh([r["p"] for r in families])):
+    r["q"] = float(q)
+groups = [np.array([s_["slope_mean"] for s_ in v]) for v in fam_sp.values()]
+allx = np.concatenate(groups); lab = np.concatenate([[i] * len(g) for i, g in enumerate(groups)])
+
+
+def between_ss(x, l):
+    gm = x.mean()
+    return sum(len(x[l == i]) * (x[l == i].mean() - gm) ** 2 for i in np.unique(l))
+
+
+obs_b = between_ss(allx, lab); rng = np.random.default_rng(1)
+perm_p = float(np.mean([between_ss(allx, rng.permutation(lab)) >= obs_b for _ in range(20000)]))
+k_, N_ = len(groups), len(allx)
+n0 = (N_ - sum(len(g) ** 2 for g in groups) / N_) / (k_ - 1)
+msb, msw = obs_b / (k_ - 1), sum(((g - g.mean()) ** 2).sum() for g in groups) / (N_ - k_)
+within_sd = float(np.sqrt(msw)); noise_se = float(np.sqrt(np.mean([s_["slope_mean_se"] ** 2 for v in fam_sp.values() for s_ in v])))
+gen_sp = collections.defaultdict(list)
+for v in fam_sp.values():
+    for s_ in v:
+        gen_sp[s_["key"].split()[0]].append(s_["slope_mean"])
+genera = sorted([dict(genus=g, n=len(x), mean_slope=float(np.mean(x)), sd=float(np.std(x, ddof=1)), n_earlier=int(sum(v < 0 for v in x)))
+                 for g, x in gen_sp.items() if len(x) >= GEN_MIN], key=lambda r: r["mean_slope"])
+family_test = dict(n_species=int(N_), n_families=k_, min_species=FAM_MIN,
+                   anova_p=float(stats.f_oneway(*groups).pvalue), kruskal_p=float(stats.kruskal(*groups).pvalue),
+                   permutation_p=perm_p, share_between=float(obs_b / ((allx - allx.mean()) ** 2).sum()),
+                   icc=float(max(0.0, (msb - msw) / (msb + (n0 - 1) * msw))),
+                   within_sd=within_sd, noise_se=noise_se, true_sd=float(np.sqrt(max(0.0, within_sd ** 2 - noise_se ** 2))),
+                   overall_mean=float(allx.mean()),
+                   genus_min=GEN_MIN, genus_kruskal_p=float(stats.kruskal(*[np.array(gen_sp[g["genus"]]) for g in genera]).pvalue))
 
 # sampling effort per year
 effort = collections.Counter(datetime.date.fromisoformat(r["date"]).year for r in D)
@@ -400,7 +440,7 @@ out = dict(climate_splice=dict(acorn_end=splice["acorn_end"], era5_end=splice["e
            generated=datetime.datetime.now().isoformat(timespec="seconds"),
            last_full_year=LAST_FULL, series_switch=SERIES_SWITCH, params=dict(min_year_n=MIN_YEAR_N, long_days=LONG_DAYS, min_seasons=MIN_SEASONS, min_span=MIN_SPAN, max_gap=MAX_GAP, temp_window=TEMP_WINDOW),
            n_brochures=len(D), n_keys_total=len(obs), species=species_out, community=community,
-           climate=climate, climate_trends=climate_trends, families=families, effort=effort_out)
+           climate=climate, climate_trends=climate_trends, families=families, family_test=family_test, genera=genera, effort=effort_out)
 os.makedirs(os.path.join(ROOT, "site", "data"), exist_ok=True)
 json.dump(out, open(os.path.join(ROOT, "site", "data", "analysis.json"), "w"), separators=(",", ":"),
           default=lambda o: float(o) if isinstance(o, (np.floating,)) else int(o) if isinstance(o, np.integer) else bool(o) if isinstance(o, np.bool_) else str(o))

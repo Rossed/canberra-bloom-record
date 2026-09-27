@@ -336,10 +336,19 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
           <p class="cap" id="capHist"></p>
         </div>
         <div class="panel">
-          <h3>By plant family</h3>
-          <div class="chart"><canvas id="cFam"></canvas></div>
-          <p class="cap">Average mid-flowering shift for families with at least 3 wild species analysed. Numbers show species analysed.</p>
+          <h3>Do plant families shift together?</h3>
+          <div id="famVerdict" class="prose" style="font-size:14px"></div>
         </div>
+      </div>
+      <div class="panel">
+        <h3>Every species, grouped by family</h3>
+        <div class="legend"><span><i class="pt" style="background:var(--neutral)"></i>One species (click to see it below)</span><span><i class="pt" style="background:var(--ink)"></i>Family average</span><span><i style="background:var(--ink);height:2px"></i>95% confidence interval of the average</span></div>
+        <div class="chart" id="famChartBox"><canvas id="cFam"></canvas></div>
+        <p class="cap" id="capFam"></p>
+        <div class="tablewrap"><table id="famTable"><thead><tr><th>Family</th><th class="num">Species</th><th class="num">Average shift</th><th class="num">95% CI</th><th class="num">Median</th><th class="num">Spread (SD)</th><th class="num">Earlier</th><th class="num">q</th><th>Verdict</th></tr></thead><tbody></tbody></table></div>
+        <h3 style="margin-top:10px">Large genera</h3>
+        <div class="tablewrap"><table id="genTable"><thead><tr><th>Genus</th><th class="num">Species</th><th class="num">Average shift</th><th class="num">Spread (SD)</th><th class="num">Earlier</th></tr></thead><tbody></tbody></table></div>
+        <p class="cap" id="capGen"></p>
       </div>
       <div class="controls">
         <input type="search" id="sq" placeholder="Filter species, common name or family" aria-label="Filter species">
@@ -667,16 +676,56 @@ function initAnalysis(){
   const med = [...SH.map(s=>s.slope_mean)].sort((a,b)=>a-b)[Math.floor(SH.length/2)];
   $("#capHist").innerHTML = `${earlyM} of ${SH.length} taxa with a defined season (${Math.round(100*earlyM/SH.length)}%) moved earlier. If nothing were changing you'd expect about half. Median shift ${fmt(med)} days per decade. ${S.length-SH.length} long-flowering taxa are left out.`;
 
-  const F = A.families;
-  mk("cFam",{type:"bar",data:{labels:F.map(f=>f.family),datasets:[{data:F.map(f=>f.mean_slope),backgroundColor:F.map(f=>f.mean_slope<0?early_c:late_c),borderRadius:4,borderSkipped:"start",barThickness:10}]},
-    options:baseOpts({indexAxis:"y",plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{label:c=>`${fmt(c.raw)} d/decade · ${F[c.dataIndex].n_earlier} of ${F[c.dataIndex].n} species earlier`}}},
-      scales:{x:{...baseOpts().scales.x,title:axTitle("mean mid-flowering shift, days per decade")},y:{...baseOpts().scales.y,ticks:{...baseOpts().scales.y.ticks,font:{family:"Spectral",size:12},callback:(v,i)=>`${F[i].family} (${F[i].n})`}}}})});
-  $("#cFam").parentElement.style.height = Math.max(280, F.length*20+60)+"px";
+  initFamilies();
 
   $("#spIntro").innerHTML = `${S.length} taxa appear in at least ${A.params.min_seasons} well-sampled seasons spanning ${A.params.min_span}+ years. The shift is a linear trend in each taxon's mid-flowering date, in days per decade. The table opens sorted by strength of evidence (p). Long-flowering taxa are hidden by default, because when a plant is in flower most of the year its dates mostly reflect which weeks a volunteer walked past. A plant only shows up if that week's walk passed it, so single-species results are leads. Check the <b>q</b> value (false discovery rate across all ${S.length} tests) before trusting one.`;
   initSpeciesTable();
   initWhy();
   initMethod();
+}
+
+function initFamilies(){
+  const F = A.families, T = A.family_test, G = A.genera;
+  const pct = x => Math.round(100*x);
+  const clear = F.filter(f=>f.hi<0 && f.q<0.1), fab = F.find(f=>f.family==="Fabaceae"), acacia = G.find(g=>g.genus==="Acacia");
+  const names = a => a.map(x=>x.family).join(", ").replace(/, ([^,]+)$/, " and $1");
+  $("#famVerdict").innerHTML = `
+    <p><b>Mostly no.</b> Each family's figure is the average of its species, and the species inside a family differ a lot. They typically spread ±${T.within_sd.toFixed(0)} days per decade around the family average. About ±${T.noise_se.toFixed(0)} of that is noise from the leaflet records, leaving roughly ±${T.true_sd.toFixed(0)} of real difference between species.</p>
+    <p>Family explains only ${pct(T.share_between)}% of the differences between species. Sorting the same species into random groups does as well about ${pct(T.permutation_p)}% of the time (permutation test, p ${pf(T.permutation_p)}). So families aren't moving in their own distinctive ways. Most are drifting earlier with the garden as a whole (${fmt(T.overall_mean)} days per decade).</p>
+    <p>${clear.length} famil${clear.length===1?"y is":"ies are"} clearly earlier even after allowing for testing ${T.n_families} families: ${names(clear)}.${fab?` The pea and wattle family is the exception, at ${fmt(fab.mean_slope)} days per decade (${fab.n_earlier} of ${fab.n} species earlier)${acacia?`, with <i>Acacia</i> itself at ${fmt(acacia.mean_slope)}`:""}.`:""} Genera differ a little more than families (p ${pf(T.genus_kruskal_p)}), but with ${G.length} genera compared that is a hint to follow up, not a finding.</p>`;
+
+  // dot plot: one row per family, species jittered, family mean with CI
+  const rows = [...F].sort((a,b)=>a.mean_slope-b.mean_slope), LIM = 60;
+  const jitter = k => { let h = 0; for (const ch of k) h = (h*31 + ch.charCodeAt(0)) >>> 0; return ((h % 1000)/1000 - 0.5) * 0.5; };
+  const spPts = rows.flatMap((f,i)=>f.species.map(sp=>({x:Math.max(-LIM,Math.min(LIM,sp.slope)), y:i+jitter(sp.key), key:sp.key, slope:sp.slope, common:sp.common, fam:f.family})));
+  const means = rows.map((f,i)=>({x:f.mean_slope, y:i, f}));
+  const ciPlugin = {id:"famci", beforeDatasetsDraw(ch){ const x=ch.scales.x, y=ch.scales.y, c=ch.ctx; c.save(); c.strokeStyle=css("--ink"); c.lineWidth=2;
+    rows.forEach((f,i)=>{ c.beginPath(); c.moveTo(x.getPixelForValue(Math.max(-LIM,f.lo)), y.getPixelForValue(i)); c.lineTo(x.getPixelForValue(Math.min(LIM,f.hi)), y.getPixelForValue(i)); c.stroke(); });
+    c.strokeStyle=css("--ink-3"); c.lineWidth=1; c.setLineDash([3,3]); c.beginPath(); c.moveTo(x.getPixelForValue(0), ch.chartArea.top); c.lineTo(x.getPixelForValue(0), ch.chartArea.bottom); c.stroke(); c.restore(); }};
+  $("#famChartBox").style.height = (rows.length*34 + 70) + "px";
+  mk("cFam",{type:"scatter",data:{datasets:[
+    {label:"Family average",data:means,backgroundColor:css("--ink"),pointRadius:6,pointHoverRadius:8,borderColor:css("--surface"),borderWidth:2,order:1},
+    {label:"Species",data:spPts,backgroundColor:spPts.map(p=>p.slope<0?"rgba(42,120,214,.45)":"rgba(235,104,52,.45)"),pointRadius:3.5,pointHoverRadius:6,order:2}]},
+    plugins:[ciPlugin],
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},
+      onHover:(e,els)=>{ e.native.target.style.cursor = els.some(el=>el.datasetIndex===1) ? "pointer" : "default"; },
+      onClick:(e,els)=>{ const el = els.find(x=>x.datasetIndex===1); if(!el) return; const p = spPts[el.index];
+        if ($("#sLong").checked === false && A.species.find(s=>s.key===p.key)?.long_flowering) $("#sLong").checked = true;
+        showSpecies(p.key); document.getElementById("spDetail").scrollIntoView({behavior:"smooth", block:"start"}); },
+      plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{
+        title:c=>c[0].datasetIndex===0?c[0].raw.f.family:c[0].raw.key,
+        label:c=>c.datasetIndex===0?`average ${fmt(c.raw.f.mean_slope)} d/decade [${fmt(c.raw.f.lo)}, ${fmt(c.raw.f.hi)}] · ${c.raw.f.n} species`:`${fmt(c.raw.slope)} d/decade${c.raw.common?` · ${c.raw.common}`:""}`,
+        footer:c=>c[0].datasetIndex===1?"Click to see this plant's chart":""}}},
+      scales:{x:{...baseOpts().scales.x,min:-LIM,max:LIM,title:axTitle("mid-flowering shift, days per decade (negative = earlier)")},
+              y:{...baseOpts().scales.y,type:"linear",min:-0.6,max:rows.length-0.4,reverse:true,grid:{display:false},afterBuildTicks:ax=>{ax.ticks=rows.map((_,i)=>({value:i}));},
+                 ticks:{...baseOpts().scales.y.ticks,autoSkip:false,font:{family:"Spectral",size:12},callback:v=>rows[v]?`${rows[v].family} (${rows[v].n})`:""}}}})});
+  $("#capFam").innerHTML = `Wild species with a defined flowering season, in families with at least ${T.min_species} such species (${T.n_species} species, ${T.n_families} families). Each small dot is one species. Values beyond ±${LIM} are drawn at the edge. The large dot is the family average and the line its 95% confidence interval: when the line doesn't cross zero, the family as a whole is shifting.`;
+  $("#famTable tbody").innerHTML = rows.map(f=>{
+    const v = f.hi<0 && f.q<0.1 ? '<span class="chip early">clearly earlier</span>' : f.lo>0 && f.q<0.1 ? '<span class="chip late">clearly later</span>' : '<span class="chip">no clear shift</span>';
+    return `<tr><td><span style="font-family:var(--serif)">${esc(f.family)}</span></td><td class="num">${f.n}</td><td class="num">${fmt(f.mean_slope)}</td><td class="num">${fmt(f.lo,0)} to ${fmt(f.hi,0)}</td><td class="num">${fmt(f.median)}</td><td class="num">±${f.sd.toFixed(0)}</td><td class="num">${f.n_earlier}/${f.n}</td><td class="num">${f.q.toFixed(2)}</td><td>${v}</td></tr>`;
+  }).join("");
+  $("#genTable tbody").innerHTML = G.map(g=>`<tr><td>${sci(g.genus)}</td><td class="num">${g.n}</td><td class="num">${fmt(g.mean_slope)}</td><td class="num">±${g.sd.toFixed(0)}</td><td class="num">${g.n_earlier}/${g.n}</td></tr>`).join("");
+  $("#capGen").innerHTML = `Genera with at least ${T.genus_min} species. Shifts are in days per decade. q is each family's p value corrected for testing ${T.n_families} families at once.`;
 }
 
 let sortK = "p_mean", sortDir = 1, selSp = null;
