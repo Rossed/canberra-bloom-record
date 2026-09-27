@@ -460,7 +460,8 @@ function sci(name){
 let B = [], A = null, charts = {};
 setTimeout(route, 0);
 
-Promise.all([fetch("data/brochures.json").then(r=>r.json()), fetch("data/analysis.json").then(r=>r.json())])
+const getJSON = u => fetch(u, {cache:"no-cache"}).then(r=>{ if(!r.ok) throw new Error(u+" "+r.status); return r.json(); });
+Promise.all([getJSON("data/brochures.json"), getJSON("data/analysis.json")])
 .then(([b,a]) => { document.addEventListener("click", e => { const hl = e.target.closest("[data-hl]"); if (hl){ hlPlant = hl.dataset.hl; if (hl.getAttribute("href") === location.hash){ e.preventDefault(); route(); } } }, true); document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
 .catch(e => { $("#loading").textContent = "Couldn't load the data files (" + e.message + "). Serve this folder over HTTP rather than opening the file directly."; });
 
@@ -606,6 +607,15 @@ function extremeYears(n=3){
   return {early: list(srt.slice(0,n)), late: list(srt.slice(-n).reverse())};
 }
 const axTitle = t => ({display:true,text:t,color:css("--ink-3"),font:{family:"IBM Plex Sans",size:11}});
+/* Run one section; if it fails (e.g. a stale cached data file), keep the rest of the page working */
+function safely(name, fn, where){
+  try { fn(); }
+  catch (e) {
+    console.error(`Section "${name}" failed:`, e);
+    const el = document.querySelector(where);
+    if (el) el.innerHTML = `<p class="note">This part of the page couldn't be drawn, probably because your browser kept an older copy of the data. Reload the page (Ctrl+Shift+R, or Cmd+Shift+R on a Mac) to fix it.</p>`;
+  }
+}
 function initAnalysis(){
   const C = A.community, S = A.species, ct = A.climate_trends, R = C.robustness, LY = A.last_full_year;
   const SH = S.filter(s=>!s.long_flowering);
@@ -676,12 +686,12 @@ function initAnalysis(){
   const med = [...SH.map(s=>s.slope_mean)].sort((a,b)=>a-b)[Math.floor(SH.length/2)];
   $("#capHist").innerHTML = `${earlyM} of ${SH.length} taxa with a defined season (${Math.round(100*earlyM/SH.length)}%) moved earlier. If nothing were changing you'd expect about half. Median shift ${fmt(med)} days per decade. ${S.length-SH.length} long-flowering taxa are left out.`;
 
-  initFamilies();
+  safely("families", initFamilies, "#famVerdict");
 
   $("#spIntro").innerHTML = `${S.length} taxa appear in at least ${A.params.min_seasons} well-sampled seasons spanning ${A.params.min_span}+ years. The shift is a linear trend in each taxon's mid-flowering date, in days per decade. The table opens sorted by strength of evidence (p). Long-flowering taxa are hidden by default, because when a plant is in flower most of the year its dates mostly reflect which weeks a volunteer walked past. A plant only shows up if that week's walk passed it, so single-species results are leads. Check the <b>q</b> value (false discovery rate across all ${S.length} tests) before trusting one.`;
-  initSpeciesTable();
-  initWhy();
-  initMethod();
+  safely("species", initSpeciesTable, "#spDetail");
+  safely("climate", initWhy, "#reasons");
+  safely("method", initMethod, "#method");
 }
 
 function initFamilies(){
@@ -909,7 +919,7 @@ function initCheck(){
     e.target.value = "";
   });
   renderCkList(); ckOpen(CK.sample.find(id => !(CK.brochures[id]||{}).done) || CK.sample[0]);
-  fetch("data/renames.json").then(r=>r.json()).then(d => { RN = d; $("#rnScope").addEventListener("input", renderRenames); renderRenames(); });
+  getJSON("data/renames.json").then(d => { RN = d; $("#rnScope").addEventListener("input", renderRenames); renderRenames(); });
 }
 function ckExport(){
   const out = {reviewer: CK.reviewer, exported: new Date().toISOString(), seed: CK.seed, brochures:{}, renames:CK.renames};
