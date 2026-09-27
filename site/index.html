@@ -144,6 +144,9 @@ section.block{padding-block:28px;border-top:1px solid var(--line);display:grid;g
 .stbl{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 th.sortable{cursor:pointer}
 th.sortable:hover{color:var(--ink)}
+.ptlinks{font-size:13.5px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:10px 12px;display:grid;gap:6px}
+.ptlinks b{color:var(--ink)}
+.ptlinks ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
 .kv dt{color:var(--ink-3)}
 .kv dd{margin:0}
@@ -449,13 +452,14 @@ let B = [], A = null, charts = {};
 setTimeout(route, 0);
 
 Promise.all([fetch("data/brochures.json").then(r=>r.json()), fetch("data/analysis.json").then(r=>r.json())])
-.then(([b,a]) => { document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
+.then(([b,a]) => { document.addEventListener("click", e => { const hl = e.target.closest("[data-hl]"); if (hl){ hlPlant = hl.dataset.hl; if (hl.getAttribute("href") === location.hash){ e.preventDefault(); route(); } } }, true); document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
 .catch(e => { $("#loading").textContent = "Couldn't load the data files (" + e.message + "). Serve this folder over HTTP rather than opening the file directly."; });
 
 let analysisReady = false, checkReady = false, loaded = false;
 window.addEventListener("hashchange", route);
 function route(){
-  const h = location.hash.slice(1), v = ["extraction","analysis","check"].includes(h) ? h : "about";
+  const h = location.hash.slice(1), leafletId = h.startsWith("leaflet-") ? h.slice(8) : null;
+  const v = leafletId ? "extraction" : ["extraction","analysis","check"].includes(h) ? h : "about";
   $("#loading").hidden = loaded || v === "about";
   if (!loaded && v !== "about"){ for (const k of ["about","extraction","analysis","check"]) $("#view-"+k).hidden = true; return; }
   if (["about","extraction","analysis","check"].includes(h) || !h) window.scrollTo(0,0);
@@ -463,6 +467,18 @@ function route(){
   $("#view-"+v).hidden = false;
   if (v === "analysis" && !analysisReady){ analysisReady = true; initAnalysis(); }
   if (v === "check" && !checkReady){ checkReady = true; initCheck(); }
+  if (leafletId) openLeaflet(leafletId);
+}
+
+/* Open one leaflet on the Leaflets page, clearing filters that would hide it and highlighting a plant if given */
+let hlPlant = null;
+function openLeaflet(id){
+  if (!B.some(r=>r.id===id)) return;
+  if (!filtered.some(r=>r.id===id)){ $("#q").value = ""; $("#yearSel").value = ""; $("#flagOnly").checked = false; renderList(); }
+  select(id);
+  const row = document.querySelector(`#blist .brow[data-id="${CSS.escape(id)}"]`);
+  if (row) row.scrollIntoView({block:"center"});
+  requestAnimationFrame(() => { const d = $("#detail"); window.scrollTo({top: d.getBoundingClientRect().top + scrollY - 90}); });
 }
 
 /* ================= ABOUT ================= */
@@ -520,7 +536,7 @@ function renderList(){
     html += `<button class="brow" role="option" data-id="${r.id}" aria-selected="${r.id===sel}"><span class="d">${r.d}</span><span class="n">${r.np} plants${r.s==="FFF"?" · Friends":""}</span><span class="f">${dots}</span></button>`;
   }
   $("#blist").innerHTML = html || `<p class="note" style="padding:16px">No leaflets match. Clear the search or year filter.</p>`;
-  $("#blist").querySelectorAll(".brow").forEach(b=>b.addEventListener("click",()=>select(b.dataset.id)));
+  $("#blist").querySelectorAll(".brow").forEach(b=>b.addEventListener("click",()=>{ hlPlant = null; select(b.dataset.id); }));
 }
 function select(id){
   sel = id;
@@ -531,7 +547,7 @@ function select(id){
   const flags = r.fl.map(f=>`<span class="chip warn">${esc(f)}</span>`).join(" ");
   const rows = r.p.map((p,i)=>{
     const [li,raw,tk,acc,src,fam,ren,sec,common,cols,stage,phase,ctx,ak] = p;
-    const hit = q && (raw+" "+tk+" "+(acc||"")+" "+(fam||"")+" "+(common||"")).toLowerCase().includes(q);
+    const hit = (q && (raw+" "+tk+" "+(acc||"")+" "+(fam||"")+" "+(common||"")).toLowerCase().includes(q)) || (hlPlant && (ak===hlPlant || acc===hlPlant));
     let accCell = acc ? sci(acc) : `<span class="chip bad">unresolved</span>`;
     if (ren) accCell += ` <span class="chip acc" title="Printed under an older name">renamed</span>`;
     if (acc && src && src.startsWith("as written")) accCell += ` <span class="chip" title="ALA recognised the genus only; the name is used as printed">genus-matched</span>`;
@@ -567,7 +583,7 @@ function baseOpts(extra={}){
   const ink2 = css("--ink-2"), grid = css("--grid");
   return Object.assign({responsive:true, maintainAspectRatio:false, animation:false,
     interaction:{mode:"nearest", intersect:false},
-    plugins:{legend:{display:false}, tooltip:{backgroundColor:css("--surface"), titleColor:css("--ink"), bodyColor:css("--ink-2"), borderColor:css("--line-strong"), borderWidth:1, padding:10, titleFont:{family:"IBM Plex Sans",weight:"600"}, bodyFont:{family:"IBM Plex Mono"}}},
+    plugins:{legend:{display:false}, tooltip:{backgroundColor:css("--surface"), titleColor:css("--ink"), bodyColor:css("--ink-2"), borderColor:css("--line-strong"), borderWidth:1, padding:10, titleFont:{family:"IBM Plex Sans",weight:"600"}, bodyFont:{family:"IBM Plex Mono"}, footerColor:css("--accent"), footerFont:{family:"IBM Plex Sans",weight:"500"}}},
     scales:{x:{grid:{color:grid,drawTicks:false}, border:{color:css("--line-strong")}, ticks:{color:ink2,font:{family:"IBM Plex Mono",size:11},padding:6}},
             y:{grid:{color:grid,drawTicks:false}, border:{display:false}, ticks:{color:ink2,font:{family:"IBM Plex Mono",size:11},padding:6}}}}, extra);
 }
@@ -700,6 +716,7 @@ function showSpecies(k){
     </div>
     <div class="legend"><span><i class="pt" style="background:var(--neutral)"></i>Each leaflet mention</span><span><i class="pt" style="background:var(--accent)"></i>Mid-flowering date that season</span><span><i style="background:var(--ink)"></i>Trend</span><span><i class="pt" style="background:transparent;border:1.5px solid var(--ink-3)"></i>Season with sampling gaps (excluded)</span></div>
     <div class="chart tall"><canvas id="cSp"></canvas></div>
+    <div class="ptlinks" id="spLinks" aria-live="polite">Click any dot to get a link to its leaflet.</div>
     <dl class="kv">
       <dt>Typical onset</dt><dd>${s.typical_onset} (mid-flowering ${s.typical_centroid})</dd>
       <dt>Mid-flowering trend</dt><dd>${fmt(s.slope_mean)} d/decade, p ${pf(s.p_mean)}, q ${s.q_mean.toFixed(2)}</dd>
@@ -709,6 +726,10 @@ function showSpecies(k){
     </dl>`;
   const fmtDate = iso => new Date(iso+"T00:00:00Z").toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
   const pts = s.points.map(([yr,d,iso])=>({x:yr,y:d,iso}));
+  // leaflets that mention this plant on a given date
+  const leafletsOn = iso => B.filter(r=>r.d===iso && r.p.some(p=>p[13]===s.key || p[3]===s.key));
+  const leafletLink = r => `<a href="#leaflet-${esc(r.id)}" data-hl="${esc(s.key)}">${fmtDate(r.d)}</a> <span class="sub">· ${r.s==="FFF"?"Flowers, Fruit &amp; Foliage":"In Flower This Week"}</span> · <a href="${esc(r.url.replace(/^http:\/\/web\.archive\.org/,"https://web.archive.org"))}" target="_blank" rel="noopener">original ↗</a>`;
+  const showLinks = (title, rs) => { $("#spLinks").innerHTML = rs.length ? `<b>${title}</b><ul>${rs.map(r=>`<li>${leafletLink(r)}</li>`).join("")}</ul>` : "No leaflet found for this point."; };
   const mids = cov.map(x=>({x:x.season,y:x.mean,t:x.temp_window,n:x.n,range:x.n>1?`${x.first_label} – ${x.last_label}`:x.first_label}));
   const gaps = s.seasons.filter(x=>!x.covered).map(x=>({x:x.season,y:x.mean}));
   const ys = pts.map(p=>p.y); const ymin=Math.max(0,Math.min(...ys)-10), ymax=Math.min(364,Math.max(...ys)+10);
@@ -717,7 +738,13 @@ function showSpecies(k){
     {label:"Mid-flowering",data:mids,backgroundColor:css("--accent"),pointRadius:6,borderColor:css("--surface"),borderWidth:2,pointHoverRadius:8},
     {label:"Excluded season",data:gaps,backgroundColor:"transparent",borderColor:css("--ink-3"),borderWidth:1.5,pointRadius:6},
     {label:"Mention",data:pts,backgroundColor:css("--neutral"),pointRadius:3,pointHoverRadius:5}]},
-    options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:c=>`${c[0].raw.x}`,label:c=>c.dataset.label==="Trend"?`trend`:c.raw.iso?`Leaflet of ${fmtDate(c.raw.iso)}`:c.raw.range?`Mid-flowering ~${doyLabel(st+c.raw.y)} · ${c.raw.n} mention${c.raw.n>1?"s":""}: ${c.raw.range}`+(c.raw.t!=null?` · pre-onset ${c.raw.t.toFixed(1)} °C`:""):`${c.dataset.label}: ${doyLabel(st+c.raw.y)}`}}},
+    options:baseOpts({interaction:{mode:"nearest",intersect:true},
+      onHover:(e,els)=>{ e.native.target.style.cursor = els.some(el=>el.datasetIndex===1||el.datasetIndex===3) ? "pointer" : "default"; },
+      onClick:(e,els)=>{ const el = els.find(x=>x.datasetIndex===3) || els.find(x=>x.datasetIndex===1); if(!el) return;
+        const raw = charts.cSp.data.datasets[el.datasetIndex].data[el.index];
+        if (raw.iso) showLinks(`Leaflet mentioning ${s.key}:`, leafletsOn(raw.iso));
+        else showLinks(`All ${raw.n} leaflet${raw.n>1?"s":""} mentioning ${s.key} in ${raw.x}:`, [...new Set(pts.filter(p=>p.x===raw.x).map(p=>p.iso))].sort().flatMap(leafletsOn)); },
+      plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{footer:c=>c.some(x=>x.raw.iso||x.raw.range)?"Click for a link to the leaflet":"",title:c=>`${c[0].raw.x}`,label:c=>c.dataset.label==="Trend"?`trend`:c.raw.iso?`Leaflet of ${fmtDate(c.raw.iso)}`:c.raw.range?`Mid-flowering ~${doyLabel(st+c.raw.y)} · ${c.raw.n} mention${c.raw.n>1?"s":""}: ${c.raw.range}`+(c.raw.t!=null?` · pre-onset ${c.raw.t.toFixed(1)} °C`:""):`${c.dataset.label}: ${doyLabel(st+c.raw.y)}`}}},
       scales:{x:{...baseOpts().scales.x,type:"linear",min:1996,max:A.last_full_year+2,ticks:{...baseOpts().scales.x.ticks,stepSize:4,callback:v=>v}},
               y:{...baseOpts().scales.y,reverse:true,min:ymin,max:ymax,title:axTitle("date (earlier ↑)"),ticks:{...baseOpts().scales.y.ticks,callback:v=>doyLabel(st+v)}}}})});
 }
