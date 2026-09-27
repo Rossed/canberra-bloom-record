@@ -30,6 +30,9 @@ REPO = "https://github.com/Rossed/canberra-bloom-record"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 A = json.load(open(os.path.join(ROOT, "site", "data", "analysis.json")))
+import sys; sys.path.insert(0, os.path.join(ROOT, "pipeline"))
+from facts import build_facts
+FX = build_facts()  # shared headline figures and sentences (same wording as the website)
 D = json.load(open(os.path.join(ROOT, "data", "brochures.json")))
 C, R, S = A["community"], A["community"]["robustness"], A["species"]
 LY = A["last_full_year"]
@@ -442,14 +445,15 @@ s += [Spacer(1, 4 * mm), P("A REPORT FROM THE CANBERRA BLOOM RECORD", "eyebrow")
 
 # ---- summary
 s += [P("SUMMARY", "eyebrow"), P("The short answer", "h1"),
-      Paragraph(f"The plants in the Gardens now flower about <font color='{EARLY}'>{abs(obs):.0f} days earlier per decade</font> than in 1997, roughly {total_days} days over the whole period. Warmer years flower earlier, and Canberra's warming accounts for roughly {shLo}–{shHi}% of the change.", st["big"]),
+      Paragraph(FX["sentence_shift"].replace(f"about {FX['shift_abs_round']} days earlier per decade", f"about <font color='{EARLY}'>{FX['shift_abs_round']} days earlier per decade</font>") + f" Warming explains roughly {FX['share']} of the shift.", st["big"]),
       P("<b>Where the evidence comes from.</b> Every week or two since 1997 a volunteer has walked through the Gardens and written a leaflet naming the plants in flower along the way. The Gardens published these as <i>In Flower This Week</i> until August 2016, and the Friends of the ANBG have continued them since as <i>Flowers, Fruit &amp; Foliage</i>. In every leaflet the featured plants are printed in bold. That makes it possible to list, for each plant, the dates it was in flower, year after year."),
       P("What was found", "h2")]
 s += bullets([
-    f"<b>Flowering is earlier.</b> Across {len(S)} plants seen in at least eight years, the middle of each plant's flowering period moved {fmt(obs)} days per decade (95% confidence interval {fmt(R['all_years']['mean_lo'])} to {fmt(R['all_years']['mean_hi'])}). Of the {len(SH)} plants with a clear flowering season, {earlyM} ({round(100 * earlyM / len(SH))}%) moved earlier.",
+    f"<b>Flowering is earlier.</b> Across {FX['n_taxa']} plants seen in at least eight years, the middle of each plant's flowering period moved {FX['shift']} days per decade (95% confidence interval {FX['shift_ci']}). Of the {FX['n_short']} plants with a clear flowering season, {FX['n_short_earlier']} ({FX['pct_short_earlier']}) moved earlier.",
     f"<b>The result holds when checked.</b> It holds when the weekly leaflets of the early years are thinned to match the later fortnightly ones, when long-flowering plants are left out, and within the Gardens' own leaflets alone. Nothing jumps at the 2016 handover to the Friends.",
-    f"<b>Warmth brings flowering forward.</b> Canberra warmed by about {ct['annual']['per_decade']:.1f} °C per decade from 1997 to {LY}. In years that were warmer than usual before a plant's season, it flowered {abs(w60['sens_mean']):.0f}–{abs(w180['sens_mean']):.0f} days earlier per degree.",
-    f"<b>Warming explains only part of the change.</b> Multiplying that sensitivity by the actual warming gives {fmt(expLo)} to {fmt(expHi)} days per decade, about {shLo}–{shHi}% of the {fmt(obs)} observed. Rainfall made no clear difference. The rest is probably the Gardens themselves changing (plants maturing, new plantings, watering) and changes in who wrote the leaflets and which paths they walked.",
+    f"<b>Warmth plays a part.</b> {FX['sentence_warming']}",
+    f"<b>But warming explains only part of it.</b> {FX['sentence_share']} The rest is probably the Gardens themselves changing (plants maturing, new plantings, watering) and changes in who wrote the leaflets and which paths they walked.",
+    f"<b>Plant families move together with the garden.</b> {FX['sentence_families']}",
 ])
 s += [Spacer(1, 3 * mm), callout([P("How much weight does this bear?", "h3"),
       P("The leaflets were written to guide visitors, not as a scientific survey. A plant only appears when a volunteer chose to walk past it and mention it. The overall pattern across hundreds of plants is fairly robust. The result for any single plant is weak evidence and should be treated as a lead to follow up, not a finding. Read the whole report as a strong hint rather than proof.", "body")], W),
@@ -491,7 +495,8 @@ s += [P("Why the middle of flowering, not the first sighting?", "h2"),
       P("Checking the extraction", "h2"),
       P(f"The website's Leaflets page shows every leaflet next to the plants taken from it, and flags {n_flag} leaflets for a closer look. A Check accuracy page lets reviewers compare a random sample of leaflets with the originals." +
         (f" So far {val['done']} leaflets ({val['checked']} records) have been checked: {100 * val['prec']:.1f}% of extracted records were genuine featured plants, {100 * val['rec']:.1f}% of featured plants were found, and {100 * val['name']:.1f}% of names were correct." if val else
-         " Reviewer results will be added to this report when they are available.")),
+         " Reviewer results will appear here when available.") +
+        " On the website, each dot on a plant's chart links to its leaflet."),
       PageBreak()]
 
 # ---- 3. findings, garden-wide
@@ -512,7 +517,7 @@ ex = best[0]
 s += [P("4 · WHICH PLANTS", "eyebrow"), P("Which plants are shifting", "h1"),
       P(f"Most plants moved earlier, but by different amounts, and a few moved later. The left chart shows the spread across the {len(SH)} plants with a clear flowering season. The box on the right summarises whether plant families shift together."),
       two_up([chart_hist(), P(f"{earlyM} of {len(SH)} plants ({round(100 * earlyM / len(SH))}%) moved earlier. If nothing were changing, about half would by chance.", "cap")],
-             [P("Do families shift together?", "h3"), P(f"Mostly no. Family explains only {round(100 * FT['share_between'])}% of the differences between species, no more than random groupings would (p {pf(FT['permutation_p'])}). Species within a family vary widely. The detail follows the species tables.", "body")], W),
+             [P("Do families shift together?", "h3"), P(f"Mostly no. Family explains only {FX['family_share']} of the differences between species, no more than random groupings would (p {pf(FT['permutation_p'])}). Species within a family vary widely. The detail follows the species tables.", "body")], W),
       P("One plant in detail", "h2"),
       P(f"<b>{sci(ex['key'])}</b>{(' (' + esc(ex['common']) + ')') if ex['common'] and not re.match(r'(?i)^(a|an) ', ex['common']) else ''} has the strongest evidence of an earlier shift among wild species. Each grey dot is one leaflet that mentioned it. The green dots mark the middle of each year's mentions."),
       chart_species(ex),
@@ -552,7 +557,7 @@ s += [KeepTogether([P("Do plant families shift together?", "h2"),
       P(f"Each family's figure is simply the average of its species. The chart shows every species as a dot, so the spread is visible. Species within a family typically differ by ±{FT['within_sd']:.0f} days per decade. About ±{FT['noise_se']:.0f} of that is noise in the leaflet records, leaving roughly ±{FT['true_sd']:.0f} of real difference between species."),
       chart_families(),
       P(f"Wild species with a defined season, in families with at least {FT['min_species']} such species ({FT['n_species']} species). Small dots are species (blue earlier, orange later). The black dot is the family average and the line its 95% confidence interval. When the line doesn't cross zero, the family as a whole is shifting.", "cap")]),
-      P(f"<b>The verdict.</b> Family explains only {round(100 * FT['share_between'])}% of the differences between species. Random groupings of the same species do as well {round(100 * FT['permutation_p'])}% of the time (permutation test p {pf(FT['permutation_p'])}), so families are not moving in their own distinctive ways. Most drift earlier with the garden as a whole. {len(clearF)} families are clearly earlier even after allowing for testing {FT['n_families']} families: {names([f['family'] for f in clearF])}." +
+      P(f"<b>The verdict.</b> Family explains only {FX['family_share']} of the differences between species. Random groupings of the same species do as well {round(100 * FT['permutation_p'])}% of the time (permutation test p {pf(FT['permutation_p'])}), so families are not moving in their own distinctive ways. Most drift earlier with the garden as a whole. {len(clearF)} families are clearly earlier even after allowing for testing {FT['n_families']} families: {names([f['family'] for f in clearF])}." +
         (f" The pea and wattle family (Fabaceae) is the exception at {fmt(fab['mean_slope'])} days per decade{', with <i>Acacia</i> at ' + fmt(acacia['mean_slope']) if acacia else ''}." if fab else "") +
         f" Genera differ slightly more than families (p {pf(FT['genus_kruskal_p'])}), a hint worth following up rather than a finding."),
       data_table(["Family", "Species", "Average", "95% CI", "Spread", "Earlier", "q", "Verdict"], fam_rows,
@@ -566,13 +571,13 @@ s += [P("5 · WHY", "eyebrow"), P("Is it the warming?", "h1"),
       P(f"Canberra has warmed over the period, especially in winter and spring. Warmer years clearly flower earlier. But the warming is modest, and on its own it accounts for only part of the change."),
       two_up([chart_temp(), P(f"Canberra seasonal mean temperature with trend lines. Per decade, 1997–{LY}: annual {fmt(ct['annual']['per_decade'], 2)} °C, winter {fmt(ct['winter']['per_decade'], 2)}, spring {fmt(ct['spring']['per_decade'], 2)}.", "cap")],
              [chart_rain(), P("Rainfall. The Millennium Drought lasted until 2009. 2010 and the La Niña years of 2021–22 were very wet. Unlike temperature, rainfall shows no clear link with flowering time.", "cap")], W),
-      two_up([chart_scatter(), P(f"Each dot is a year. Warmer years flowered earlier (r = {yc['annual']['r']:.2f}). With the long-term trend removed from both, the link remains (r = {yc['annual_detrended']['r']:.2f}, p {pf(yc['annual_detrended']['p'])}).", "cap")],
+      two_up([chart_scatter(), P(f"Each dot is a year. Warmer years flowered earlier (r = {FX['year_r']}). With the long-term trend removed from both, the link remains (r = {FX['year_r_detrended']}, p {pf(yc['annual_detrended']['p'])}).", "cap")],
              [chart_window(), P(f"Days earlier per °C, depending on how long a warm-up before flowering is measured. Longer periods show stronger effects, up to {abs(w180['sens_mean']):.1f} days per °C.", "cap")], W),
       PageBreak(), P("5 · WHY (CONTINUED)", "eyebrow"), P("Putting it together", "h2")]
 s += bullets([
-    f"<b>How much can warming explain?</b> Plants flower {abs(w60['sens_mean']):.1f}–{abs(w180['sens_mean']):.1f} days earlier per °C, and the relevant periods warmed about {w180['warming_per_decade']:.2f}–{w60['warming_per_decade']:.2f} °C per decade. That predicts {fmt(expLo)} to {fmt(expHi)} days per decade, against {fmt(obs)} observed, or about {shLo}–{shHi}%.",
+    f"<b>How much can warming explain?</b> Plants flower {FX['sens_range']} days earlier per °C, and the relevant periods warmed about {w180['warming_per_decade']:.2f}–{w60['warming_per_decade']:.2f} °C per decade. That predicts {FX['expected_range']} days per decade, against {FX['shift']} observed, or about {FX['share']}.",
     f"<b>The rest isn't explained by weather.</b> With temperature, rainfall and time in one model, a shift of {fmt(trm['year']['coef'] * 10)} days per decade remains. This is a lower bound on warming's share, because a fixed warm-up period only approximates when each plant responds.",
-    f"<b>Rainfall makes no clear difference.</b> Neither wetter years (r = {yc['rain_annual_detrended']['r']:.2f} after removing trends) nor rain before each plant's own season shows a consistent effect on flowering time.",
+    f"<b>Rainfall makes no clear difference.</b> Neither wetter years (r = {FX['rain_r']} after removing trends) nor rain before each plant's own season shows a consistent effect on flowering time.",
     "<b>Other likely causes.</b> The garden is maturing and watered, which can make plants less tied to the weather. New plantings and cultivars are often chosen because they flower early or for long periods. The volunteers and their routes changed over time. The leaflets can't separate these effects.",
 ])
 s += [Spacer(1, 6 * mm), Rule(W), Spacer(1, 2 * mm)]

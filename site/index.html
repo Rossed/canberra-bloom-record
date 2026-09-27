@@ -251,12 +251,13 @@ a.report small{font-weight:400;opacity:.85;font-size:13px}
 
       <h2>What was found</h2>
       <div class="found">
-        <p><b>The plants are flowering earlier than they used to.</b> On average, their flowering time has moved about <b data-n="perdecade">5</b> days earlier for every ten years. Over the whole period that adds up to roughly <b data-n="total">two weeks</b>.</p>
-        <p><b>Warmth plays a part.</b> Canberra has warmed by about a third of a degree each decade since 1997. In warmer years the plants flowered earlier, by around 3 to 7 days for each degree of extra warmth.</p>
-        <p><b>But warming explains only part of it.</b> On these figures, the warming accounts for roughly <b data-n="share">a fifth to a third</b> of the change. Rainfall made no clear difference. The rest is likely due to changes in the Gardens themselves, such as plants maturing, new plantings and watering, and to changes in who wrote the leaflets and which paths they walked.</p>
+        <p><b>The plants are flowering earlier than they used to.</b> <span data-fx="sentence_shift"></span></p>
+        <p><b>Warmth plays a part.</b> <span data-fx="sentence_warming"></span></p>
+        <p><b>But warming explains only part of it.</b> <span data-fx="sentence_share"></span> The rest is likely due to changes in the Gardens themselves, such as plants maturing, new plantings and watering, and to changes in who wrote the leaflets and which paths they walked.</p>
+        <p><b>Plant families move together with the garden.</b> <span data-fx="sentence_families"></span></p>
       </div>
 
-      <a class="report" href="report/canberra-bloom-record.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Download the full report (PDF) <small>· about 11 pages, easy to print or email</small></span></a>
+      <a class="report" href="report/canberra-bloom-record.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Download the full report (PDF) <small>· <span data-fx="report_pages">12</span> pages, easy to print or email</small></span></a>
 
       <h2>Things to keep in mind</h2>
       <ul class="caveats">
@@ -457,12 +458,12 @@ function sci(name){
   if(!name) return "";
   return esc(name).replace(/('[^']*'?)|\b(subsp\.|var\.|f\.|sp\.|×)|([^'\s][^'\s]*)/g,(m,c,r,w)=> c ? c : r ? r : `<span class="sp">${w}</span>`);
 }
-let B = [], A = null, charts = {};
+let B = [], A = null, FX = {}, charts = {};
 setTimeout(route, 0);
 
 const getJSON = u => fetch(u, {cache:"no-cache"}).then(r=>{ if(!r.ok) throw new Error(u+" "+r.status); return r.json(); });
-Promise.all([getJSON("data/brochures.json"), getJSON("data/analysis.json")])
-.then(([b,a]) => { document.addEventListener("click", e => { const hl = e.target.closest("[data-hl]"); if (hl){ hlPlant = hl.dataset.hl; if (hl.getAttribute("href") === location.hash){ e.preventDefault(); route(); } } }, true); document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
+Promise.all([getJSON("data/brochures.json"), getJSON("data/analysis.json"), getJSON("data/facts.json")])
+.then(([b,a,f]) => { FX = f; document.addEventListener("click", e => { const hl = e.target.closest("[data-hl]"); if (hl){ hlPlant = hl.dataset.hl; if (hl.getAttribute("href") === location.hash){ e.preventDefault(); route(); } } }, true); document.addEventListener("click", e => { const a = e.target.closest("[data-scroll]"); if (a){ e.preventDefault(); document.getElementById(a.dataset.scroll).scrollIntoView({behavior:"smooth"}); } }); B = b; A = a; loaded = true; initAbout(); initExtraction(); route(); })
 .catch(e => { $("#loading").textContent = "Couldn't load the data files (" + e.message + "). Serve this folder over HTTP rather than opening the file directly."; });
 
 let analysisReady = false, checkReady = false, loaded = false;
@@ -493,17 +494,9 @@ function openLeaflet(id){
 
 /* ================= ABOUT ================= */
 function initAbout(){
-  const R = A.community.robustness.all_years, W = A.community.window_sensitivity;
-  const w60 = W.find(w=>w.window===60), w180 = W.find(w=>w.window===180);
-  const per = Math.abs(R.mean_days_per_decade), yrs = A.last_full_year + 1 - 1997;
-  const shLo = Math.abs(w60.sens_mean*w60.warming_per_decade)/per, shHi = Math.abs(w180.sens_mean*w180.warming_per_decade)/per;
-  const frac = x => x < 0.15 ? "a tenth" : x < 0.23 ? "a fifth" : x < 0.29 ? "a quarter" : x < 0.42 ? "a third" : x < 0.6 ? "half" : "most";
-  const total = Math.round(per*yrs/10);
-  const vals = {iftw: B.filter(r=>r.s==="IFTW").length.toLocaleString(), fff: B.filter(r=>r.s==="FFF").length.toLocaleString(),
-    wayback: B.filter(r=>r.src==="wayback").length, records: B.reduce((s,r)=>s+r.np,0).toLocaleString(), plants: A.species.length,
-    perdecade: Math.round(per), total: total >= 12 && total <= 17 ? "two weeks" : `${total} days`,
-    share: frac(shLo) === frac(shHi) ? frac(shLo) : `${frac(shLo)} to ${frac(shHi)}`};
-  document.querySelectorAll("#view-about [data-n]").forEach(el => { if (vals[el.dataset.n] != null) el.textContent = vals[el.dataset.n]; });
+  const map = {iftw:"n_iftw", fff:"n_fff", wayback:"n_wayback", records:"n_records", plants:"n_taxa"};
+  document.querySelectorAll("#view-about [data-n]").forEach(el => { const k = map[el.dataset.n]; if (k && FX[k] != null) el.textContent = FX[k]; });
+  document.querySelectorAll("[data-fx]").forEach(el => { if (FX[el.dataset.fx] != null) el.textContent = FX[el.dataset.fx]; });
 }
 
 /* ================= EXTRACTION ================= */
@@ -626,16 +619,16 @@ function initAnalysis(){
   const expLo = w60.sens_mean*w60.warming_per_decade, expHi = w180.sens_mean*w180.warming_per_decade;
   const yc = C.year_corr_mean, step = C.series_step_mean.friends_series;
   $("#answer").innerHTML = `
-    <div class="eyebrow">Short answer · ${A.series_counts.IFTW + A.series_counts.FFF} leaflets, 1997–${LY+1}</div>
-    <p class="big">Plants in the Gardens now flower about <em>${Math.abs(obs).toFixed(0)} days earlier per decade</em> than in 1997. Warmer years flower earlier, and warming explains roughly ${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}% of the shift.</p>
+    <div class="eyebrow">Short answer · ${FX.n_leaflets} leaflets, ${FX.span}</div>
+    <p class="big">${FX.sentence_shift.replace(`about ${FX.shift_abs_round} days earlier per decade`, `about <em>${FX.shift_abs_round} days earlier per decade</em>`)} Warming explains roughly ${FX.share} of the shift.</p>
     <div class="stats" style="margin:0">
-      <div class="stat"><span class="v">${fmt(obs)} d</span><span class="l">mid-flowering shift per decade, all ${R.all_years.n_species} taxa (95% CI ${fmt(R.all_years.mean_lo,0)} to ${fmt(R.all_years.mean_hi,0)})</span></div>
-      <div class="stat"><span class="v">${fmt(th.days_per_decade)} d</span><span class="l">first-appearance shift per decade, with the weekly years thinned to match the fortnightly ones (95% CI ${fmt(th.lo,0)} to ${fmt(th.hi,0)})</span></div>
-      <div class="stat"><span class="v">${earlyM} / ${SH.length}</span><span class="l">taxa with a defined season trending earlier; ${qE} earlier and ${qL} later after correcting for multiple tests</span></div>
-      <div class="stat"><span class="v">${fmt(ct.annual.per_decade,2)} °C</span><span class="l">Canberra warming per decade, 1997–${LY} (spring ${fmt(ct.spring.per_decade,2)} °C)</span></div>
-      <div class="stat"><span class="v">${Math.round(100*expLo/obs)}–${Math.round(100*expHi/obs)}%</span><span class="l">of the shift matched by warmer weather before flowering (${fmt(expLo,1)} to ${fmt(expHi,1)} d/decade)</span></div>
+      <div class="stat"><span class="v">${FX.shift} d</span><span class="l">mid-flowering shift per decade, all ${FX.n_taxa} taxa (95% CI ${FX.shift_ci})</span></div>
+      <div class="stat"><span class="v">${FX.thinned_first} d</span><span class="l">first-appearance shift per decade, with the weekly years thinned to match the fortnightly ones (95% CI ${FX.thinned_first_ci})</span></div>
+      <div class="stat"><span class="v">${FX.n_short_earlier} / ${FX.n_short}</span><span class="l">taxa with a defined season trending earlier; ${FX.q_earlier} earlier and ${FX.q_later} later after correcting for multiple tests</span></div>
+      <div class="stat"><span class="v">${FX.warming}</span><span class="l">Canberra warming per decade, 1997–${LY} (spring ${FX.warming_spring})</span></div>
+      <div class="stat"><span class="v">${FX.share}</span><span class="l">of the shift matched by warmer weather before flowering (${FX.expected_range} d/decade). Likely an underestimate.</span></div>
     </div>
-    <p class="prose">The earlier shift appears across most taxa and in every sampling check. Warm years flower early: each 1 °C of extra warmth before flowering brings it forward by ${Math.abs(w60.sens_mean).toFixed(1)}–${Math.abs(w180.sens_mean).toFixed(1)} days, depending on how long a run-up period is measured. Canberra warmed about ${ct.annual.per_decade.toFixed(1)} °C per decade, which on those figures accounts for a day or two per decade. Rainfall shows no clear effect. Nothing jumps when the leaflets passed from the ANBG to the Friends in 2016 (${fmt(step.coef)} days, p ${pf(step.p)}). The remainder is likely a mix of the garden's own changes and how the leaflets were written. See <a href="#analysis" data-scroll="reasons">Reading the evidence</a>.</p>
+    <p class="prose">${FX.sentence_warming} ${FX.sentence_share} ${FX.sentence_families} The shift appears in every sampling check, and nothing jumps when the leaflets passed from the ANBG to the Friends in 2016 (${FX.handover_step} days). See <a href="#analysis" data-scroll="reasons">Reading the evidence</a>.</p>
     <a class="report" href="report/canberra-bloom-record.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Download the full report (PDF) <small>· summary, charts, method and glossary</small></span></a>`;
 
   // yearly index (mid-flowering)
@@ -840,7 +833,7 @@ function initWhy(){
     options:baseOpts({interaction:{mode:"nearest",intersect:true},plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,filter:i=>i.dataset.label!=="fit",callbacks:{title:c=>String(c[0].raw.yr),label:c=>`annual ${c.raw.x.toFixed(1)} °C · flowering ${fmt(c.raw.y)} d`}}},
       scales:{x:{...baseOpts().scales.x,title:axTitle("annual mean temperature °C")},y:{...baseOpts().scales.y,title:axTitle("flowering index, days")}}})});
   const yc = C.year_corr_mean;
-  $("#capScatter").innerHTML = `Each dot is a year. Warmer years flower earlier (r = ${yc.annual.r.toFixed(2)}, p ${pf(yc.annual.p)}). After removing the shared long-term trend from both, the link is still there (r = ${yc.annual_detrended.r.toFixed(2)}, p ${pf(yc.annual_detrended.p)}), so it isn't just two things drifting together. Rainfall shows no such link (r = ${yc.rain_annual_detrended.r.toFixed(2)}, p ${pf(yc.rain_annual_detrended.p)}).`;
+  $("#capScatter").innerHTML = `Each dot is a year. Warmer years flower earlier (r = ${FX.year_r}, p ${pf(yc.annual.p)}). After removing the shared long-term trend from both, the link is still there (r = ${FX.year_r_detrended}, p ${pf(yc.annual_detrended.p)}), so it isn't just two things drifting together. Rainfall shows no such link (r = ${FX.rain_r}, p ${pf(yc.rain_annual_detrended.p)}).`;
 
   const W = C.window_sensitivity;
   mk("cWin",{type:"bar",data:{labels:W.map(w=>w.window+" days"),datasets:[
@@ -855,9 +848,9 @@ function initWhy(){
   $("#reasons").innerHTML = `
     <li><b>The earlier shift is real in the record.</b> Mid-flowering dates moved ${fmt(obs)} days per decade across ${R.all_years.n_species} taxa. The shift holds when the weekly years are thinned to match the fortnightly ones (${fmt(R.thinned_fortnightly.mean_days_per_decade)}), when long-flowering taxa are dropped (${fmt(R.short_season_only.mean_days_per_decade)}), and within the ANBG leaflets alone (${fmt(R.iftw_1997_2016.mean_days_per_decade)}).</li>
     <li><b>First appearance tells the same story once sampling is matched.</b> Taken raw, the first-appearance trend is only ${fmt(R.all_years.days_per_decade)} d/decade, because fortnightly leaflets from 2014 spot plants about a week later on average. With the weekly years thinned to fortnightly it is ${fmt(R.thinned_fortnightly.days_per_decade)} (95% CI ${fmt(R.thinned_fortnightly.lo)} to ${fmt(R.thinned_fortnightly.hi)}).</li>
-    <li><b>Warmth brings flowering forward.</b> Canberra warmed ${fmt(A.climate_trends.annual.per_decade,2)} °C per decade from 1997 to ${A.last_full_year}. Warmer-than-usual run-ups bring flowering forward by ${Math.abs(w60.sens_mean).toFixed(1)}–${Math.abs(w180.sens_mean).toFixed(1)} days per °C, and across the garden the warmest years flowered earliest (r = ${A.community.year_corr_mean.annual.r.toFixed(2)}).</li>
+    <li><b>Warmth brings flowering forward.</b> Canberra warmed ${fmt(A.climate_trends.annual.per_decade,2)} °C per decade from 1997 to ${A.last_full_year}. Warmer-than-usual run-ups bring flowering forward by ${Math.abs(w60.sens_mean).toFixed(1)}–${Math.abs(w180.sens_mean).toFixed(1)} days per °C, and across the garden the warmest years flowered earliest (r = ${FX.year_r}).</li>
     <li><b>Warming accounts for part of the shift.</b> Sensitivity times warming gives ${fmt(w60.sens_mean*w60.warming_per_decade)} to ${fmt(w180.sens_mean*w180.warming_per_decade)} days per decade, against ${fmt(obs)} observed. With temperature, rainfall and year in one model, the year term is still ${fmt(trm.year.coef*10)} d/decade. That figure may be too high if a fixed window misses when each plant responds.</li>
-    <li><b>Rainfall makes no clear difference.</b> Neither wetter years (r = ${A.community.year_corr_mean.rain_annual_detrended.r.toFixed(2)}) nor rain before each plant's own season shows a consistent effect on flowering time.</li>
+    <li><b>Rainfall makes no clear difference.</b> Neither wetter years (r = ${FX.rain_r}) nor rain before each plant's own season shows a consistent effect on flowering time.</li>
     <li><b>No jump when the leaflets changed hands.</b> After allowing for the trend, the Friends' leaflets (2016 on) sit ${fmt(C.series_step_mean.friends_series.coef)} days from the ANBG ones (p ${pf(C.series_step_mean.friends_series.p)}), so the handover didn't create the result.</li>
     <li><b>Likely non-climate contributors.</b> The garden is maturing and irrigated, which can decouple plants from the weather. Newer plantings and cultivars are chosen for long or early flowering. Volunteers and routes changed. The leaflets can't separate these.</li>`;
 }

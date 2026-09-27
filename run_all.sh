@@ -13,4 +13,6 @@ python3 pipeline/06_analysis.py
 python3 pipeline/07_site_data.py
 [ -n "$(ls validation/*.json 2>/dev/null)" ] && python3 pipeline/08_apply_validation.py || true
 python3 pipeline/11_report.py
+python3 pipeline/facts.py > /dev/null      # shared figures for the website (after the report, so its page count is known)
+python3 pipeline/12_check_consistency.py  # website and report must agree; stops here if not
 echo "Done. Serve with: python3 -m http.server 8765 --directory site"

@@ -24,3 +24,13 @@ The site's **3 · Check accuracy** page lets a reviewer mark a stratified random
 
     python3 pipeline/08_apply_validation.py   # prints precision / recall / name accuracy with 95% CIs, writes data/name_overrides.json
     python3 pipeline/05_taxonomy.py && python3 pipeline/06_analysis.py && python3 pipeline/07_site_data.py
+
+## Keeping the website and report consistent
+Headline figures and the plain-language summary sentences are defined once in `pipeline/facts.py`.
+The website reads them from `site/data/facts.json`, and the PDF report imports them directly.
+`pipeline/12_check_consistency.py` renders every site page in headless Chrome, reads the PDF, and fails if
+any shared figure or sentence is missing somewhere it should appear, if retired wording reappears, or if a page
+shows broken values. It runs at the end of `run_all.sh` and before every GitHub Pages deploy.
+
+When changing a result or its wording: change it in `facts.py` (or the analysis behind it), rebuild with
+`./run_all.sh`, and add any newly retired phrasing to `FORBIDDEN` in the check.

@@ -11,7 +11,19 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  check:
+    # The website and the PDF report must say the same thing; a failure here blocks the deploy.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pymupdf
+      - name: Consistency check (site pages vs PDF report)
+        run: python pipeline/12_check_consistency.py --chrome "$(which google-chrome || which chromium)"
   deploy:
+    needs: check
     runs-on: ubuntu-latest
     environment:
       name: github-pages
